@@ -1,5 +1,6 @@
 .IPPcode18
 #sd
+
 #ssa
 DEFVAR GF@counter
 MOVE GF@counter string@bla<asf # Inicializace prom ě nn é na pr á zdn ý ř et ě zec
