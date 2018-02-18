@@ -123,7 +123,8 @@ function XmlAddArgument($argLists, $xw) {
     for ($i = 0; $i < count($argLists); $i+=1) {
         $argList = $argLists[$i];
         foreach ($argList as $key => $value) {
-            xmlwriter_start_element($xw, "arg${i}");
+            $argNum = $i + 1;
+            xmlwriter_start_element($xw, "arg${argNum}");
                 xmlwriter_start_attribute($xw, "type");
                 xmlwriter_text($xw, $key);
                 xmlwriter_end_attribute($xw);
