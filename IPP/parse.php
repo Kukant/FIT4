@@ -84,6 +84,7 @@ function ProcessInput() {
             case "INT2CHAR": # v s
             case "STRLEN": # v s
             case "TYPE": # v s
+            case "NOT": # v s
                 XmlAddArgument(ProcessArguments($args, array("var", "symb")), $xw);
                 break;
             # 3 operands
@@ -92,7 +93,7 @@ function ProcessInput() {
             case "MUL":
             case "IDIV":
             case ($parts[0] == "LG" || $parts[0] == "GT" || $parts[0] == "EQ"):
-            case ($parts[0] == "AND" || $parts[0] == "OR" || $parts[0] == "NOT"):
+            case ($parts[0] == "AND" || $parts[0] == "OR"):
             case "STRI2INT":
             case "CONCAT":
             case "GETCHAR":
