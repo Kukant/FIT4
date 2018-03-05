@@ -1,4 +1,3 @@
-#!/usr/bin/php5.6
 <?php 
 
 ## FUNCTIONS
@@ -23,8 +22,7 @@ function GetArguments($argv) {
 }
 
 function ProcessInput() {
-    
-    $line = ProcessOneLine(readline());
+    $line = ProcessOneLine(fgets(STDIN));
     if (count($line) != 1 || strtoupper($line[0]) != ".IPPCODE18")
         Error("file");
     $i = 1;
@@ -92,7 +90,7 @@ function ProcessInput() {
             case "SUB":
             case "MUL":
             case "IDIV":
-            case ($parts[0] == "LG" || $parts[0] == "GT" || $parts[0] == "EQ"):
+            case ($parts[0] == "LT" || $parts[0] == "GT" || $parts[0] == "EQ"):
             case ($parts[0] == "AND" || $parts[0] == "OR"):
             case "STRI2INT":
             case "CONCAT":
@@ -173,7 +171,14 @@ function ProcessOneLine($line) {
     $noComments = DeleteComments($line);
     $split = preg_split('/\s+/', $noComments);
     # get rid of "" in retur na array
-    $nonEmpty =  array_filter($split, function($s) {return $s != "";} );
+    $nonEmpty = array();
+    $i=0;
+    foreach ($split as $part) {
+        if ($part == "")
+            continue;
+        $nonEmpty[$i] = $part;
+        $i+=1; 
+    }
     if (count($nonEmpty) > 0)
         $nonEmpty[0] = strtoupper($nonEmpty[0]);
 
@@ -208,8 +213,8 @@ function ProcessArguments($args, $expectedTypes) {
             ## constant or variable
             switch ($split[0]) {
                 case "bool":
-                    if ($split[1] != "true" || $split[1] != "false")
-                        Error("Unexpected bool value: ".$split[1]."\n");
+                    if ($split[1] != "true" && $split[1] != "false")
+                        Error("Unexpected bool value: |".$split[1]."|\n");
                 case "int":
                 case "string":
                     if ($split[0] == "string")
