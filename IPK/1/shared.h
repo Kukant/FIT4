@@ -10,6 +10,7 @@
 // macros
 
 #define BUFFER_SIZE 1024
+#define SH_TABLE_ROWS 64
 
 #define SERVER_HI "Zdarec, co chces delat?"
 #define SERVER_OK "Cajk"
@@ -19,6 +20,9 @@
 
 #define CLIENT_HI_WRITE "Chcu ti neco poslat."
 #define CLIENT_HI_READ "Chcu si neco stahnout."
+#define CLIENT_SAY_SHUTDOWN "Hele kamo vypni se uz jo."
+
+#define FILE_RECEIVED "Hele uz mi to vsechno doslo, dik."
 
 // macro-functions
 
@@ -27,8 +31,8 @@
             do { if (DEBUG) fprintf(stderr,__VA_ARGS__); } while (0)
 
 
-int receive_file(int target_socket, char *buffer, FILE *fw);
-int send_file(int target_socket, char *buffer, FILE *fr);
+int receive_file(int target_socket, FILE *fw);
+int send_file(int target_socket, FILE *fr);
 
 
 #endif //INC_1_SHARED_H

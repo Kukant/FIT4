@@ -6,12 +6,16 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <strings.h>
+#include <stdlib.h>
 
 
-int receive_file(int target_socket, char *buffer, FILE *fw) {
+int receive_file(int target_socket, FILE *fw) {
+    char buffer[BUFFER_SIZE] = {0};
     long block_size;
     memset(buffer, 0, BUFFER_SIZE);
+    unsigned long file_size = 0;
     while((block_size = recv(target_socket, &buffer, BUFFER_SIZE, 0)) > 0) {
+        file_size += block_size;
         long write_size = fwrite(&buffer, sizeof(char), block_size, fw);
         if (write_size < block_size) {
             fprintf(stderr, "Error while writing data.\n");
@@ -21,11 +25,14 @@ int receive_file(int target_socket, char *buffer, FILE *fw) {
             break;
         memset(buffer, 0, BUFFER_SIZE);
     }
+    debug_print("received: %lu bites\n", file_size);
+    send(target_socket, FILE_RECEIVED, strlen(FILE_RECEIVED) + 1, 0);
 
     return 0;
 }
 
-int send_file(int target_socket, char *buffer, FILE *fr) {
+int send_file(int target_socket, FILE *fr) {
+    char buffer[BUFFER_SIZE] = {0};
     long block_size;
     memset(buffer, 0, BUFFER_SIZE);
     while ((block_size = fread(buffer, sizeof(char), BUFFER_SIZE, fr)) > 0) {
@@ -34,6 +41,13 @@ int send_file(int target_socket, char *buffer, FILE *fr) {
             return 1;
         }
         memset(buffer, 0, BUFFER_SIZE);
+    }
+    // wait until file was received
+    debug_print("Waiting till everything is received.\n");
+    recv(target_socket, buffer, BUFFER_SIZE, 0);
+    if (strcmp(buffer, FILE_RECEIVED) != 0) {
+        fprintf(stderr, "Client sent unknown message after file transfer: %s \n", buffer);
+        exit(1);
     }
 
     return 0;

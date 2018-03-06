@@ -23,18 +23,16 @@ int main(int argc, char *argv[]) {
     int ret = getParams(argc, argv);
     if (ret == 1) {
         fprintf(stderr, "Wrong params.\n");
-        clean();
-        return 1;
+        exit(1);
     }
+    atexit(clean);
 
     debug_print("Params: \nhost: '%s'\nport: '%d'\nfilename: %s\n", host_name, (int)port_num, filename);
 
     // get address from hostname
     struct hostent *he;
-    if ( (he = gethostbyname(host_name)) == NULL) {
-        clean();
-        return 1;
-    }
+    if ( (he = gethostbyname(host_name)) == NULL)
+        exit(1);
 
 
     // create amd fill remote addr struct
@@ -47,17 +45,15 @@ int main(int argc, char *argv[]) {
     // create socket
     int client_socket;
 
-    if ((client_socket = socket(AF_INET, SOCK_STREAM, 0)) <= 0) {
+    if ((client_socket = socket(AF_INET, SOCK_STREAM, 6)) <= 0) {
         fprintf(stderr, "Can not create socket: %s\n", strerror(errno));
-        clean();
-        return 1;
+        exit(1);
     }
 
     // connect to server
     if (connect(client_socket, (struct sockaddr *) &remote_addr, sizeof(struct sockaddr)) == -1) {
         fprintf(stderr, "Error while connecting: %s\n", strerror(errno));
-        clean();
-        return 1;
+        exit(1);
     }
 
     debug_print("Successfully connected to server.\n");
@@ -73,8 +69,7 @@ int main(int argc, char *argv[]) {
 
     if (want_to_read) {
         // receive a file
-        if (send(client_socket, CLIENT_HI_READ, strlen(CLIENT_HI_READ) + 1, 0) == -1)
-            debug_print("error while sending.");
+        send(client_socket, CLIENT_HI_READ, strlen(CLIENT_HI_READ) + 1, 0);
         bzero(buffer, BUFFER_SIZE);
         // expecting filename request from server
         recv(client_socket, &buffer, BUFFER_SIZE, 0);
@@ -84,25 +79,42 @@ int main(int argc, char *argv[]) {
         }
         send(client_socket, filename, strlen(filename) + 1, 0);
 
-
         FILE *fw = fopen(filename, "w");
         if (!fw) {
             fprintf(stderr, "Could not open file %s\n", filename);
             exit(1);
         }
-        if (receive_file(client_socket, buffer, fw) != 0) {
+        if (receive_file(client_socket, fw) != 0) {
             exit(1);
         }
-        debug_print("File %s received successfully.", filename);
+        debug_print("File %s received successfully.\n", filename);
         fclose(fw);
 
     } else {
         // send a file
         send(client_socket, CLIENT_HI_WRITE, strlen(CLIENT_HI_WRITE) + 1, 0);
+        bzero(buffer, BUFFER_SIZE);
+        // expecting filename request from server
+        recv(client_socket, &buffer, BUFFER_SIZE, 0);
+        if (strcmp(buffer, SERVER_SEND_FILENAME) != 0) {
+            fprintf(stderr, "Unexpected server response: %s\n", buffer);
+            exit(1);
+        }
+        send(client_socket, filename, strlen(filename) + 1, 0);
+
+        FILE *fr = fopen(filename, "r");
+        if (!fr) {
+            fprintf(stderr, "Could not open file %s\n", filename);
+            exit(1);
+        }
+        if (send_file(client_socket, fr) != 0) {
+            exit(1);
+        }
+        debug_print("File %s sent successfully.\n", filename);
+        fclose(fr);
     }
 
-    clean();
-    return 0;
+    exit(0);
 }
 
 void clean() {
@@ -156,7 +168,7 @@ int getParams(int argc, char *argv[]) {
 
 char *strdup(const char *str)
 {
-    int n = strlen(str) + 1;
+    size_t n = strlen(str) + 1;
     char *dup = malloc(n);
     if(dup)
     {

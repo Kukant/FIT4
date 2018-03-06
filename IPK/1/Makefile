@@ -2,14 +2,15 @@
 # Tomas Kukan
 
 CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra -pedantic -g
+CFLAGS=-std=gnu99 -Wall -Wextra -pedantic -g
+LINKS=-lpthread
 
 
 all: client server
 
 client: client.c shared.c
-		$(CC) $(CFLAGS) -o ipk-client shared.c client.c
+		$(CC) $(CFLAGS) -o ipk-client shared.c client.c $(LINKS)
 		cp ipk-client clientdir
 
 server: server.c shared.c
-		$(CC) $(CFLAGS) -o ipk-server shared.c server.c
+		$(CC) $(CFLAGS) -o ipk-server shared.c server.c $(LINKS)
