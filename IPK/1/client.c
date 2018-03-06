@@ -2,6 +2,7 @@
 // Created by zeusko on 03/03/18.
 //
 #include "client.h"
+#include "shared.h"
 #include <stdio.h>
 #include <string.h>
 #include <getopt.h>
@@ -11,8 +12,9 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
+#include <strings.h>
 
-long int portnum;
+long int port_num;
 char *host_name;
 char *filename;
 bool want_to_read;
@@ -24,6 +26,8 @@ int main(int argc, char *argv[]) {
         clean();
         return 1;
     }
+
+    debug_print("Params: \nhost: '%s'\nport: '%d'\nfilename: %s\n", host_name, (int)port_num, filename);
 
     // get address from hostname
     struct hostent *he;
@@ -38,7 +42,7 @@ int main(int argc, char *argv[]) {
     memset(&remote_addr, 0, sizeof(remote_addr));
     remote_addr.sin_family = AF_INET;
     memcpy(&remote_addr.sin_addr, he->h_addr_list[0], (size_t) he->h_length);
-    remote_addr.sin_port = htons((uint16_t)portnum);
+    remote_addr.sin_port = htons((uint16_t)port_num);
 
     // create socket
     int client_socket;
@@ -56,6 +60,47 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    debug_print("Successfully connected to server.\n");
+
+    // handshake
+    char buffer[BUFFER_SIZE] = {0};
+    recv(client_socket, &buffer, BUFFER_SIZE, 0);
+    debug_print("Server sent: %s\n", buffer);
+    if (strcmp(buffer, SERVER_HI) != 0) {
+        fprintf(stderr, "Unexpected server response: %s\n", buffer);
+        exit(1);
+    }
+
+    if (want_to_read) {
+        // receive a file
+        if (send(client_socket, CLIENT_HI_READ, strlen(CLIENT_HI_READ) + 1, 0) == -1)
+            debug_print("error while sending.");
+        bzero(buffer, BUFFER_SIZE);
+        // expecting filename request from server
+        recv(client_socket, &buffer, BUFFER_SIZE, 0);
+        if (strcmp(buffer, SERVER_SEND_FILENAME) != 0) {
+            fprintf(stderr, "Unexpected server response: %s\n", buffer);
+            exit(1);
+        }
+        send(client_socket, filename, strlen(filename) + 1, 0);
+
+
+        FILE *fw = fopen(filename, "w");
+        if (!fw) {
+            fprintf(stderr, "Could not open file %s\n", filename);
+            exit(1);
+        }
+        if (receive_file(client_socket, buffer, fw) != 0) {
+            exit(1);
+        }
+        debug_print("File %s received successfully.", filename);
+        fclose(fw);
+
+    } else {
+        // send a file
+        send(client_socket, CLIENT_HI_WRITE, strlen(CLIENT_HI_WRITE) + 1, 0);
+    }
+
     clean();
     return 0;
 }
@@ -68,7 +113,6 @@ void clean() {
 int getParams(int argc, char *argv[]) {
     int c;
     bool pflag = false, hflag = false, rflag = false, wflag = false;
-    long int port_num;
     while((c = getopt(argc, argv, "h:p:r:w:")) != -1) {
         switch (c) {
             case 'h':

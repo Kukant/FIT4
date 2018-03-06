@@ -96,6 +96,12 @@
 		<Unit filename="/home/zeusko/Plocha/FIT4/IPK/1/server.h">
 			<Option target="1"/>
 		</Unit>
+		<Unit filename="/home/zeusko/Plocha/FIT4/IPK/1/shared.c">
+			<Option target="1"/>
+		</Unit>
+		<Unit filename="/home/zeusko/Plocha/FIT4/IPK/1/shared.h">
+			<Option target="1"/>
+		</Unit>
 		<Unit filename="/home/zeusko/Plocha/FIT4/IPK/1/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

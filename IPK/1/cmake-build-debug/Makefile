@@ -177,6 +177,33 @@ server.c.s:
 	$(MAKE) -f CMakeFiles/1.dir/build.make CMakeFiles/1.dir/server.c.s
 .PHONY : server.c.s
 
+shared.o: shared.c.o
+
+.PHONY : shared.o
+
+# target to build an object file
+shared.c.o:
+	$(MAKE) -f CMakeFiles/1.dir/build.make CMakeFiles/1.dir/shared.c.o
+.PHONY : shared.c.o
+
+shared.i: shared.c.i
+
+.PHONY : shared.i
+
+# target to preprocess a source file
+shared.c.i:
+	$(MAKE) -f CMakeFiles/1.dir/build.make CMakeFiles/1.dir/shared.c.i
+.PHONY : shared.c.i
+
+shared.s: shared.c.s
+
+.PHONY : shared.s
+
+# target to generate assembly for a file
+shared.c.s:
+	$(MAKE) -f CMakeFiles/1.dir/build.make CMakeFiles/1.dir/shared.c.s
+.PHONY : shared.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -192,6 +219,9 @@ help:
 	@echo "... server.o"
 	@echo "... server.i"
 	@echo "... server.s"
+	@echo "... shared.o"
+	@echo "... shared.i"
+	@echo "... shared.s"
 .PHONY : help
 
 

@@ -2,22 +2,19 @@
 // Created by zeusko on 03/03/18.
 //
 #include "server.h"
+#include "shared.h"
+
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <strings.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <unistd.h> // fork
-
-#define DEBUG 1
-#define debug_print(...) \
-            do { if (DEBUG) fprintf(stderr, __VA_ARGS__); } while (0)
-
-
 
 long int port_num;
 
@@ -53,7 +50,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-
     bool running = true;
     while (running) {
         int client_socket;
@@ -69,21 +65,66 @@ int main(int argc, char *argv[]) {
         }
 
         if (!fork()) {
-            debug_print("Ahoj z forku!\n");
-            int bytes_to_write = 5;
-            while (bytes_to_write > 0) {
-                int bytes_written = (int) write (client_socket, "ahoj", 5);
-                debug_print("written %d bytes\n", bytes_written);
-                bytes_to_write -= bytes_written;
+            close(server_socket);
+            send (client_socket, SERVER_HI, strlen(SERVER_HI) + 1, 0);
+            char buffer[BUFFER_SIZE] = {0};
+            char filename[BUFFER_SIZE] = {0};
+            recv(client_socket, &buffer, sizeof(buffer), 0);
+
+            if (strcmp(buffer, CLIENT_HI_READ) == 0) {
+
+                // send file
+                debug_print("Client wants to read a file.\n");
+                bzero(buffer, sizeof(buffer));
+                // expecting filename
+                send (client_socket, SERVER_SEND_FILENAME, strlen(SERVER_SEND_FILENAME) + 1, 0);
+                debug_print("Waiting for filename.\n");
+                recv(client_socket, &filename, sizeof(filename), 0);
+                debug_print("Filename: %s\n", filename);
+                FILE *fr;
+                if ((fr = fopen(filename, "r")) == NULL) {
+                    fprintf(stderr, "Can not open file '%s'\n", filename);
+                    exit(1);
+                }
+
+                if (send_file(client_socket, buffer, fr) != 0) {
+                    fprintf(stderr, "Can not send file '%s'\n", filename);
+                    exit(1);
+                }
+                fclose(fr);
+                debug_print("File sent successfully.\n");
+
+            } else if (strcmp(buffer, CLIENT_HI_WRITE) == 0) {
+
+                // receive file
+                debug_print("Client wants to write a file.\n");
+                bzero(buffer, sizeof(buffer));
+                // expecting filename
+                recv(client_socket, &filename, sizeof(buffer), 0);
+                FILE *fw;
+                if ((fw = fopen(filename, "w")) == NULL) {
+                    fprintf(stderr, "Can not open file '%s'\n", filename);
+                    exit(1);
+                }
+                if (receive_file(client_socket, buffer, fw) != 0) {
+                    fprintf(stderr, "Error while receiving file\n");
+                    exit(1);
+                }
+                debug_print("File received successfully.\n");
+                fclose(fw);
+
+            } else {
+                fprintf(stderr, "Unknown message: '%s'\n", buffer);
+                exit(1);
             }
 
+            send (client_socket, SERVER_HI, strlen(SERVER_BYE) + 1, 0);
+            close(client_socket);
+            exit(0);
         }
+        close(client_socket);
     }
-
-
-
-
-    return 0;
+    exit(0);
 }
 
 /**

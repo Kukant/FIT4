@@ -2,13 +2,14 @@
 # Tomas Kukan
 
 CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra -pedantic
+CFLAGS=-std=c99 -Wall -Wextra -pedantic -g
 
 
 all: client server
 
-client: client.c
-		$(CC) $(CFLAGS) -o ipk-client client.c
+client: client.c shared.c
+		$(CC) $(CFLAGS) -o ipk-client shared.c client.c
+		cp ipk-client clientdir
 
-server: server.c
-		$(CC) $(CFLAGS) -o ipk-server server.c
+server: server.c shared.c
+		$(CC) $(CFLAGS) -o ipk-server shared.c server.c

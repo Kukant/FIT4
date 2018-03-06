@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_C
   "/home/zeusko/Plocha/FIT4/IPK/1/client.c" "/home/zeusko/Plocha/FIT4/IPK/1/cmake-build-debug/CMakeFiles/1.dir/client.c.o"
   "/home/zeusko/Plocha/FIT4/IPK/1/server.c" "/home/zeusko/Plocha/FIT4/IPK/1/cmake-build-debug/CMakeFiles/1.dir/server.c.o"
+  "/home/zeusko/Plocha/FIT4/IPK/1/shared.c" "/home/zeusko/Plocha/FIT4/IPK/1/cmake-build-debug/CMakeFiles/1.dir/shared.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
