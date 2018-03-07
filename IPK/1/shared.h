@@ -20,9 +20,15 @@
 
 #define CLIENT_HI_WRITE "Chcu ti neco poslat."
 #define CLIENT_HI_READ "Chcu si neco stahnout."
+#define CLIENT_ERR "Hele nejde mi to"
+#define CLIENT_OK "Vse ok, pac a pusu"
 #define CLIENT_SAY_SHUTDOWN "Hele kamo vypni se uz jo."
 
 #define FILE_RECEIVED "Hele uz mi to vsechno doslo, dik."
+#define FILE_SENT_OK "Vsechno jsem poslal, cajk."
+#define FILE_NOT_EMPTY "Aspon neco ti teda poslu."
+#define FILE_EMPTY "On je prazdnej, proradne testy."
+
 
 // macro-functions
 

@@ -23,8 +23,10 @@
 #include "server.h"
 #include "shared.h"
 
+
+typedef char shared_table_t[SH_TABLE_ROWS][BUFFER_SIZE];
 long int port_num;
-char ***sh_w_files;
+shared_table_t *sh_w_files;
 sem_t *sh_w_files_mtx;
 bool resources_freed = true;
 
@@ -101,7 +103,7 @@ int main(int argc, char *argv[]) {
 
                 // send file
                 debug_print("Client wants to read a file.\n");
-                bzero(buffer, sizeof(buffer));
+
                 // expecting filename
                 send (client_socket, SERVER_SEND_FILENAME, strlen(SERVER_SEND_FILENAME) + 1, 0);
                 debug_print("Waiting for filename.\n");
@@ -110,6 +112,16 @@ int main(int argc, char *argv[]) {
                 FILE *fr;
                 if ((fr = fopen(filename, "r")) == NULL) {
                     fprintf(stderr, "Can not open file '%s'\n", filename);
+                    send (client_socket, SERVER_ERR, strlen(SERVER_ERR) + 1, 0);
+                    exit(1);
+                }
+
+                send (client_socket, SERVER_OK, strlen(SERVER_OK) + 1, 0);
+                bzero(buffer, BUFFER_SIZE);
+                recv(client_socket, &buffer, BUFFER_SIZE, 0);
+                if (strcmp(buffer, CLIENT_OK) != 0) {
+                    fprintf(stderr, "Client is not ok '%s'\n", buffer);
+                    fclose(fr);
                     exit(1);
                 }
 
@@ -123,18 +135,15 @@ int main(int argc, char *argv[]) {
 
             } else if (strcmp(buffer, CLIENT_HI_WRITE) == 0) {
                 // receive file
-                //debug_print("Client wants to write a file.\n");
+                debug_print("Client wants to write a file.\n");
                 // expecting filename
                 send (client_socket, SERVER_SEND_FILENAME, strlen(SERVER_SEND_FILENAME) + 1, 0);
                 debug_print("Waiting for filename.\n");
                 recv(client_socket, &filename, sizeof(filename), 0);
-                //debug_print("Filename: %s\n", filename);
-                print_shared_table();
                 if (can_i_write_into(filename) == false) {
-                    fprintf(stderr, "File '%s' already opened!----------------------------------------------------\n", filename);
+                    send (client_socket, SERVER_ERR, strlen(SERVER_ERR) + 1, 0);
+                    fprintf(stderr, "File '%s' already opened!---------------------\n", filename);
                     exit(1);
-                } else {
-                    debug_print("REceiving file: %s\n", filename);
                 }
 
                 FILE *fw;
@@ -142,13 +151,17 @@ int main(int argc, char *argv[]) {
                     fprintf(stderr, "Can not open file '%s', err: %s\n", filename, strerror(errno));
                     exit(1);
                 }
+                // everything ok, end it to me
+                send (client_socket, SERVER_OK, strlen(SERVER_OK) + 1, 0);
+                debug_print("Receiving file: %s\n", filename);
+
                 if (receive_file(client_socket, fw) != 0) {
                     fprintf(stderr, "Error while receiving file\n");
                     exit(1);
                 }
                 debug_print("File received successfully.\n");
                 fclose(fw);
-
+                debug_print("file closed\n");
                 remove_wopen_file(filename);
 
             } else {
@@ -192,20 +205,10 @@ int get_params(int argc, char *argv[]) {
 }
 
 int set_resources() {
-    if ((sh_w_files = create_shared_memory(sizeof(char**))) == NULL) {
+    if ((sh_w_files = create_shared_memory(BUFFER_SIZE * SH_TABLE_ROWS)) == NULL) {
         fprintf(stderr, "ERROR: Shared variable cound not be set.\n");
         return -1;
     }
-
-    (*sh_w_files) = calloc(sizeof(char *), SH_TABLE_ROWS);
-    if (!(*sh_w_files))
-        return -1;
-    for (int i = 0; i < SH_TABLE_ROWS; i++ ) {
-        (*sh_w_files)[i] = calloc(sizeof(char), BUFFER_SIZE);
-        if (!((*sh_w_files)[i]))
-            return -1;
-    }
-
 
 
     if((sh_w_files_mtx = sem_open("/xkukan00mujkrutejmutex", O_CREAT | O_EXCL, 0666, 1)) == SEM_FAILED) {
@@ -222,13 +225,10 @@ void free_resources() {
     debug_print("freeing resources and exiting. \n");
     if (resources_freed)
         return;
-    for (int i = 0; i < SH_TABLE_ROWS; i++ )
-        free((*sh_w_files)[i]);
 
-    free(*sh_w_files);
     sem_close(sh_w_files_mtx);
     sem_unlink("/xkukan00mujkrutejmutex");
-    munmap(sh_w_files, sizeof(char**));
+    munmap(sh_w_files, BUFFER_SIZE * SH_TABLE_ROWS);
     resources_freed = true;
     exit(0);
 }
@@ -282,12 +282,12 @@ int remove_wopen_file(char *filename) {
     if (!p) // unsuccessful translation
         return 1;
     filename = real_path;
-
     sem_wait(sh_w_files_mtx);
     for (int i = 0; i < SH_TABLE_ROWS; i++) {
         if (strcmp((*sh_w_files)[i], filename) == 0) {
             (*sh_w_files)[i][0] = '\0';
             sem_post(sh_w_files_mtx);
+            debug_print("Removing from table: %s\n", filename);
             return 0;
         }
     }

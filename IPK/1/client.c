@@ -61,7 +61,6 @@ int main(int argc, char *argv[]) {
     // handshake
     char buffer[BUFFER_SIZE] = {0};
     recv(client_socket, &buffer, BUFFER_SIZE, 0);
-    debug_print("Server sent: %s\n", buffer);
     if (strcmp(buffer, SERVER_HI) != 0) {
         fprintf(stderr, "Unexpected server response: %s\n", buffer);
         exit(1);
@@ -70,8 +69,8 @@ int main(int argc, char *argv[]) {
     if (want_to_read) {
         // receive a file
         send(client_socket, CLIENT_HI_READ, strlen(CLIENT_HI_READ) + 1, 0);
-        bzero(buffer, BUFFER_SIZE);
         // expecting filename request from server
+        bzero(buffer, BUFFER_SIZE);
         recv(client_socket, &buffer, BUFFER_SIZE, 0);
         if (strcmp(buffer, SERVER_SEND_FILENAME) != 0) {
             fprintf(stderr, "Unexpected server response: %s\n", buffer);
@@ -84,6 +83,15 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "Could not open file %s\n", filename);
             exit(1);
         }
+        bzero(buffer, BUFFER_SIZE);
+        recv(client_socket, &buffer, BUFFER_SIZE, 0);
+        if (strcmp(buffer, SERVER_OK) != 0) {
+            fprintf(stderr, "Server probably could not open file, his response: %s\n", buffer);
+            fclose(fw);
+            exit(1);
+        }
+        send(client_socket, CLIENT_OK, strlen(CLIENT_OK) + 1, 0);
+
         if (receive_file(client_socket, fw) != 0) {
             exit(1);
         }
@@ -92,6 +100,13 @@ int main(int argc, char *argv[]) {
 
     } else {
         // send a file
+        FILE *fr = fopen(filename, "r");
+        if (!fr) {
+            fprintf(stderr, "Could not open file %s\n", filename);
+            send(client_socket, CLIENT_ERR, strlen(CLIENT_ERR) + 1, 0);
+            exit(1);
+        }
+
         send(client_socket, CLIENT_HI_WRITE, strlen(CLIENT_HI_WRITE) + 1, 0);
         bzero(buffer, BUFFER_SIZE);
         // expecting filename request from server
@@ -101,12 +116,20 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
         send(client_socket, filename, strlen(filename) + 1, 0);
+        debug_print("Sending filename.\n");
 
-        FILE *fr = fopen(filename, "r");
-        if (!fr) {
-            fprintf(stderr, "Could not open file %s\n", filename);
+        memset(buffer, 0, BUFFER_SIZE);
+        recv(client_socket, &buffer, BUFFER_SIZE, 0);
+        if (strcmp(buffer, SERVER_ERR) == 0) {
+            fprintf(stderr, "Server responed: '%s'\nFile is probably already open.\n", buffer);
+            exit(1);
+        } else if (strcmp(buffer, SERVER_OK) == 0) {
+            debug_print("Server responded: '%s'.\n", buffer);
+        } else {
+            fprintf(stderr, "Unexpected server response: %s\n", buffer);
             exit(1);
         }
+
         if (send_file(client_socket, fr) != 0) {
             exit(1);
         }
