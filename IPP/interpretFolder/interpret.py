@@ -24,7 +24,6 @@ class Err(Enum):
     in_zeroDivision = 57
     in_wrongStringHandling = 58
 
-
 # global variables
 inputFilename = ""
 # parsed file
@@ -142,17 +141,15 @@ def processInstructions():
             pass  # l
         elif op == "LABEL":
             pass  # l
-
-
         elif op == "DEFVAR":
-            pass  # v
+            DEFVAR(args)
         elif op == "POPS":
             pass  # v
         
         elif op == "PUSHS":
             pass  # s
         elif op == "WRITE":
-            pass  # s
+            WRITE(args)  # s
         elif op == "DPRINT":
             pass  # s
         
@@ -168,6 +165,8 @@ def processInstructions():
             pass  # v s
         elif op == "TYPE":
             pass  # v s
+        elif op == "NOT":
+            pass  # v s
         
         # 3 operands
         elif op == "ADD":
@@ -180,7 +179,7 @@ def processInstructions():
             pass
         elif (op == "LG" or op == "GT" or op == "EQ"):
             pass
-        elif (op == "AND" or op == "OR" or op == "NOT"):
+        elif (op == "AND" or op == "OR"):
             pass
         elif op == "STRI2INT":
             pass
@@ -198,6 +197,98 @@ def processInstructions():
         else:
             error("ERROR: pass unknown operator '" + op + "'", Err.lexOrSyn)
 
+
+## OPERATOR FUNCTIONS
+
+def WRITE(args):
+    if len(args) != 1:
+        error("Unexpected arguments len in WRITE", Err.lexOrSyn)
+
+    param = parse_param(args[0])
+    if param["type"] == "var":
+        var = get_var(param["frame"], param["name"])
+        to_print = {"type": var["type"], "value": var["value"]}
+    else:
+        to_print = param  # returned value from parse_params() has the same format
+
+    if to_print["type"] != "bool":
+        print(to_print["value"])
+    else:
+        if to_print["value"]:
+            print("true")
+        else:
+            print("false")
+
+
+def DEFVAR(args):
+    if len(args) != 1:
+        error("Unexpected arguments len in DEFVAR", Err.lexOrSyn)
+
+    var = parse_param(args[1])
+    if var["type"] != "var":
+        error("DEFVAR expected var, got: " + var["type"], Err.lexOrSyn)
+
+    if var["frame"] == "GF":
+        if var["name"] in GF.keys():
+            error("Variable " + var["name"] + " already defined", Err.semantic)
+        GF[var["name"]] = {"value": None, "type": None}
+    elif var["frame"] == "TF":
+        if var["name"] in TF.keys():
+            error("Variable " + var["name"] + " already defined", Err.semantic)
+        TF[var["name"]] = {"value": None, "type": None}
+        pass
+    elif var["frame"] == "LF":
+        pass  # TODO
+
+
+## OTHER FUNCTIONS
+
+
+def parse_param(param):
+    if param["type"] == "var":
+        return parse_var(param["value"])
+    elif param["type"] == "string":
+        return {"type": "string", "value": param["value"]}
+    elif param["type"] == "int":
+        return {"type": "int", "value": param["value"]}
+    elif param["type"] == "label":
+        return {"type": "label", "value": param["value"]}
+    elif param["type"] == "bool":
+        return {"type": "bool", "value": param["value"]}
+    else:
+        error("unexpected param type: " + param["type"], Err.lexOrSyn)
+
+
+def parse_var(var):
+    splitted = var.split("@", 1)
+    if len(splitted != 2):
+        error("Wrong variable format.", Err.lexOrSyn)
+
+    frame = splitted[0]
+    name = splitted[1]
+
+    if frame != "GF" and frame != "LF" and frame != "TF":
+        error("Unknown variable frame: " + frame, Err.lexOrSyn)
+
+    return {"frame": frame, "name": name, "type": "var"}
+
+def get_var(frame, name):
+    if frame == "GF":
+        if name in GF.keys():
+            return GF[name]
+        else:
+            error("Variable not defined", Err.in_varNotDefined)
+    elif frame == "TF":
+        if name in TF.keys():
+            return TF[name]
+        else:
+            error("Variable not defined", Err.in_varNotDefined)
+    elif frame == "LF":
+        pass  # TODO
+    else:
+        error("Unknown variable frame: " + frame, Err.lexOrSyn)
+
+## MAIN
 
 def main():
     getOpts()
