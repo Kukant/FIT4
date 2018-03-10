@@ -36,9 +36,16 @@
 #define debug_print(...) \
             do { if (DEBUG) fprintf(stderr,__VA_ARGS__); } while (0)
 
+struct packet_info {
+    long packet_size;
+};
 
 int receive_file(int target_socket, FILE *fw);
 int send_file(int target_socket, FILE *fr);
+
+int send_packet(int target_socket,char *buffer, long bytes);
+
+int recv_packet(int in_socket, char *buffer);
 
 
 #endif //INC_1_SHARED_H

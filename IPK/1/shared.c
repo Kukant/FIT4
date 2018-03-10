@@ -23,8 +23,14 @@ int receive_file(int target_socket, FILE *fw) {
                 fprintf(stderr, "Error while writing data.\n");
                 return 1;
             }
-            if (block_size < BUFFER_SIZE) // end of file
+            if (block_size < BUFFER_SIZE ) // end of file
                 break;
+
+            if ( (*((int*)(buffer + BUFFER_SIZE - sizeof(int)))) == EOF )
+            {
+                debug_print("EOF NA KONCI BLOKU\n");
+                break;
+            }
             memset(buffer, 0, BUFFER_SIZE);
         }
     }
@@ -66,8 +72,23 @@ int send_file(int target_socket, FILE *fr) {
         fprintf(stderr, "Client sent unknown message after file transfer: %s \n", buffer);
         exit(1);
     }
+    debug_print("Sending FILE SENT OK msg.\n");
     send(target_socket, FILE_SENT_OK, strlen(FILE_SENT_OK) + 1, 0);
 
 
     return 0;
+}
+
+int send_packet(int target_socket,char *buffer, long bytes){
+    struct packet_info pi;
+    pi.packet_size = bytes;
+    send(target_socket, &pi, sizeof(struct packet_info), 0);
+    send(target_socket, &buffer, bytes, 0);
+}
+
+int recv_packet(int in_socket, char *buffer) {
+
+    // while (received != sizeof(struct packet_info))
+
+    // while (received != pi->packet_size)
 }
