@@ -74,11 +74,11 @@ int main(int argc, char *argv[]) {
 
     if (want_to_read) {
         // receive a file
-        send_packet(client_socket, CLIENT_HI_READ, strlen(CLIENT_HI_READ) + 1, 0);
+        send_packet(client_socket, CLIENT_READ, strlen(CLIENT_READ) + 1, 0);
         send_packet(client_socket, f_basename, strlen(f_basename) + 1, 0);
         debug_print("Sending filename '%s'.\n", f_basename);
 
-        FILE *fw = fopen(filename, "w");
+        FILE *fw = fopen(filename, "wb");
         if (!fw) {
             fprintf(stderr, "Could not open file %s\n", filename);
             exit(1);
@@ -101,14 +101,14 @@ int main(int argc, char *argv[]) {
 
     } else {
         // send a file
-        FILE *fr = fopen(filename, "r");
+        FILE *fr = fopen(filename, "rb");
         if (!fr) {
             fprintf(stderr, "Could not open file %s\n", filename);
             send_packet(client_socket, CLIENT_ERR, strlen(CLIENT_ERR) + 1, 0);
             exit(1);
         }
 
-        send_packet(client_socket, CLIENT_HI_WRITE, strlen(CLIENT_HI_WRITE) + 1, 0);
+        send_packet(client_socket, CLIENT_WRITE, strlen(CLIENT_WRITE) + 1, 0);
         send_packet(client_socket, f_basename, strlen(f_basename) + 1, 0);
         debug_print("Sending filename '%s'.\n", f_basename);
 

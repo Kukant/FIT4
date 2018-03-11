@@ -17,8 +17,8 @@
 #define SERVER_OK "OK"
 #define SERVER_ERR "Error on server side."
 
-#define CLIENT_HI_WRITE "SEND"
-#define CLIENT_HI_READ "READ"
+#define CLIENT_WRITE "SEND"
+#define CLIENT_READ "READ"
 #define CLIENT_ERR "Error on client side."
 #define CLIENT_OK "COK"
 

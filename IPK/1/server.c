@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 
             recv_packet(client_socket, buffer, NULL);
 
-            if (strcmp(buffer, CLIENT_HI_READ) == 0) {
+            if (strcmp(buffer, CLIENT_READ) == 0) {
 
                 // send file
                 debug_print("Client wants to read a file.\n");
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
                 recv_packet(client_socket, filename, NULL);
                 debug_print("Filename: %s\n", filename);
                 FILE *fr;
-                if ((fr = fopen(filename, "r")) == NULL) {
+                if ((fr = fopen(filename, "rb")) == NULL) {
                     fprintf(stderr, "Can not open file '%s'\n", filename);
                     send_packet(client_socket, SERVER_ERR, strlen(SERVER_ERR) + 1, 0);
                     exit(1);
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 
                 debug_print("File sent successfully.\n");
 
-            } else if (strcmp(buffer, CLIENT_HI_WRITE) == 0) {
+            } else if (strcmp(buffer, CLIENT_WRITE) == 0) {
                 // receive file
                 debug_print("Client wants to write a file.\n");
                 recv_packet(client_socket, filename, NULL);
@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
                 }
                 debug_print("Opening file for writing\n");
                 FILE *fw;
-                if ((fw = fopen(filename, "w")) == NULL) {
+                if ((fw = fopen(filename, "wb")) == NULL) {
                     fprintf(stderr, "Can not open file '%s', err: %s\n", filename, strerror(errno));
                     exit(1);
                 }
@@ -222,8 +222,11 @@ int set_resources() {
 
 
     if((sh_w_files_mtx = sem_open("/xkukan00mujkrutejmutex", O_CREAT | O_EXCL, 0666, 1)) == SEM_FAILED) {
-        fprintf(stderr, "ERROR: mutex cound not be open.\n");
-        return -1;
+        sem_unlink("/xkukan00mujkrutejmutex");
+        if((sh_w_files_mtx = sem_open("/xkukan00mujkrutejmutex", O_CREAT | O_EXCL, 0666, 1)) == SEM_FAILED) {
+            fprintf(stderr, "ERROR: mutex cound not be open.\n");
+            return -1;
+        }
     }
 
     resources_freed = false;

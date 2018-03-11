@@ -70,8 +70,26 @@ int send_packet(int target_socket,char *buffer, long bytes, bool eof){
     struct packet_info pi;
     pi.packet_size = bytes;
     pi.eof = eof;
-    send(target_socket, &pi, sizeof(struct packet_info), 0);
-    send(target_socket, buffer, bytes, 0);
+
+    long sent_bytes = 0;
+
+    while (sent_bytes != sizeof(struct packet_info))
+    {
+        long sent = send(target_socket, &pi, sizeof(struct packet_info), 0);
+        if (sent < 0)
+            continue;
+        sent_bytes += sent;
+    }
+
+    sent_bytes = 0;
+
+    while (sent_bytes != bytes)
+    {
+        long sent = send(target_socket, buffer, bytes, 0);
+        if (sent < 0)
+            continue;
+        sent_bytes += sent;
+    }
 
     return 0;
 }
