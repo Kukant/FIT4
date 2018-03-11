@@ -1,0 +1,27 @@
+Vytvoril: Tomas Kukan
+Datum: 10. 3. 2018
+
+#Omezeni
+Zadna znama omezeni nejsou. Server je konkurentni a neblokujici. Pomoci sdilene pameti jsou osetreny situace,
+jako zapisovani od dvou klientu zaroven do toho sameho souboru (druhemu klientovi bude poslana chybova zprava).
+
+#Poznamky
+Klient i server nesmi byt spusteni z te same slozky na stejnem stroji. - Tuto situaci jsem neosetril, protoze je
+nelogicka.
+
+#Preklad
+prikaz 'make'
+
+#Spusteni
+
+./ipk-client -h host -p port [-r|-w] file
+./ipk-server -p port
+
+napr.
+
+./ipk-client -h eva.fit.vutbr.cz -p 55555 -r myfile.xml
+./ipk-server -p 55555
+
+#Dalsi info
+Viz. zadani.
+
