@@ -7,6 +7,7 @@ class ArgType:
     bool = "bool"
     symb = [var, string, bool, int]
     label = "label"
+    type = "type"
 
 
 class Err(Enum):

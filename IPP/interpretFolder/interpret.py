@@ -7,6 +7,7 @@
 
 from operator_functions import *
 
+
 def processInstructions():
     global instructions
     for instruction in instructions:
@@ -38,14 +39,12 @@ def processInstructions():
         elif op == "PUSHS":
             pass  # s
         elif op == "WRITE":
-            WRITE(args)  # s
+            WRITE(args)
         elif op == "DPRINT":
-            pass  # s
-        
+            DPRINT(args)
         # 2 operands
         elif op == "READ":
-            pass  # v t
-        
+            READ(args)
         elif op == "MOVE":
             MOVE(args) # v s
         elif op == "INT2CHAR":
@@ -90,8 +89,8 @@ def processInstructions():
 #  MAIN
 
 def main():
-    getOpts()
-    parseXMLFile()
+    get_opts()
+    parse_xml_file()
     # import pprint
     # pprint.pprint(instructions)
     processInstructions()

@@ -13,4 +13,3 @@ for ((i=0; i<${len};++i)); do
     printf "\n\n Press enter for next test:"
     read a
 done
-:

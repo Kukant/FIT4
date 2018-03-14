@@ -4,11 +4,17 @@ import sys
 from helpful_classes import *
 from globals import *
 import xml.etree.ElementTree as ET
+import re
+
+
+def dbgp(msg):
+    if DEBUG:
+        print("DEBUG" + str(msg))
 
 def args_check(types):
     """
     Decorator for checking args len
-    :param types: array of expected types
+    :param types: array of expected types, put there None for variable argument
     :return:
     """
     def real_decorator(f):
@@ -18,6 +24,8 @@ def args_check(types):
                 error("Unexpected arguments len. in " + f.__name__ + "() expected "
                       + str(n) + " got: " + str(len(args)), Err.lexOrSyn)
             for i, type in enumerate(types):
+                if type is None:
+                    continue
                 if type == ArgType.symb:
                     if args[i].type not in ArgType.symb:
                         error("Unexpected arg type in " + f.__name__ + "() expected symb, got: " +
@@ -29,12 +37,13 @@ def args_check(types):
         return wrapper
     return real_decorator
 
+
 def error(msg, exitCode):
     print("Error: ", msg)
     exit(exitCode.value)
 
 
-def printHelp():
+def print_help():
     print(
         "This program interprets IPPcode2018 structured into XML file\n",
         "Author: Tomas Kukan, 12. 1. 2018\n",
@@ -43,8 +52,8 @@ def printHelp():
         )
 
 
-def getOpts():
-
+def get_opts():
+    global input_filename
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hf:", ["help", "file="])
     except getopt.GetoptError as err:
@@ -56,16 +65,15 @@ def getOpts():
 
     for o, a in opts:
         if o in ("-h", "--help"):
-            printHelp()
+            print_help()
             sys.exit()
         elif o in ("-f", "--file"):
-            global input_filename
             input_filename = a
         else:
             assert False, "unhandled option"
 
 
-def parseXMLFile():
+def parse_xml_file():
     global input_filename
     global instructions
     tree = None
@@ -73,7 +81,7 @@ def parseXMLFile():
         tree = ET.parse(input_filename)
     except ET.ParseError:
         error("Exception while parsing file: " + input_filename, Err.parsingFile)
-    except Exception as e:
+    except FileNotFoundError:
         error("Exception while opening file: " + input_filename, Err.openingFile)
 
     root = tree.getroot()
@@ -123,8 +131,8 @@ def parse_arg(_type, val):
     """
     if _type == "var":
         return parse_var(val)
-    elif _type in ["string", "int", "label", "bool"]:
-        return Argument(_type=_type, val=val)
+    elif _type in ["string", "int", "label", "bool", "type"]:
+        return Argument(_type=_type, val=parse_val(val, _type))
     else:
         error("unexpected param type: " + _type, Err.lexOrSyn)
 
@@ -160,6 +168,12 @@ def get_var(frame, name):
         error("Unknown variable frame: " + frame, Err.lexOrSyn)
 
 
+def get_val(arg, expected_val):
+    if arg.type == "var": # TODO TODO TODO
+        return get_var(arg.frame, arg.name)
+    else:
+        return arg.val
+
 def set_val(dst, src):
     dest_var = get_var(dst.frame, dst.name)
     if src.type == ArgType.var:
@@ -174,6 +188,30 @@ def set_val(dst, src):
         error("Cannot move value of type " + src.type + " to type " + dest_var.type, Err.in_wrongOperand)
     else:
         dest_var.val = src.val
+
+
+def parse_val(val, type):
+    if not re.match(r'^[^\s#]*$', val):
+        error("Value of argument is not valid: " + val, Err.lexOrSyn)
+
+    if type == ArgType.string:
+        if not re.match(r'^([^\\]|\\[0-9]{3})*$', val):
+            error("String is not valid: " + val, Err.lexOrSyn)
+        for match in set(re.findall(r'(?<=\\)[0-9]{3}', val)):
+            val = val.replace("\\" + str(match), chr(int(match)))
+    elif type == ArgType.bool:
+        val = True if str(val).upper() == "TRUE" else False
+    elif type == ArgType.int:
+        val = int(val)
+    elif type == ArgType.label:
+        pass
+    elif type == ArgType.type:
+        if val not in ["int", "string", "bool"]:
+            error("Type not valid " + val, Err.lexOrSyn)
+    else:
+        dbgp("parse_val got unknown type " + type)
+
+    return val
 
 
 
