@@ -35,13 +35,13 @@ def processInstructions():
             DEFVAR(args)
         elif op == "POPS":
             pass  # v
-        
         elif op == "PUSHS":
             pass  # s
         elif op == "WRITE":
             WRITE(args)
         elif op == "DPRINT":
             DPRINT(args)
+
         # 2 operands
         elif op == "READ":
             READ(args)
@@ -54,21 +54,36 @@ def processInstructions():
         elif op == "TYPE":
             pass  # v s
         elif op == "NOT":
-            pass  # v s
+            NOT(args)
         
         # 3 operands
         elif op == "ADD":
-            pass
+            args.append("+")
+            ARITMETIC(args)
         elif op == "SUB":
-            pass
+            args.append("-")
+            ARITMETIC(args)
         elif op == "MUL":
-            pass
+            args.append("*")
+            ARITMETIC(args)
         elif op == "IDIV":
-            pass
-        elif (op == "LG" or op == "GT" or op == "EQ"):
-            pass
-        elif (op == "AND" or op == "OR"):
-            pass
+            args.append("/")
+            ARITMETIC(args)
+        elif op == "LT":
+            args.append("<")
+            COMPARE(args)
+        elif op == "GT":
+            args.append(">")
+            COMPARE(args)
+        elif op == "EQ":
+            args.append("==")
+            COMPARE(args)
+        elif op == "AND":
+            args.append("and")
+            AND_OR(args)
+        elif op == "OR":
+            args.append("or")
+            AND_OR(args)
         elif op == "STRI2INT":
             pass
         elif op == "CONCAT":

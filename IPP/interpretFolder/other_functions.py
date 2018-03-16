@@ -168,11 +168,20 @@ def get_var(frame, name):
         error("Unknown variable frame: " + frame, Err.lexOrSyn)
 
 
-def get_val(arg, expected_val):
-    if arg.type == "var": # TODO TODO TODO
-        return get_var(arg.frame, arg.name)
+def get_val(arg, expected_type):
+    if arg.type == "var":
+        var = get_var(arg.frame, arg.name)
+        if var.type is None or var.val is None:
+            error("Variable is not defined.", Err.in_varNotDefined)
+        if var.type != expected_type:
+            error("Unexpected value type.", Err.in_wrongOperand)
+        else:
+            return var.val
     else:
-        return arg.val
+        if arg.type != expected_type:
+            error("Unexpected value type.", Err.in_wrongOperand)
+        else:
+            return arg.val
 
 def set_val(dst, src):
     dest_var = get_var(dst.frame, dst.name)

@@ -84,11 +84,65 @@ def READ(args):
 @args_check([ArgType.var, ArgType.symb, ArgType.symb, None])
 def ARITMETIC(args):
     var = args[0]
-    op1 = args[1]
-    op2 = args[2]
-    operation = args[3]
+    op1 = get_val(args[1], ArgType.int)
+    op2 = get_val(args[2], ArgType.int)
+    operator = args[3]
     res = 0
+    if operator == "+":
+        res = op1 + op2
+    elif operator == "-":
+        res = op1 - op2
+    elif operator == "*":
+        res = op1 * op2
+    elif operator == "/":
+        if op2 == 0:
+            error("Zero division!", Err.in_zeroDivision)
+        res = int(op1/op2)
+    else:
+        dbgp("Unknownd operator" + operator)
 
     set_val(var, Argument(_type=ArgType.int, val=res))
 
 
+@args_check([ArgType.var, ArgType.symb, ArgType.symb, None])
+def COMPARE(args):
+    var = args[0]
+    operand_types = args[1].type
+    if operand_types not in [ArgType.int, ArgType.string, ArgType.bool]:
+        error("Unexpected operand type", Err.in_wrongOperand)
+    op1 = get_val(args[1], operand_types)
+    op2 = get_val(args[2], operand_types)
+    operator = args[3]
+    res = False
+    if operator == "<":  # LT
+        res = op1 < op2
+    elif operator == ">":  # GT
+        res = op1 > op2
+    elif operator == "==":  # EQ
+        res = op1 == op2
+    else:
+        dbgp("Unknown operator in COMPARE")
+
+    set_val(var, Argument(_type=ArgType.bool, val=res))
+
+
+@args_check([ArgType.var, ArgType.symb, ArgType.symb, None])
+def AND_OR(args):
+    var = args[0]
+    op1 = get_val(args[1], ArgType.bool)
+    op2 = get_val(args[2], ArgType.bool)
+    operator = args[3]
+    res = False
+    if operator == "and":
+        res = op1 and op2
+    elif operator == "or":
+        res = op1 or op2
+
+    set_val(var, Argument(_type=ArgType.bool, val=res))
+
+@args_check([ArgType.var, ArgType.symb])
+def NOT(args):
+    var = args[0]
+    op1 = get_val(args[1], ArgType.bool)
+    res = not op1
+    set_val(var, Argument(_type=ArgType.bool, val=res))
