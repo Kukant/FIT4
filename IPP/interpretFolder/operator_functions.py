@@ -1,5 +1,6 @@
 
 from other_functions import *
+from globals import *
 
 # OPERATOR FUNCTIONS
 
@@ -42,21 +43,25 @@ def DPRINT(args):
 
 @args_check([ArgType.var])
 def DEFVAR(args):
+    global GF
+    global TF
+    global LF
     var = args[0]
     if var.type != "var":
         error("DEFVAR expected var, got: " + var.type, Err.lexOrSyn)
 
     if var.frame == "GF":
         if var.name in GF.keys():
-            error("Variable " + var.name + " already defined", Err.semantic)
+            error("Variable " + var.name + " already defined in GF", Err.semantic)
         GF[var.name] = Variable()
     elif var.frame == "TF":
         if var.name in TF.keys():
-            error("Variable " + var.name + " already defined", Err.semantic)
+            error("Variable " + var.name + " already defined in TF", Err.semantic)
         TF[var.name] = Variable()
-        pass
     elif var.frame == "LF":
-        pass  # TODO
+        if var.name in LF.keys():
+            error("Variable " + var.name + " already defined in LF", Err.semantic)
+        GF[var.name] = Variable()
 
 
 @args_check([ArgType.var, ArgType.symb])
@@ -146,3 +151,45 @@ def NOT(args):
     op1 = get_val(args[1], ArgType.bool)
     res = not op1
     set_val(var, Argument(_type=ArgType.bool, val=res))
+
+
+@args_check([])
+def CREATEFRAME(args):
+    global TF
+    TF = {}
+
+@args_check([])
+def PUSHFRAME(args):
+    global TF
+    global LF
+    frames_stack.append(TF)
+    LF = TF
+    TF = None
+
+@args_check([])
+def POPFRAME(args):
+    global TF
+    global LF
+    if len(frames_stack) < 1:
+        error("Frame stack is empty.", Err.in_nonExistingFrame)
+    TF = frames_stack[-1]
+    del frames_stack[-1]
+    LF = None if len(frames_stack) < 1 else frames_stack[-1]
+
+
+@args_check([ArgType.symb])
+def PUSHS(args):
+    global data_stack
+    data_stack.append(args[0])
+
+
+@args_check([ArgType.var])
+def POPS(args):
+    global data_stack
+    var = args[0]
+    if len(data_stack) < 1:
+        error("Data stack is empty.", Err.semantic)
+    set_val(var, data_stack[-1])
+    del data_stack[-1]
+
+

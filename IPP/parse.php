@@ -10,7 +10,7 @@ function GetArguments($argv) {
     $shortopts  = "";
     $longopts = array("help");
     $options = getopt($shortopts, $longopts);
-    if (count($argv) > 1) {
+    if (count($argv) > 2) {
         exit(10);
     } elseif (isset($options["help"])) {
         printHelp();

@@ -152,20 +152,22 @@ def parse_var(var):
 
 
 def get_var(frame, name):
+    global GF
+    global TF
+    global LF
     if frame == "GF":
         if name in GF.keys():
             return GF[name]
-        else:
-            error("Variable does not exist.", Err.in_nonExistingVar)
     elif frame == "TF":
         if name in TF.keys():
             return TF[name]
-        else:
-            error("Variable does not exist.", Err.in_nonExistingVar)
     elif frame == "LF":
-        pass  # TODO
+        if name in LF.keys():
+            return LF[name]
     else:
         error("Unknown variable frame: " + frame, Err.lexOrSyn)
+
+    error("Variable does not exist.", Err.in_nonExistingVar)
 
 
 def get_val(arg, expected_type):

@@ -14,11 +14,11 @@ def processInstructions():
         op = instruction.opcode
         args = instruction.args
         if op == "CREATEFRAME":
-            pass
+            CREATEFRAME(args)
         elif op == "PUSHFRAME":
-            pass
+            PUSHFRAME(args)
         elif op == "POPFRAME":
-            pass
+            POPFRAME(args)
         elif op == "RETURN":
             pass
         elif op == "BREAK":
