@@ -14,4 +14,4 @@ clean:
 		rm ipk-lookup
 
 run:
-		./ipk-lookup -s 127.0.0.1 www.google.com
+		./ipk-lookup -s 127.0.1.1 www.google.com

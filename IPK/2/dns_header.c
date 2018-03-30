@@ -4,7 +4,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "dns_header.h"
+#include "main.h"
 
 int dns_format ( char *url, char *dest)
 {
@@ -27,6 +29,7 @@ int dns_format ( char *url, char *dest)
         }
     }
     buf[0] = c;
+
     return 0;
 }
 

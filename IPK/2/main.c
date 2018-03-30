@@ -43,31 +43,29 @@ int main(int argc, char **argv) {
     header->adcount = 0;
 
     dns_format(hostname, buffer + sizeof(dnshdr));
-    query_t* query = (query_t *) buffer + sizeof(dnshdr) + strlen(hostname);
+    query_t* query = (query_t *) (buffer + sizeof(dnshdr) + strlen(hostname) + 2);
     query->qclass = htons(DNS_QCLASS_IN);
     query->qtype = htons(DNS_QTYPE_A);
 
     debug_print("Sending Packet...\n");
-    if( sendto(s,(char*)buffer,sizeof(dnshdr) + (strlen((const char*)hostname)+1) + sizeof(query_t),0,(struct sockaddr*)&dest,sizeof(dest)) < 0)
-    {
+    if( sendto(s,(char*)buffer,sizeof(dnshdr) + (strlen((const char*)hostname)+2) + sizeof(query_t),0,(struct sockaddr*)&dest,sizeof(dest)) < 0) {
         fprintf(stderr, "Sent failed: %s\n", strerror(errno));
     } else {
         debug_print("Packet sent successfully.\n");
     }
 
     int i = sizeof dest;
-    recv(s, buffer, BUFFER_SIZE, 0);
-    //if(recvfrom (s,(char*)buffer , BUFFER_SIZE , 0 , (struct sockaddr*)&dest , (socklen_t*)&i ) < 0)
-    //{
-     //   perror("recvfrom failed");
-    //}
+    if(recvfrom (s,(char*)buffer , BUFFER_SIZE , 0 , (struct sockaddr*)&dest , (socklen_t*)&i ) < 0) {
+        fprintf(stderr, "Recvfrom failed: %s\n", strerror(errno));
+    }
+
     header=(dnshdr*)buffer;
 
-    printf("nThe response contains : ");
-    printf("n %d Questions.",ntohs(header->qcount));
-    printf("n %d Answers.",ntohs(header->ancount));
-    printf("n %d Authoritative Servers.",ntohs(header->nscount));
-    printf("n %d Additional records.nn",ntohs(header->adcount));
+    debug_print("\nThe response contains : ");
+    debug_print("\n %d Questions.",ntohs(header->qcount));
+    debug_print("\n %d Answers.",ntohs(header->ancount));
+    debug_print("\n %d Authoritative Servers.",ntohs(header->nscount));
+    debug_print("\n %d Additional records.\n",ntohs(header->adcount));
 
 
 
