@@ -42,7 +42,7 @@ int get_params(int argc, char **argv) {
         return 2;
     }
 
-    strncpy(domain_name, argv[optind], sizeof(domain_name));
+    strncpy(hostname, argv[optind], sizeof(hostname));
 
     return 0;
 }

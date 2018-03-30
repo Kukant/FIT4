@@ -4,13 +4,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include "dns_header.h"
 
-char* dns_format ( char *url, int *size, unsigned short int qtype, unsigned short int qclass )
+int dns_format ( char *url, char *dest)
 {
-    int i, c = 0, len = (int) strlen(url);
-    char *buf = (char *) malloc(len+6);
+    int i, len = (int) strlen(url);
+    unsigned char c = 0;
+    char *buf = dest;
     if (!buf) {
-        return NULL;
+        return -1;
     }
 
     buf[len+1] = 0;
@@ -25,13 +27,6 @@ char* dns_format ( char *url, int *size, unsigned short int qtype, unsigned shor
         }
     }
     buf[0] = c;
-
-    uint16_t* qt = buf+len+2;
-    *qt = qtype;
-    uint16_t* qc = buf+len+4;
-    *qc = qclass;
-
-    if(size) *size = len+6;
-    return buf;
+    return 0;
 }
 

@@ -85,6 +85,11 @@ typedef struct {
     uint16_t adcount;	/* Additional Record Count */
 } dnshdr;
 
+typedef struct {
+    uint16_t qtype;
+    uint16_t qclass;
+}query_t;
+
 /* DNS QTYPES */
 #define DNS_QTYPE_A		1
 #define DNS_QTYPE_NS		2
@@ -145,6 +150,6 @@ typedef struct {
 	because strlen reads until nullbyte and therefore doesnt include  qtype and qclass.
 */
 
-char* dns_format ( char *url, int *size, unsigned short int qtype, unsigned short int qclass );
+int dns_format ( char *url, char *dest);
 
 #endif //INC_2_DNS_HEADER_H
