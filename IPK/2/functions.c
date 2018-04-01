@@ -12,7 +12,7 @@
 
 int get_params(int argc, char **argv) {
 
-    bool sflag = false;
+    bool sflag = false, tflag = false, Tflag = false;
 
     int c;
     while((c = getopt(argc, argv, "hs:T:t:i")) != -1) {
@@ -25,10 +25,25 @@ int get_params(int argc, char **argv) {
                 sflag = true;
                 break;
             case 'T':
-                timeout = atol(optarg);
+                timeout_sec = atol(optarg);
+                Tflag = true;
                 break;
             case 't':
-                strncpy(type, optarg, sizeof(type));
+                if (!strcmp(optarg, "A")) {
+                    type = DNS_QTYPE_A;
+                } else if (!strcmp(optarg, "AAAA")) {
+                    type = DNS_QTYPE_AAAA;
+                } else if (!strcmp(optarg, "NS")) {
+                    type = DNS_QTYPE_NS;
+                } else if (!strcmp(optarg, "PTR")) {
+                    type = DNS_QTYPE_PTR;
+                } else if (!strcmp(optarg, "CNAME")) {
+                    type = DNS_QTYPE_CNAME;
+                } else {
+                    fprintf(stderr, "Wrong query type.\n");
+                    return 2;
+                }
+                tflag = true;
                 break;
             case 'i':
                 iterative = true;
@@ -37,6 +52,13 @@ int get_params(int argc, char **argv) {
                 return 2;
         }
     }
+
+    // defaults
+    if (!tflag)
+        type = DNS_QTYPE_A;
+
+    if (!Tflag)
+        timeout_sec = 5;
 
     if (!sflag || optind >= argc || optind + 1 != argc) {
         return 2;

@@ -2,6 +2,7 @@
 // Created by zeusko on 28/03/18.
 //
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifndef INC_2_MAIN_H
 #define INC_2_MAIN_H
@@ -9,8 +10,8 @@
 #define BUFFER_SIZE 65536
 // globals
 char server[128];
-long timeout;
-char type[64];
+long timeout_sec;
+uint16_t type;
 bool iterative;
 
 char hostname[256];

@@ -1,9 +1,8 @@
 
-
 CC=gcc
 CFLAGS=-std=gnu99 -Wall -Wextra -pedantic -g
 LINKS=-lpthread
-
+bla=$$(cat /etc/resolv.conf | grep nameserver | cut -d " " -f2)
 
 all: ipk-lookup
 
@@ -14,4 +13,4 @@ clean:
 		rm ipk-lookup
 
 run:
-		./ipk-lookup -s 127.0.1.1 www.google.com
+		./ipk-lookup -s $(bla) www.google.com

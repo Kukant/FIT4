@@ -14,9 +14,18 @@ int main(int argc, char **argv) {
         exit(0);
     }
 
-    debug_print("Args:\n\tserver: %s\n\thostname: %s\n", server, hostname);
+    debug_print("Args:\n\tserver: %s\n\thostname: %s\n\ttimeout: %ld\n\tqType: %d\n", server, hostname, timeout_sec, type);
 
     int s = socket(AF_INET , SOCK_DGRAM , IPPROTO_UDP); //UDP packet for DNS queries
+
+    struct timeval timeout;
+    timeout.tv_sec = timeout_sec;
+    timeout.tv_usec = 0;
+
+    if (setsockopt (s, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0) {
+        fprintf(stderr, "Error: setsockopt failed\n");
+        return 2;
+    }
 
     struct sockaddr_in dest;
     dest.sin_family = AF_INET;
@@ -29,7 +38,7 @@ int main(int argc, char **argv) {
     // set header
     dnshdr *header = (dnshdr *) buffer;
     header->id = htons(123);
-    header->rd = 1;
+    header->rd = 0;
     header->tc = 0;
     header->aa = 0;
     header->opcode = DNS_OPCODE_QUERY;
