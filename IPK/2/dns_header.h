@@ -154,4 +154,6 @@ int dns_format ( char *in_str, char *dest);
 
 int ipv4_to_dns_format(char *src, char *dst);
 
+int ipv6_to_dns_format(char *src, char *dst);
+
 #endif //INC_2_DNS_HEADER_H

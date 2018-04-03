@@ -99,23 +99,27 @@ int set_question(char * qstart) {
     if (type == DNS_QTYPE_PTR) {
         int ret = ipv4_to_dns_format(hostname, qstart);
         if (ret < 0) { // not ipv4 format
-            fprintf(stderr, "not ipv4 format\n");
-            exit(1);
+            ret = ipv6_to_dns_format(hostname, qstart);
+            if (ret > 0) {
+                debug_print("Got ipv6 format\n");
+                qlen += ret;
+            } else {
+                fprintf(stderr, "Wrong PTR format.\n");
+                exit(2);
+            }
         } else {
-            printf("\n%d\n",ret);
-            query_t* query = (query_t *) (qstart + ret);
+            debug_print("Got ipv4 format\n");
             qlen += ret;
-            query->qclass = htons(DNS_QCLASS_IN);
-            query->qtype = htons(type);
         }
 
     } else {
         dns_format(hostname, qstart);
         qlen += strlen(hostname) + 2;
-        query_t* query = (query_t *) (qstart + strlen(hostname) + 2);
-        query->qclass = htons(DNS_QCLASS_IN);
-        query->qtype = htons(type);
     }
+
+    query_t* query = (query_t *) (qstart + qlen);
+    query->qclass = htons(DNS_QCLASS_IN);
+    query->qtype = htons(type);
 
     return qlen + sizeof(query_t);
 }
