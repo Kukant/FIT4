@@ -5,14 +5,16 @@
 
 """
 
+import globals as g
 from operator_functions import *
 
 
 def processInstructions():
-    global instructions
-    for instruction in instructions:
-        op = instruction.opcode
-        args = instruction.args
+    while g.instruction_num < len(g.instructions):
+        op = g.instructions[g.instruction_num].opcode
+        args = g.instructions[g.instruction_num].args
+        order = g.instructions[g.instruction_num].order
+
         if op == "CREATEFRAME":
             CREATEFRAME(args)
         elif op == "PUSHFRAME":
@@ -28,15 +30,15 @@ def processInstructions():
         elif op == "CALL":
             pass  # l
         elif op == "JUMP":
-            pass  # l
+            JUMP(args)
         elif op == "LABEL":
-            pass  # l
+            pass # labels are registered during file parsing
         elif op == "DEFVAR":
             DEFVAR(args)
         elif op == "POPS":
-            pass  # v
+            POPS(args)
         elif op == "PUSHS":
-            pass  # s
+            PUSHS(args)
         elif op == "WRITE":
             WRITE(args)
         elif op == "DPRINT":
@@ -100,14 +102,17 @@ def processInstructions():
         else:
             error("ERROR: pass unknown operator '" + op + "'", Err.lexOrSyn)
 
+        g.instruction_num += 1
+
 
 #  MAIN
 
 def main():
+    g.init()
     get_opts()
     parse_xml_file()
-    # import pprint
-    # pprint.pprint(instructions)
+    #import pprint
+    #pprint.pprint(g.instructions)
     processInstructions()
 
 

@@ -1,6 +1,6 @@
 
+import globals as g
 from other_functions import *
-from globals import *
 
 # OPERATOR FUNCTIONS
 
@@ -13,6 +13,9 @@ def WRITE(args):
         to_print = {"type": var.type, "value": var.val}
     else:
         to_print = {"type": arg.type, "value": arg.val}
+
+    if to_print["type"] is None or to_print["value"] is None:
+        error("Varible to write is not defined", Err.in_varNotDefined)
 
     if to_print["type"] != ArgType.bool:
         print(to_print["value"])
@@ -43,25 +46,26 @@ def DPRINT(args):
 
 @args_check([ArgType.var])
 def DEFVAR(args):
-    global GF
-    global TF
-    global LF
     var = args[0]
     if var.type != "var":
         error("DEFVAR expected var, got: " + var.type, Err.lexOrSyn)
 
     if var.frame == "GF":
-        if var.name in GF.keys():
+        if var.name in g.GF.keys():
             error("Variable " + var.name + " already defined in GF", Err.semantic)
-        GF[var.name] = Variable()
+        g.GF[var.name] = Variable()
     elif var.frame == "TF":
-        if var.name in TF.keys():
+        if g.TF is None:
+            error("Frame TF is not initialized.", Err.in_nonExistingFrame)
+        if var.name in g.TF.keys():
             error("Variable " + var.name + " already defined in TF", Err.semantic)
-        TF[var.name] = Variable()
+        g.TF[var.name] = Variable()
     elif var.frame == "LF":
-        if var.name in LF.keys():
+        if g.LF is None:
+            error("Frame LF is not initialized.", Err.in_nonExistingFrame)
+        if var.name in g.LF.keys():
             error("Variable " + var.name + " already defined in LF", Err.semantic)
-        GF[var.name] = Variable()
+        g.GF[var.name] = Variable()
 
 
 @args_check([ArgType.var, ArgType.symb])
@@ -155,41 +159,39 @@ def NOT(args):
 
 @args_check([])
 def CREATEFRAME(args):
-    global TF
-    TF = {}
+    g.TF = {}
 
 @args_check([])
 def PUSHFRAME(args):
-    global TF
-    global LF
-    frames_stack.append(TF)
-    LF = TF
-    TF = None
+    g.frames_stack.append(g.TF)
+    g.LF = g.TF
+    g.TF = None
 
 @args_check([])
 def POPFRAME(args):
-    global TF
-    global LF
-    if len(frames_stack) < 1:
+    if len(g.frames_stack) < 1:
         error("Frame stack is empty.", Err.in_nonExistingFrame)
-    TF = frames_stack[-1]
-    del frames_stack[-1]
-    LF = None if len(frames_stack) < 1 else frames_stack[-1]
+    g.TF = g.frames_stack[-1]
+    del g.frames_stack[-1]
+    LF = None if len(g.frames_stack) < 1 else g.frames_stack[-1]
 
 
 @args_check([ArgType.symb])
 def PUSHS(args):
-    global data_stack
-    data_stack.append(args[0])
+    g.data_stack.append(args[0])
 
 
 @args_check([ArgType.var])
 def POPS(args):
-    global data_stack
     var = args[0]
-    if len(data_stack) < 1:
+    if len(g.data_stack) < 1:
         error("Data stack is empty.", Err.semantic)
-    set_val(var, data_stack[-1])
-    del data_stack[-1]
+    set_val(var, g.data_stack[-1])
+    del g.data_stack[-1]
 
-
+@args_check([ArgType.label])
+def JUMP(args):
+    if args[0].val in g.labels.keys():
+        g.instruction_num = g.labels[args[0].val] - 1 # 1 will be added in the end of switch
+    else:
+        error("Label " + args[0].val + " is not defined.", Err.semantic)

@@ -2,13 +2,13 @@
 import getopt
 import sys
 from helpful_classes import *
-from globals import *
+import globals as g
 import xml.etree.ElementTree as ET
 import re
 
 
 def dbgp(msg):
-    if DEBUG:
+    if g.DEBUG:
         print("DEBUG" + str(msg))
 
 def args_check(types):
@@ -53,7 +53,6 @@ def print_help():
 
 
 def get_opts():
-    global input_filename
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hf:", ["help", "file="])
     except getopt.GetoptError as err:
@@ -68,21 +67,19 @@ def get_opts():
             print_help()
             sys.exit()
         elif o in ("-f", "--file"):
-            input_filename = a
+            g.input_filename = a
         else:
             assert False, "unhandled option"
 
 
 def parse_xml_file():
-    global input_filename
-    global instructions
     tree = None
     try:
-        tree = ET.parse(input_filename)
+        tree = ET.parse(g.input_filename)
     except ET.ParseError:
-        error("Exception while parsing file: " + input_filename, Err.parsingFile)
+        error("Exception while parsing file: " + g.input_filename, Err.parsingFile)
     except FileNotFoundError:
-        error("Exception while opening file: " + input_filename, Err.openingFile)
+        error("Exception while opening file: " + g.input_filename, Err.openingFile)
 
     root = tree.getroot()
     # test root
@@ -98,6 +95,7 @@ def parse_xml_file():
     if root.attrib["language"] != "IPPcode18":
         error("Wrong program-language: " + root.attrib["language"] + " expected IPPcode18", Err.parsingFile)
 
+    instruction_count = 1
     for instruction in root:
         # test instruction
         if instruction.tag != "instruction":
@@ -105,7 +103,16 @@ def parse_xml_file():
         if tuple(instruction.attrib.keys()) != tuple(["order", "opcode"]):
             error("Instruction attributes are not valid." + tuple(instruction.attrib.keys()).__str__(), Err.parsingFile)
 
-        to_append = Instruction(order=instruction.attrib["order"], opcode=instruction.attrib["opcode"])
+
+        try:
+            order = int(instruction.attrib["order"])
+        except ValueError:
+            error("Order is not integer!", Err.parsingFile)
+
+        if instruction_count != order:
+            error("Wrong instruction order number!", Err.parsingFile)
+        instruction_count += 1
+        to_append = Instruction(order=order, opcode=instruction.attrib["opcode"])
 
         # test argument
         for i, arg in enumerate(instruction):
@@ -116,7 +123,17 @@ def parse_xml_file():
 
             to_append.args.append(parse_arg(_type=arg.attrib["type"], val=arg.text))
 
-        instructions.append(to_append)
+        g.instructions.append(to_append)
+        # handle labels
+        last = g.instructions[-1]
+        if last.opcode == "LABEL":
+            if len(last.args) != 1:
+                error("LABEL got unexpected args number", Err.lexOrSyn)
+            if last.args[0].type != ArgType.label:
+                error("LABEL got unexpected arg type", Err.lexOrSyn)
+            g.labels[last.args[0].val] = last.order
+
+
 
 
 ## OTHER FUNCTIONS
@@ -131,7 +148,7 @@ def parse_arg(_type, val):
     """
     if _type == "var":
         return parse_var(val)
-    elif _type in ["string", "int", "label", "bool", "type"]:
+    elif _type in ["string", "int", "bool", "type", "label"]:
         return Argument(_type=_type, val=parse_val(val, _type))
     else:
         error("unexpected param type: " + _type, Err.lexOrSyn)
@@ -152,18 +169,19 @@ def parse_var(var):
 
 
 def get_var(frame, name):
-    global GF
-    global TF
-    global LF
     if frame == "GF":
-        if name in GF.keys():
-            return GF[name]
+        if name in g.GF.keys():
+            return g.GF[name]
     elif frame == "TF":
-        if name in TF.keys():
-            return TF[name]
+        if g.TF is None:
+            error("Frame TF is not initialized.", Err.in_nonExistingFrame)
+        if name in g.TF.keys():
+            return g.TF[name]
     elif frame == "LF":
-        if name in LF.keys():
-            return LF[name]
+        if g.LF is None:
+            error("Frame LF is not initialized.", Err.in_nonExistingFrame)
+        if name in g.LF.keys():
+            return g.LF[name]
     else:
         error("Unknown variable frame: " + frame, Err.lexOrSyn)
 

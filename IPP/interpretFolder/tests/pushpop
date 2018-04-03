@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <program language="IPPcode18">
- <instruction order="1" opcode="JUMP">
-  <arg1 type="label">end</arg1>
+ <instruction order="1" opcode="DEFVAR">
+  <arg1 type="var">GF@a</arg1>
  </instruction>
  <instruction order="2" opcode="MOVE">
   <arg1 type="var">GF@a</arg1>
@@ -13,17 +13,10 @@
  <instruction order="4" opcode="DEFVAR">
   <arg1 type="var">GF@b</arg1>
  </instruction>
- <instruction order="5" opcode="LABEL">
-  <arg1 type="label">govnoo</arg1>
- </instruction>
- <instruction order="6" opcode="POPS">
+ <instruction order="5" opcode="POPS">
   <arg1 type="var">GF@b</arg1>
  </instruction>
- <instruction order="7" opcode="LABEL">
-  <arg1 type="label">end</arg1>
- </instruction>
- <instruction order="9" opcode="WRITE">
+ <instruction order="6" opcode="WRITE">
   <arg1 type="var">GF@b</arg1>
  </instruction>
-
 </program>
