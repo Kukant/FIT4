@@ -32,7 +32,7 @@
 #define DNS_RCODE_NOERROR	0
 #define DNS_RCODE_FORMERR	1
 #define DNS_RCODE_SERVFAIL	2
-#define DNS_RCODE_NXDOMAIN	3
+#define DNS_RCODE_NXDOMAIN	3 // not existing domain
 #define DNS_RCODE_NOTIMP	4
 #define DNS_RCODE_REFUSED	5
 #define DNS_RCODE_YXDOMAIN	6
@@ -150,6 +150,8 @@ typedef struct {
 	because strlen reads until nullbyte and therefore doesnt include  qtype and qclass.
 */
 
-int dns_format ( char *url, char *dest);
+int dns_format ( char *in_str, char *dest);
+
+int ipv4_to_dns_format(char *src, char *dst);
 
 #endif //INC_2_DNS_HEADER_H
