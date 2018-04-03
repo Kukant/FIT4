@@ -8,6 +8,7 @@ class ArgType:
     symb = [var, string, bool, int]
     label = "label"
     type = "type"
+    none_type = ""
 
 
 class Err(Enum):

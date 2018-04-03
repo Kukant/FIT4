@@ -22,7 +22,7 @@
  <instruction order="7" opcode="LABEL">
   <arg1 type="label">end</arg1>
  </instruction>
- <instruction order="9" opcode="WRITE">
+ <instruction order="8" opcode="WRITE">
   <arg1 type="var">GF@b</arg1>
  </instruction>
 

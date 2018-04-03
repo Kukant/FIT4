@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<program language="IPPcode18">
+ <instruction order="1" opcode="DEFVAR">
+  <arg1 type="var">GF@a</arg1>
+ </instruction>
+ <instruction order="2" opcode="MOVE">
+  <arg1 type="var">GF@a</arg1>
+  <arg2 type="string">ahojky</arg2>
+ </instruction>
+ <instruction order="3" opcode="JUMPIFEQ">
+  <arg1 type="label">1</arg1>
+  <arg2 type="var">GF@a</arg2>
+  <arg3 type="string">ahojky</arg3>
+ </instruction>
+ <instruction order="4" opcode="WRITE">
+  <arg1 type="string">1necajk</arg1>
+ </instruction>
+ <instruction order="5" opcode="LABEL">
+  <arg1 type="label">1</arg1>
+ </instruction>
+ <instruction order="6" opcode="WRITE">
+  <arg1 type="string">1cajk</arg1>
+ </instruction>
+ <instruction order="7" opcode="JUMPIFNEQ">
+  <arg1 type="label">2</arg1>
+  <arg2 type="string">ahojky</arg2>
+  <arg3 type="var">GF@a</arg3>
+ </instruction>
+ <instruction order="8" opcode="WRITE">
+  <arg1 type="string">2cajk</arg1>
+ </instruction>
+ <instruction order="9" opcode="JUMP">
+  <arg1 type="label">3</arg1>
+ </instruction>
+ <instruction order="10" opcode="LABEL">
+  <arg1 type="label">2</arg1>
+ </instruction>
+ <instruction order="11" opcode="WRITE">
+  <arg1 type="string">2necajk</arg1>
+ </instruction>
+ <instruction order="12" opcode="LABEL">
+  <arg1 type="label">3</arg1>
+ </instruction>
+ <instruction order="13" opcode="JUMPIFEQ">
+  <arg1 type="label">4</arg1>
+  <arg2 type="int">123</arg2>
+  <arg3 type="int">1235</arg3>
+ </instruction>
+ <instruction order="14" opcode="WRITE">
+  <arg1 type="string">3cajk</arg1>
+ </instruction>
+ <instruction order="15" opcode="JUMP">
+  <arg1 type="label">5</arg1>
+ </instruction>
+ <instruction order="16" opcode="LABEL">
+  <arg1 type="label">4</arg1>
+ </instruction>
+ <instruction order="17" opcode="WRITE">
+  <arg1 type="string">3necajk</arg1>
+ </instruction>
+ <instruction order="18" opcode="LABEL">
+  <arg1 type="label">5</arg1>
+ </instruction>
+ <instruction order="19" opcode="JUMPIFNEQ">
+  <arg1 type="label">ende</arg1>
+  <arg2 type="string">ahojkyy</arg2>
+  <arg3 type="var">GF@a</arg3>
+ </instruction>
+ <instruction order="20" opcode="WRITE">
+  <arg1 type="string">4necajk</arg1>
+ </instruction>
+ <instruction order="21" opcode="LABEL">
+  <arg1 type="label">ende</arg1>
+ </instruction>
+</program>

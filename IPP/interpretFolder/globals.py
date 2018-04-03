@@ -26,3 +26,6 @@ def init():
     # {"labelname": <instruction order>}
     global labels
     labels = {}
+    # RETURN, CALL use this stack for jumping
+    global call_stack
+    call_stack = []

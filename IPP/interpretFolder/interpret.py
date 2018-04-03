@@ -13,7 +13,6 @@ def processInstructions():
     while g.instruction_num < len(g.instructions):
         op = g.instructions[g.instruction_num].opcode
         args = g.instructions[g.instruction_num].args
-        order = g.instructions[g.instruction_num].order
 
         if op == "CREATEFRAME":
             CREATEFRAME(args)
@@ -22,13 +21,13 @@ def processInstructions():
         elif op == "POPFRAME":
             POPFRAME(args)
         elif op == "RETURN":
-            pass
+            RETURN(args)
         elif op == "BREAK":
-            pass
+            BREAK(args)
     
         # 1 operand
         elif op == "CALL":
-            pass  # l
+            CALL(args)
         elif op == "JUMP":
             JUMP(args)
         elif op == "LABEL":
@@ -50,11 +49,11 @@ def processInstructions():
         elif op == "MOVE":
             MOVE(args) # v s
         elif op == "INT2CHAR":
-            pass  # v s
+            INT2CHAR(args)
         elif op == "STRLEN":
-            pass  # v s
+            STRLEN(args)
         elif op == "TYPE":
-            pass  # v s
+            TYPE(args)
         elif op == "NOT":
             NOT(args)
         
@@ -87,18 +86,19 @@ def processInstructions():
             args.append("or")
             AND_OR(args)
         elif op == "STRI2INT":
-            pass
+            STRI2INT(args)
         elif op == "CONCAT":
-            pass
+            CONCAT(args)
         elif op == "GETCHAR":
-            pass
+            GETCHAR(args)
         elif op == "SETCHAR":
-            pass  # pocud v s s
-        
+            SETCHAR(args)
         elif op == "JUMPIFEQ":
-            pass  # l s s
+            args.append("EQ")
+            JUMPIF(args)
         elif op == "JUMPIFNEQ":
-            pass
+            args.append("NEQ")
+            JUMPIF(args)
         else:
             error("ERROR: pass unknown operator '" + op + "'", Err.lexOrSyn)
 

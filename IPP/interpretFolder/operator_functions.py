@@ -115,12 +115,22 @@ def ARITMETIC(args):
 
 @args_check([ArgType.var, ArgType.symb, ArgType.symb, None])
 def COMPARE(args):
-    var = args[0]
-    operand_types = args[1].type
-    if operand_types not in [ArgType.int, ArgType.string, ArgType.bool]:
+    operands_type = None
+    # get operands type
+    if args[1].type == ArgType.var:
+        var = get_var(args[1].frame, args[1].name)
+        if var.type is None or var.val is None:
+            error("Variable is not defined", Err.in_varNotDefined)
+        else:
+            operands_type = var.type
+    else:
+        operands_type = args[1].type
+
+    if operands_type not in [ArgType.int, ArgType.string, ArgType.bool]:
         error("Unexpected operand type", Err.in_wrongOperand)
-    op1 = get_val(args[1], operand_types)
-    op2 = get_val(args[2], operand_types)
+
+    op1 = get_val(args[1], operands_type)
+    op2 = get_val(args[2], operands_type)
     operator = args[3]
     res = False
     if operator == "<":  # LT
@@ -132,7 +142,7 @@ def COMPARE(args):
     else:
         dbgp("Unknown operator in COMPARE")
 
-    set_val(var, Argument(_type=ArgType.bool, val=res))
+    set_val(args[0], Argument(_type=ArgType.bool, val=res))
 
 
 @args_check([ArgType.var, ArgType.symb, ArgType.symb, None])
@@ -195,3 +205,148 @@ def JUMP(args):
         g.instruction_num = g.labels[args[0].val] - 1 # 1 will be added in the end of switch
     else:
         error("Label " + args[0].val + " is not defined.", Err.semantic)
+
+@args_check([ArgType.label, ArgType.symb, ArgType.symb, None])
+def JUMPIF(args):
+    operands_type = None
+    # get operands type
+    if args[1].type == ArgType.var:
+        var = get_var(args[1].frame, args[1].name)
+        if var.type is None or var.val is None:
+            error("Variable is not defined", Err.in_varNotDefined)
+        else:
+            operands_type = var.type
+    else:
+        operands_type = args[1].type
+
+    if operands_type not in [ArgType.int, ArgType.string, ArgType.bool]:
+        error("Unexpected operand type", Err.in_wrongOperand)
+
+    op1 = get_val(args[1], operands_type)
+    op2 = get_val(args[2], operands_type)
+    res = op1 == op2
+
+    if (res and args[3] == "EQ") or \
+       (not res and args[3] == "NEQ"):
+        JUMP([args[0]])
+
+
+@args_check([ArgType.label])
+def CALL(args):
+    g.call_stack.append(g.instruction_num)
+    JUMP(args)
+
+@args_check([])
+def RETURN(args):
+    if len(g.call_stack) > 0:
+        g.instruction_num = g.call_stack[-1]
+        del g.call_stack[-1]
+    else:
+        error("Callstack is empty.", Err.semantic)
+
+@args_check([])
+def BREAK(args):
+    debug_print()
+
+@args_check([ArgType.var, ArgType.symb])
+def INT2CHAR(args):
+    val = get_val(args[1], ArgType.int)
+
+    try:
+        val = chr(val)
+    except ValueError:
+        error("Int cannot be converted to char.", Err.in_wrongStringHandling)
+
+    set_val(args[0], Argument(_type=ArgType.string, val=val))
+
+@args_check([ArgType.var, ArgType.symb, ArgType.symb])
+def STRI2INT(args):
+    # get string
+    string = get_val(args[1], ArgType.string)
+    # get index
+    index = get_val(args[2], ArgType.int)
+    # set char
+    val = None
+    if len(string) <= index:
+        error("Index out of string range.", Err.in_wrongStringHandling)
+    else:
+        val = ord(string[index])
+
+    set_val(args[0], Argument(_type=ArgType.int, val=val))
+
+@args_check([ArgType.var, ArgType.symb])
+def STRLEN(args):
+    val = get_val(args[1], ArgType.string)
+    set_val(args[0], Argument(_type=ArgType.int, val=len(val)))
+
+
+@args_check([ArgType.var, ArgType.symb])
+def TYPE(args):
+
+    if args[1].type == ArgType.var:
+        var = get_var(args[1].frame, args[1].name)
+        if var.type is None or var.val is None:
+            val = ArgType.none_type
+        else:
+            val = var.type
+    else:
+        val = args[1].type
+
+    if val == ArgType.string:
+        val = "string"
+    elif val == ArgType.int:
+        val = "int"
+    elif val == ArgType.bool:
+        val = "bool"
+    elif val == ArgType.none_type:
+        val = ""
+
+    set_val(args[0], Argument(_type=ArgType.string, val=val))
+
+
+@args_check([ArgType.var, ArgType.symb, ArgType.symb])
+def CONCAT(args):
+    str1 = get_val(args[1], ArgType.string)
+    str2 = get_val(args[2], ArgType.string)
+    set_val(args[0], Argument(_type=ArgType.string, val=str1+str2))
+
+
+@args_check([ArgType.var, ArgType.symb, ArgType.symb])
+def GETCHAR(args):
+    # get string
+    string = get_val(args[1], ArgType.string)
+    # get index
+    index = get_val(args[2], ArgType.int)
+    if len(string) <= index:
+        error("Index out of string range.", Err.in_wrongStringHandling)
+
+    set_val(args[0], Argument(_type=ArgType.string, val=string[index]))
+
+
+@args_check([ArgType.var, ArgType.symb, ArgType.symb])
+def SETCHAR(args):
+    string = ""
+    arg = args[0]
+    var = get_var(arg.frame, arg.name)
+    if var.type is None or var.val is None:
+        error("Variable is not defined.", Err.in_varNotDefined)
+    if var.type != ArgType.string:
+        error("Unexpected value type.", Err.in_wrongStringHandling)
+    else:
+        string = var.val
+
+    index = get_val(args[1], ArgType.int)
+    char = get_val(args[2], ArgType.string)
+    if len(char) < 1:
+        error("Char cannot be empty", Err.in_wrongStringHandling)
+
+    char = char[0]
+
+    if len(string) <= index:
+        error("Index out of string range.", Err.in_wrongStringHandling)
+
+    strlist = list(string)
+    strlist[index] = char
+    string = "".join(strlist)
+    set_val(args[0], Argument(_type=ArgType.string, val=string))
+

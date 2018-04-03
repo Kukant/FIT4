@@ -146,9 +146,16 @@ def parse_arg(_type, val):
     :param val:
     :return:
     """
+
     if _type == "var":
+        if val is None:
+            error("Lexical error: missing something behind @?", Err.lexOrSyn)
         return parse_var(val)
     elif _type in ["string", "int", "bool", "type", "label"]:
+        if val is None and _type == "string":
+            val = ""
+        elif val is None:
+            error("Lexical error: missing something behind @?", Err.lexOrSyn)
         return Argument(_type=_type, val=parse_val(val, _type))
     else:
         error("unexpected param type: " + _type, Err.lexOrSyn)
@@ -231,7 +238,10 @@ def parse_val(val, type):
     elif type == ArgType.bool:
         val = True if str(val).upper() == "TRUE" else False
     elif type == ArgType.int:
-        val = int(val)
+        try:
+            val = int(val)
+        except ValueError:
+            error("Int has invalid format.", Err.lexOrSyn)
     elif type == ArgType.label:
         pass
     elif type == ArgType.type:
@@ -241,6 +251,9 @@ def parse_val(val, type):
         dbgp("parse_val got unknown type " + type)
 
     return val
+
+def debug_print():
+    pass
 
 
 
