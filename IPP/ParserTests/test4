@@ -1,0 +1,25 @@
+.IPPcode18
+
+defvar GF@a
+move GF@a string@ahojky
+
+JUMPIFEQ 1 GF@a string@ahojky
+write string@1necajk
+label 1
+write string@1cajk
+JUMPIFNEQ 2 string@ahojky GF@a
+write string@2cajk
+jump 3
+label 2
+write string@2necajk
+label 3
+
+JUMPIFEQ 4 int@123 int@1235
+write string@3cajk
+jump 5
+label 4
+write string@3necajk
+label 5
+JUMPIFNEQ ende string@ahojkyy GF@a
+write string@4necajk
+label ende

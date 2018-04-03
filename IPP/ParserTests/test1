@@ -1,5 +1,7 @@
 .IPPcode18
 
-DEFVAR GF@tmp
-MOVE GF@tmp string@ahoj\032svete
-WRITE GF@tmp
+CREATEFRAME
+DEFVAR TF@prvni
+MOVE TF@prvni int@1
+PUSHFRAME
+WRITE LF@prvni
