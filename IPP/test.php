@@ -1,4 +1,4 @@
-#!/usr/bin/php5.6
+
 <?php
 $errParam = 10;
 $errInFile = 11;
