@@ -1,0 +1,15 @@
+Archive:  xkukan00.zip
+  inflating: globals.py              
+  inflating: helpful_classes.py      
+  inflating: interpret.py            
+  inflating: operator_functions.py   
+  inflating: other_functions.py      
+  inflating: test.php                
+ extracting: dokumentace.pdf         
+This program interprets IPPcode2018 structured into XML file
+ Author: Tomas Kukan, 12. 1. 2018
+ Options: --help : prints help.
+          --source=<filename> : input XML file -required
+This program tests parsing and interpreting IPPcode18
+Author: Tomas Kukan, 12. 1. 2018
+Options: --help : prints help.
