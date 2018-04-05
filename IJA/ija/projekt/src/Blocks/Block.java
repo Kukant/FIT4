@@ -8,10 +8,6 @@ abstract public class Block {
     ArrayList<Output> Outputs;
     ArrayList<Block> Inputs;
 
-    public Block(){
-
-    }
-
     public int BindOutput(Block b, int index){
         return 0;
     }
