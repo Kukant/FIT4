@@ -13,4 +13,4 @@ clean:
 		rm ipk-lookup
 
 run:
-		./ipk-lookup -s $(bla) www.google.com
+		./ipk-lookup -s $(bla) -i www.google.com

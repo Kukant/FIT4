@@ -113,8 +113,8 @@ int set_question(char * qstart) {
         }
 
     } else {
-        dns_format(hostname, qstart);
-        qlen += strlen(hostname) + 2;
+        int len = dns_format(hostname, qstart);
+        qlen += len;
     }
 
     query_t* query = (query_t *) (qstart + qlen);
@@ -124,3 +124,22 @@ int set_question(char * qstart) {
     return qlen + sizeof(query_t);
 }
 
+void print_A(unsigned char *ptr) {
+    printf("A ");
+    struct in_addr addr;
+    char result[150];
+
+    memcpy(&addr, ptr, 4);
+
+    printf("%s", inet_ntop(AF_INET, &addr, result, 150));
+}
+
+void print_AAAA(unsigned char *ptr) {
+    printf("A ");
+    struct in_addr addr;
+    char result[1024];
+
+    memcpy(&addr, ptr, 16);
+
+    printf("%s", inet_ntop(AF_INET6, &addr, result, 150));
+}

@@ -11,27 +11,27 @@
 
 int dns_format ( char *in_str, char *dest)
 {
-    int i, len = (int) strlen(in_str);
-    unsigned char c = 0;
-    char *buf = dest;
-    if (!buf) {
-        return -1;
+    int len = (int) strlen(in_str);
+    if (in_str[len - 1] != '.') {
+        in_str[len] = '.';
+        in_str[len + 1] = '\0';
+        len++;
     }
+    unsigned char c = 0;
 
-    buf[len+1] = 0;
-    for(i=len - 1;i>=0;i--){
+    for(int i = len - 1;i >= 0;i--){
         if(in_str[i] == '.') {
-            buf[i + 1] = c;
+            dest[i + 1] = c;
             c = 0;
         }
         else {
-            buf[i + 1] = in_str[i];
+            dest[i + 1] = in_str[i];
             c++;
         }
     }
-    buf[0] = c;
+    dest[0] = c;
 
-    return 0;
+    return len + 1;
 }
 
 /**
@@ -49,9 +49,9 @@ int ipv4_to_dns_format(char *src, char *dst) {
     memset(str, 0, 64);
 
     sprintf(str, "%u.%u.%u.%u.in-addr.arpa", address[3], address[2], address[1], address[0]);
-    dns_format(str, dst);
+    int len = dns_format(str, dst);
 
-    return (int)strlen(str) + 2;
+    return len;
 }
 
 int ipv6_to_dns_format(char *src, char *dst) {
@@ -72,7 +72,51 @@ int ipv6_to_dns_format(char *src, char *dst) {
         strcat(res, str);
     }
     strcat(res, "ip6.arpa");
-    dns_format(res, dst);
+    int len = dns_format(res, dst);
 
-    return (int)strlen(res) + 2;
+    return len;
+}
+
+int read_name(unsigned char *name, unsigned char* buffer, unsigned char *reader) {
+
+    int count = 1;
+    int name_index = 0;
+    bool jumped = false;
+    unsigned char *old_reader = reader;
+
+    while (*reader != '\0') {
+        if (*reader >= 0b11000000) {
+            int offset = (*reader - 0b11000000) * 256 + *(reader + 1);
+            reader = buffer + offset;
+            jumped = true;
+            continue;
+        }
+
+        name[name_index++] = *reader;
+        if (!jumped)
+            count++;
+
+        reader++;
+    }
+
+    name[name_index] = '\0';
+    if (jumped)
+        count++;
+
+    int i;
+    for (i = 0; i < (int) strlen((char *)name); i++) {
+
+        unsigned char c = name[i];
+        for (unsigned char j = 0; j < c; j++) {
+            name[i] = name[i+1];
+            i++;
+        }
+        name[i] = '.';
+    }
+
+    name[i]='\0';
+
+    reader = old_reader;
+
+    return count;
 }

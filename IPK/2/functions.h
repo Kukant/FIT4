@@ -14,4 +14,7 @@ void print_help();
 int set_question(char * qstart);
 
 void set_header(dnshdr *header);
+
+void print_A(unsigned char *ptr);
+void print_AAAA(unsigned char *ptr);
 #endif //INC_2_FUNCTIONS_H

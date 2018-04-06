@@ -56,6 +56,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 typedef struct {
     uint16_t id;
 # if __BYTE_ORDER == __BIG_ENDIAN
@@ -89,6 +90,17 @@ typedef struct {
     uint16_t qtype;
     uint16_t qclass;
 }query_t;
+
+//#pragma pack(push, 1)
+#pragma pack(2)
+typedef struct {
+    uint16_t type;
+    uint16_t class;
+    uint32_t ttl;
+    uint16_t rd_length;
+}rrdata;
+//#pragma pack(pop)
+
 
 /* DNS QTYPES */
 #define DNS_QTYPE_A		1
@@ -155,5 +167,13 @@ int dns_format ( char *in_str, char *dest);
 int ipv4_to_dns_format(char *src, char *dst);
 
 int ipv6_to_dns_format(char *src, char *dst);
+
+/**
+ *
+ * @param name
+ * @param buffer
+ * @return count
+ */
+int read_name(unsigned char *name, unsigned char* buffer, unsigned char *reader);
 
 #endif //INC_2_DNS_HEADER_H

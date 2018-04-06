@@ -16,6 +16,8 @@ int main(int argc, char **argv) {
         exit(0);
     }
 
+    bool satisfied = false;
+
     debug_print("Args:\n\tserver: %s\n\thostname: %s\n\ttimeout: %ld\n\tqType: %d\n", server, hostname, timeout_sec, type);
 
     // open socket
@@ -60,14 +62,53 @@ int main(int argc, char **argv) {
     header=(dnshdr*)buffer;
 
     debug_print("\n Response code: %d.",header->rcode);
-    debug_print("\nThe response contains : ");
+    debug_print("\n The response contains : ");
     debug_print("\n %d Questions.",ntohs(header->qcount));
     debug_print("\n %d Answers.",ntohs(header->ancount));
     debug_print("\n %d Authoritative Servers.",ntohs(header->nscount));
-    debug_print("\n %d Additional records.\n",ntohs(header->adcount));
+    debug_print("\n %d Additional records.\n\n",ntohs(header->adcount));
+
+    unsigned char name[1024];
+    rrdata *r_data;
+    unsigned char *reader = (unsigned char *) ((char *)buffer + sizeof(dnshdr) + qlen);
+
+    for (int i = 0; i < ntohs(header->ancount); i++) {
+
+        int count = read_name(name, (unsigned char *) buffer, reader);
+        r_data = (rrdata *) (reader + count);
+        printf("%s IN ", name);
+        switch(ntohs(r_data->type)){
+            case DNS_QTYPE_A:
+                print_A(reader + count + sizeof(rrdata));
+                break;
+            case DNS_QTYPE_AAAA:
+                print_AAAA(reader + count + sizeof(rrdata));
+                break;
+            case DNS_QTYPE_CNAME:
+                printf("CNAME ");
+                read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
+                printf("%s", name);
+                break;
+            case DNS_QTYPE_PTR:
+                printf("PTR ");
+                read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
+                printf("%s", name);
+                break;
+            default:
+                fprintf(stderr, "Unknown type %d\n", ntohs(r_data->type));
+                break;
+        }
+
+        if (ntohs(r_data->type) == type)
+            satisfied = true;
+        printf("\n");
+
+        reader += count + sizeof(rrdata) + ntohs(r_data->rd_length);
+    }
 
 
-
-
-    return 0;
+    if (satisfied)
+        return 0;
+    else
+        return 1;
 }
