@@ -3,8 +3,6 @@ package Blocks;
 import java.util.ArrayList;
 import Others.*;
 
-import static java.sql.Types.NULL;
-
 abstract public class Block {
 
     private ArrayList<Output> Outputs;
@@ -90,8 +88,6 @@ abstract public class Block {
                 break;
             }
         }
-
-        float bla = null;
 
         if (AllDefined) {
             this.MyVal = Calculate();
