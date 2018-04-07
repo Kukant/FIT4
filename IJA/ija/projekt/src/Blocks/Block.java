@@ -5,9 +5,9 @@ import Others.*;
 
 abstract public class Block {
 
-    private ArrayList<Output> Outputs;
-    private Block[] Inputs;
-    private Value[] InputValues;
+    protected ArrayList<Output> Outputs;
+    protected Block[] Inputs;
+    public Value[] InputValues;
     public double MyVal;
 
     /**
@@ -73,7 +73,7 @@ abstract public class Block {
      * This method will be overriden.
      * @return
      */
-    private double Calculate() {
+    public double Calculate() {
         return 0;
     }
 
