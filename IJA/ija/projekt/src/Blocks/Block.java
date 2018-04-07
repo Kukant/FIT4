@@ -3,11 +3,14 @@ package Blocks;
 import java.util.ArrayList;
 import Others.*;
 
+import static java.sql.Types.NULL;
+
 abstract public class Block {
 
     private ArrayList<Output> Outputs;
     private Block[] Inputs;
     private Value[] InputValues;
+    public double MyVal;
 
     /**
      * Manager will call this when new connection will be established.
@@ -34,9 +37,8 @@ abstract public class Block {
      */
     public int BindInput(Block b, int Index){
         if (this.Inputs[Index] != null) {
-            Debugger.log("Trying to override old input.");
+            Debugger.log("Trying to override already connected input.");
         }
-
         this.Inputs[Index] = b;
         return 0;
     }
@@ -77,6 +79,9 @@ abstract public class Block {
         return 0;
     }
 
+    /**
+     * Manager will call this function on every Block until all blocks have a value.
+     */
     public void SendVal(){
         boolean AllDefined = true;
         for(Value v: this.InputValues) {
@@ -86,10 +91,12 @@ abstract public class Block {
             }
         }
 
+        float bla = null;
+
         if (AllDefined) {
-            double myVal = Calculate();
+            this.MyVal = Calculate();
             for (Output output : this.Outputs ) {
-                output.block.InputValues[output.Index] = new Value(myVal, true);
+                output.block.InputValues[output.Index] = new Value(this.MyVal, true);
             }
         }
     }
