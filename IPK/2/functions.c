@@ -142,7 +142,7 @@ void print_A(unsigned char *ptr) {
 }
 
 void print_AAAA(unsigned char *ptr) {
-    printf("A ");
+    printf("AAAA ");
     struct in_addr addr;
     char result[1024];
 
@@ -202,31 +202,40 @@ void print_answers(char *buffer, int qlen, bool *satisfied) {
 }
 
 void print_out_line(unsigned char* name, rrdata * p_r_data, unsigned char* buffer, unsigned char*reader, int name_len) {
-    printf("%s IN ", name);
+
     switch (ntohs(p_r_data->type)) {
         case DNS_QTYPE_A:
+            printf("%s IN ", name);
             print_A(reader + name_len + sizeof(rrdata));
             break;
         case DNS_QTYPE_AAAA:
+            printf("%s IN ", name);
             print_AAAA(reader + name_len + sizeof(rrdata));
             break;
         case DNS_QTYPE_CNAME:
+            printf("%s IN ", name);
             printf("CNAME ");
             read_name(name, buffer, reader + name_len + sizeof(rrdata));
             printf("%s", name);
             break;
         case DNS_QTYPE_PTR:
+            printf("%s IN ", name);
             printf("PTR ");
             read_name(name, buffer, reader + name_len + sizeof(rrdata));
             printf("%s", name);
             break;
         case DNS_QTYPE_NS:
+            printf("%s IN ", name);
             printf("NS ");
             read_name(name, buffer, reader + name_len + sizeof(rrdata));
             printf("%s", name);
             break;
+        case DNS_QTYPE_SOA:
+            fprintf(stderr, "\nError: got SOA\n");
+            exit(1);
         default:
-            fprintf(stderr, "Unknown type %d\n", ntohs(p_r_data->type));
+            fprintf(stderr, "Server error / Unknown type %d\n", ntohs(p_r_data->type));
+            exit(1);
 
     }
     printf("\n");
@@ -241,7 +250,7 @@ ipv4addr get_rr(char* first_ip, struct sockaddr_in dest, int s, unsigned char *b
     set_header((dnshdr *) buffer);
     int qlen = set_question(buffer + sizeof(dnshdr), this_hostname, qtype, this_type);
 
-    if( sendto(s,(char*)buffer,sizeof(dnshdr) + qlen,0,(struct sockaddr*)&dest,sizeof(dest)) < 0) {
+    if( sendto(s,(char*)buffer,sizeof(dnshdr) + qlen, 0, (struct sockaddr*)&dest,sizeof(dest)) < 0) {
         fprintf(stderr, "1Sent failed: %s\n", strerror(errno));
         ip.ok = false;
         return ip;
@@ -265,15 +274,17 @@ ipv4addr get_rr(char* first_ip, struct sockaddr_in dest, int s, unsigned char *b
             rrdata *prdata;
             int rrlen = readRR(ns_hostname, buffer, reader, &prdata);
             read_name(ns_hostname, buffer, reader + rrlen - ntohs(prdata->rd_length));
-            ip = get_rr((char *)root_ip, dest, s, buffer, (char *) ns_hostname, DNS_QTYPE_A, ntohs(prdata->type));
+            ip = get_rr((char *)root_ip, dest, s, buffer, (char *) ns_hostname, DNS_QTYPE_A, 125);
             reader = (unsigned char*) &(ip.addr);
             debug_print("Back from recursion.\n");
             if (!ip.ok) return ip;
         } else {
             reader = (unsigned char *) ((char *)buffer + sizeof(dnshdr) + qlen);
-            // just received the first/next ip adress
+
+            // print ns
             readRR(name, buffer, reader, &p_r_data);
             int name_len = read_name(name,  buffer, reader);
+
             print_out_line( name, p_r_data, buffer, reader, name_len);
 
             // jump over all RRs to additional records
@@ -284,8 +295,15 @@ ipv4addr get_rr(char* first_ip, struct sockaddr_in dest, int s, unsigned char *b
             }
 
             // first additional
-            readRR(name, buffer, reader, &p_r_data);
+            int rrlen = readRR(name, buffer, reader, &p_r_data);
             name_len = read_name(name, buffer, reader);
+
+            if (ntohs(p_r_data->type) == DNS_QTYPE_AAAA) {
+                // second will have ipv4 address
+                reader += (unsigned char) rrlen;
+                readRR(name, buffer, reader, &p_r_data);
+                name_len = read_name(name, buffer, reader);
+            }
 
             print_out_line(name, p_r_data,  buffer, reader, name_len);
 
@@ -318,11 +336,11 @@ ipv4addr get_rr(char* first_ip, struct sockaddr_in dest, int s, unsigned char *b
     if (header->aa == 1) {
         debug_print("Success\n");
         reader = (unsigned char *) ((char *)buffer + sizeof(dnshdr) + qlen);
-        // just received the first/next ip adress
         readRR(name, buffer, reader, &p_r_data);
         int name_len = read_name(name,  buffer, reader);
+
         print_out_line( name, p_r_data, buffer, reader, name_len);
-        memcpy(&(ip.addr), buffer + sizeof(dnshdr) + qlen + name_len + sizeof(rrdata), 4);
+        memcpy(&(ip.addr),  reader + name_len + sizeof(rrdata), 4);
         ip.ok = true;
         return ip;
     } else {
