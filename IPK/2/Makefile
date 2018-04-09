@@ -1,6 +1,6 @@
 
 CC=gcc
-CFLAGS=-std=gnu99 -Wall -Wextra -pedantic -g
+CFLAGS=-std=gnu99 -Wall -Wextra -g
 LINKS=-lpthread
 bla=$$(cat /etc/resolv.conf | grep nameserver | cut -d " " -f2)
 

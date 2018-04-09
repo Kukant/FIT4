@@ -13,10 +13,11 @@ char server[128];
 long timeout_sec;
 uint16_t type;
 bool iterative;
+unsigned char root_ip[4];
 
 char hostname[256];
 
-#define DEBUG 1
+#define DEBUG 0
 #define debug_print(...) \
             do { if (DEBUG) fprintf(stderr,__VA_ARGS__); } while (0)
 

@@ -55,6 +55,7 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 
 typedef struct {
@@ -98,7 +99,12 @@ typedef struct {
     uint16_t class;
     uint32_t ttl;
     uint16_t rd_length;
-}rrdata;
+} rrdata;
+
+typedef struct {
+    bool ok;
+    unsigned char addr[4];
+} ipv4addr;
 //#pragma pack(pop)
 
 

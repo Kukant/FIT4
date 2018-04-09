@@ -12,6 +12,12 @@
 int dns_format ( char *in_str, char *dest)
 {
     int len = (int) strlen(in_str);
+
+    if (len == 0) {
+        dest[0] = '.';
+        dest[1] = '\0';
+        return 1;
+    }
     if (in_str[len - 1] != '.') {
         in_str[len] = '.';
         in_str[len + 1] = '\0';
@@ -82,7 +88,8 @@ int read_name(unsigned char *name, unsigned char* buffer, unsigned char *reader)
     int count = 1;
     int name_index = 0;
     bool jumped = false;
-    unsigned char *old_reader = reader;
+    unsigned char *record_p = reader;
+
 
     while (*reader != '\0') {
         if (*reader >= 0b11000000) {
@@ -103,7 +110,7 @@ int read_name(unsigned char *name, unsigned char* buffer, unsigned char *reader)
     if (jumped)
         count++;
 
-    int i;
+    int i = 0;
     for (i = 0; i < (int) strlen((char *)name); i++) {
 
         unsigned char c = name[i];
@@ -114,9 +121,12 @@ int read_name(unsigned char *name, unsigned char* buffer, unsigned char *reader)
         name[i] = '.';
     }
 
-    name[i]='\0';
-
-    reader = old_reader;
+    if (record_p[0] == '\0') {
+        name[0]='.';
+        name[1]='\0';
+    } else {
+        name[i]='\0';
+    }
 
     return count;
 }

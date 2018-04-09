@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     if (iterative) {
         qlen = get_root_servers_question(buffer + sizeof(dnshdr));
     } else {
-        qlen = set_question(buffer + sizeof(dnshdr), hostname);
+        qlen = set_question((unsigned char *)(buffer + sizeof(dnshdr)), hostname, -1, type);
     }
 
     debug_print("Sending packet of size: dnshdr: %d qlen %d:...\n", (int)sizeof(dnshdr), qlen);
@@ -74,61 +74,44 @@ int main(int argc, char **argv) {
     unsigned char *reader = (unsigned char *) ((char *)buffer + sizeof(dnshdr) + qlen);
 
     if (iterative) {
-        if (header->aa == 1) {
-         // print answer
+        int name_len = read_name(name, (unsigned char*)buffer, reader);
+        p_r_data = (rrdata *) (reader + name_len);
+        print_out_line( name, p_r_data, (unsigned char*) buffer, reader, name_len);
+
+        // ask the root server for the first ip adress
+        if (ntohs(header->ancount) == 0) return 1;
+        set_header((dnshdr *)buffer);
+        int first_rr_len = readRR(name, (unsigned char*)buffer, reader, &p_r_data);
+        read_name(name, (unsigned char*)buffer, reader + first_rr_len - ntohs(p_r_data->rd_length));
+        qlen = set_question((unsigned char *)(buffer + sizeof(dnshdr)), (char *) name, DNS_QTYPE_A, 153);
+
+        if( sendto(s,(char*)buffer,sizeof(dnshdr) + qlen,0,(struct sockaddr*)&dest,sizeof(dest)) < 0) {
+            fprintf(stderr, "Sent failed: %s\n", strerror(errno));
+            return 1;
         }
 
-        // jump over all RRs to additional records
-        int rrcount = ntohs(header->ancount) + ntohs(header->nscount);
-        for (int i = 0; i < rrcount; i++) {
-            int len = readRR(name, (unsigned char*)buffer, reader, &p_r_data);
-            reader += len;
+        i = sizeof dest;
+        if(recvfrom (s,(char*)buffer , BUFFER_SIZE , 0 , (struct sockaddr*)&dest , (socklen_t*)&i ) < 0) {
+            fprintf(stderr, "Recvfrom failed: %s\n", strerror(errno));
+            return 1;
         }
 
-        debug_print("First Additional record: \n");
-        reader += readRR(name, (unsigned char*)buffer, reader, &p_r_data);
-        debug_print("name: '%s'\nrr_data len: %d\n", name, ntohs(p_r_data->rd_length));
-        reader -= ntohs(p_r_data->rd_length);
+        reader = (unsigned char *) ((char *)buffer + sizeof(dnshdr) + qlen);
+        // just received the root ip address
 
-        // main loop
-        while (header->aa != 1) {
-            set_header((dnshdr *) buffer);
-            qlen = set_question(buffer + sizeof(dnshdr), hostname);
-            // copy ipv4 adress
-            memcpy(&(dest.sin_addr.s_addr), reader, 4);
+        readRR(name, (unsigned char*)buffer, reader, &p_r_data);
+        name_len = read_name(name, (unsigned char *) buffer, reader);
+        print_out_line( name, p_r_data, (unsigned char*) buffer, reader, name_len);
 
-            if( sendto(s,(char*)buffer,sizeof(dnshdr) + qlen,0,(struct sockaddr*)&dest,sizeof(dest)) < 0) {
-                fprintf(stderr, "Sent failed: %s\n", strerror(errno));
-                return 1;
-            } else {
-                debug_print("Packet sent successfully.\n");
-            }
+        // copy ipv4 root address
+        memcpy(root_ip, reader + name_len + sizeof(rrdata), 4);
+        memcpy(&(dest.sin_addr.s_addr), root_ip, 4);
 
-            i = sizeof dest;
-            if(recvfrom (s,(char*)buffer , BUFFER_SIZE , 0 , (struct sockaddr*)&dest , (socklen_t*)&i ) < 0) {
-                fprintf(stderr, "Recvfrom failed: %s\n", strerror(errno));
-                return 1;
-            }
+        ipv4addr ciel = get_rr((char *)root_ip, dest, s, (unsigned char *)buffer, hostname, type, type);
 
-            print_header(header);
-
-            // jump over all RRs to additional records
-            rrcount = ntohs(header->ancount) + ntohs(header->nscount);
-            for (int i = 0; i < rrcount; i++) {
-                int len = readRR(name, (unsigned char*)buffer, reader, &p_r_data);
-                reader += len;
-            }
-
-            debug_print("First Additional record: \n");
-            reader += readRR(name, (unsigned char*)buffer, reader, &p_r_data);
-            debug_print("name: '%s'\nrr_data len: %d\n", name, ntohs(p_r_data->rd_length));
-            reader -= ntohs(p_r_data->rd_length);
+        if (ciel.ok == true) {
+            satisfied = true;
         }
-
-        if (header->aa == 1) {
-            print_answers(buffer, qlen, &satisfied);
-        }
-
     } else {
         print_answers(buffer, qlen, &satisfied);
     }
