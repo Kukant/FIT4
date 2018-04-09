@@ -79,8 +79,8 @@ void print_help() {
 }
 
 void set_header(dnshdr *header) {
-    header->id = htons(123);
-    header->rd = iterative == true? (uint16_t) 0 : (uint16_t) 1; // recursion desired
+    header->id = htons(1234);
+    header->rd = iterative?  0b0 : 0b1; // recursion desired
     header->tc = 0;
     header->aa = 0;
     header->opcode = DNS_OPCODE_QUERY;
@@ -94,12 +94,12 @@ void set_header(dnshdr *header) {
     header->adcount = 0;
 }
 
-int set_question(char * qstart) {
+int set_question(char * qstart, char *name) {
     int qlen = 0;
     if (type == DNS_QTYPE_PTR) {
-        int ret = ipv4_to_dns_format(hostname, qstart);
+        int ret = ipv4_to_dns_format(name, qstart);
         if (ret < 0) { // not ipv4 format
-            ret = ipv6_to_dns_format(hostname, qstart);
+            ret = ipv6_to_dns_format(name, qstart);
             if (ret > 0) {
                 debug_print("Got ipv6 format\n");
                 qlen += ret;
@@ -113,7 +113,7 @@ int set_question(char * qstart) {
         }
 
     } else {
-        int len = dns_format(hostname, qstart);
+        int len = dns_format(name, qstart);
         qlen += len;
     }
 
@@ -142,4 +142,62 @@ void print_AAAA(unsigned char *ptr) {
     memcpy(&addr, ptr, 16);
 
     printf("%s", inet_ntop(AF_INET6, &addr, result, 150));
+}
+
+int get_root_servers_question(char *qstart) {
+    qstart[0] = 0;
+    query_t* query = (query_t *) (qstart + 1);
+    query->qclass = htons(DNS_QCLASS_IN);
+    query->qtype = htons(DNS_QTYPE_NS);
+
+    return 1 + sizeof(query_t);
+}
+
+void print_header (dnshdr *header) {
+    debug_print("\n Response code: %d.",header->rcode);
+    debug_print("\n The response contains : ");
+    debug_print("\n %d Questions.",ntohs(header->qcount));
+    debug_print("\n %d Answers.",ntohs(header->ancount));
+    debug_print("\n %d Authoritative Servers.",ntohs(header->nscount));
+    debug_print("\n %d Additional records.\n\n",ntohs(header->adcount));
+}
+
+void print_answers(char *buffer, int qlen, bool *satisfied) {
+
+    dnshdr *header = (dnshdr *)buffer;
+    unsigned char *reader = (unsigned char *) (buffer + sizeof(dnshdr) + qlen);
+    unsigned char name[1024];
+
+    for (int i = 0; i < ntohs(header->ancount); i++) {
+        int count = read_name(name, (unsigned char *) buffer, reader);
+        rrdata *p_r_data = (rrdata *) (reader + count);
+        printf("%s IN ", name);
+        switch(ntohs(p_r_data->type)){
+            case DNS_QTYPE_A:
+                print_A(reader + count + sizeof(rrdata));
+                break;
+            case DNS_QTYPE_AAAA:
+                print_AAAA(reader + count + sizeof(rrdata));
+                break;
+            case DNS_QTYPE_CNAME:
+                printf("CNAME ");
+                read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
+                printf("%s", name);
+                break;
+            case DNS_QTYPE_PTR:
+                printf("PTR ");
+                read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
+                printf("%s", name);
+                break;
+            default:
+                fprintf(stderr, "Unknown type %d\n", ntohs(p_r_data->type));
+                break;
+        }
+
+        if (ntohs(p_r_data->type) == type)
+            *satisfied = true;
+        printf("\n");
+
+        reader += count + sizeof(rrdata) + ntohs(p_r_data->rd_length);
+    }
 }

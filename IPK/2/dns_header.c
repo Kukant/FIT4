@@ -120,3 +120,18 @@ int read_name(unsigned char *name, unsigned char* buffer, unsigned char *reader)
 
     return count;
 }
+
+/**
+ *
+ * @param rr_start
+ * @return rr lenght
+ */
+int readRR(unsigned char *name, unsigned char *buffer, unsigned char *reader, rrdata **rr_data) {
+    int len = 0;
+    len += read_name(name, buffer, reader);
+    *rr_data = ((rrdata *) (reader + len));
+    len += ntohs((*rr_data)->rd_length);
+    len += sizeof(rrdata);
+
+    return len;
+}

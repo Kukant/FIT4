@@ -13,4 +13,7 @@ clean:
 		rm ipk-lookup
 
 run:
-		./ipk-lookup -s $(bla) -i www.google.com
+		./ipk-lookup -s $(bla) www.google.com
+
+runi:
+		./ipk-lookup -s 8.8.8.8 -i www.web-profesionalne.cz

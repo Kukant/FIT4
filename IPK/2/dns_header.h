@@ -176,4 +176,6 @@ int ipv6_to_dns_format(char *src, char *dst);
  */
 int read_name(unsigned char *name, unsigned char* buffer, unsigned char *reader);
 
+int readRR(unsigned char *name, unsigned char* buffer, unsigned char *reader, rrdata **rr_data);
+
 #endif //INC_2_DNS_HEADER_H
