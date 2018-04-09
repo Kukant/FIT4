@@ -168,36 +168,51 @@ void print_answers(char *buffer, int qlen, bool *satisfied) {
     unsigned char *reader = (unsigned char *) (buffer + sizeof(dnshdr) + qlen);
     unsigned char name[1024];
 
-    for (int i = 0; i < ntohs(header->ancount); i++) {
-        int count = read_name(name, (unsigned char *) buffer, reader);
-        rrdata *p_r_data = (rrdata *) (reader + count);
-        printf("%s IN ", name);
-        switch(ntohs(p_r_data->type)){
-            case DNS_QTYPE_A:
-                print_A(reader + count + sizeof(rrdata));
-                break;
-            case DNS_QTYPE_AAAA:
-                print_AAAA(reader + count + sizeof(rrdata));
-                break;
-            case DNS_QTYPE_CNAME:
-                printf("CNAME ");
-                read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
-                printf("%s", name);
-                break;
-            case DNS_QTYPE_PTR:
-                printf("PTR ");
-                read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
-                printf("%s", name);
-                break;
-            default:
-                fprintf(stderr, "Unknown type %d\n", ntohs(p_r_data->type));
-                break;
+    if (type == DNS_QTYPE_NS) {
+
+        for (int i = 0; i < ntohs(header->nscount); i++) {
+            int count = read_name(name, (unsigned char *) buffer, reader);
+            rrdata *p_r_data = (rrdata *) (reader + count);
+            printf("%s IN NS ", name);
+            read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
+            printf("%s\n", name);
+            reader += count + sizeof(rrdata) + ntohs(p_r_data->rd_length);
+
+            if (ntohs(p_r_data->type) == type)
+                *satisfied = true;
         }
+    } else {
+        for (int i = 0; i < ntohs(header->ancount); i++) {
+            int count = read_name(name, (unsigned char *) buffer, reader);
+            rrdata *p_r_data = (rrdata *) (reader + count);
+            printf("%s IN ", name);
+            switch(ntohs(p_r_data->type)){
+                case DNS_QTYPE_A:
+                    print_A(reader + count + sizeof(rrdata));
+                    break;
+                case DNS_QTYPE_AAAA:
+                    print_AAAA(reader + count + sizeof(rrdata));
+                    break;
+                case DNS_QTYPE_CNAME:
+                    printf("CNAME ");
+                    read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
+                    printf("%s", name);
+                    break;
+                case DNS_QTYPE_PTR:
+                    printf("PTR ");
+                    read_name(name, (unsigned char *) buffer, reader + count + sizeof(rrdata));
+                    printf("%s", name);
+                    break;
+                default:
+                    fprintf(stderr, "Unknown type %d\n", ntohs(p_r_data->type));
+                    break;
+            }
 
-        if (ntohs(p_r_data->type) == type)
-            *satisfied = true;
-        printf("\n");
+            if (ntohs(p_r_data->type) == type)
+                *satisfied = true;
+            printf("\n");
 
-        reader += count + sizeof(rrdata) + ntohs(p_r_data->rd_length);
+            reader += count + sizeof(rrdata) + ntohs(p_r_data->rd_length);
+        }
     }
 }
