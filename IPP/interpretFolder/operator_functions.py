@@ -1,3 +1,9 @@
+"""
+Module where are located all functions that implements ippcode18 instructions.
+
+Author: Tomas Kukan
+Date: early 2018
+"""
 
 import globals as g
 from other_functions import *
@@ -110,6 +116,7 @@ def ARITMETIC(args):
     else:
         dbgp("Unknownd operator" + operator)
 
+    del args[-1]
     set_val(var, Argument(_type=ArgType.int, val=res))
 
 
@@ -142,6 +149,7 @@ def COMPARE(args):
     else:
         dbgp("Unknown operator in COMPARE")
 
+    del args[-1]
     set_val(args[0], Argument(_type=ArgType.bool, val=res))
 
 
@@ -157,6 +165,7 @@ def AND_OR(args):
     elif operator == "or":
         res = op1 or op2
 
+    del args[-1]
     set_val(var, Argument(_type=ArgType.bool, val=res))
 
 @args_check([ArgType.var, ArgType.symb])
@@ -235,6 +244,7 @@ def JUMPIF(args):
     if (res and args[3] == "EQ") or \
        (not res and args[3] == "NEQ"):
         JUMP([args[0]])
+    del args[-1]
 
 
 @args_check([ArgType.label])
