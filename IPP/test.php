@@ -135,7 +135,8 @@ function testParser($srcFiles, $parser_path, $rcFiles) {
 
 function testInterpreter($inFiles, $interpret_path, $outFiles) {
     // $GLOBALS['interpretInputs']
-    for($i = 0; $i < count($inFiles); $i+=1 ){ 
+    for($i = 0; $i < count($inFiles); $i+=1 ){
+        //fwrite(STDERR,  $inFiles[$i]."\n");
         if (count($GLOBALS['interpretInputs'][$i]) != 2) {
             // parser did not end well
             array_push($GLOBALS['interpretTestsOut'], "NOT TESTED");
@@ -154,6 +155,8 @@ function testInterpreter($inFiles, $interpret_path, $outFiles) {
         
         if ($ret != 0) {
             if ($ret != $retcode) {
+                // 
+                //exec("cp xkukan00tempout ".$outFiles[$i]."_realout");
                 array_push($GLOBALS['interpretTestsOut'], "Unexpected return code: ".(string)$ret); 
             } else {
                 array_push($GLOBALS['interpretTestsOut'], "OK");
@@ -163,8 +166,8 @@ function testInterpreter($inFiles, $interpret_path, $outFiles) {
 
         exec("diff xkukan00tempout ".$outFiles[$i], $out, $ret);
         if ($ret != 0) {
-            // TODO
-            exec("cp xkukan00tempout ".$outFiles[$i]."_realout");
+            // 
+            // exec("cp xkukan00tempout ".$outFiles[$i]."_realout");
             array_push($GLOBALS['interpretTestsOut'], "Diff is not OK.");
             continue; 
         }
@@ -183,13 +186,14 @@ function generateHTML($srcFiles) {
 <style>
 .FAIL {background-color: #ffafaf;}
 .OK   {background-color: #aaffaa;}
-table, th, td {border: 1px solid black;
+table, th, td {
+        border: 1px solid black;
         margin-left: 20px;
         padding-right: 10px;
         padding-left: 10px;
         font-size: 20px;
         text-align:center; 
-    }
+}
 th {
     background-color: #25913d;
     color: white;
@@ -200,7 +204,7 @@ table {
     border-collapse: collapse;
 }
 </style>
-</head>
+            </head>
                 <body>';
     echo '<h3>Parser Tests: </h3>';
     parserTable($srcFiles);

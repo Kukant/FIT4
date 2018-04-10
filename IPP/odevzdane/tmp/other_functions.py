@@ -1,3 +1,9 @@
+"""
+Module where are located all helpful functions used by main module or operator_functions module.
+
+Author: Tomas Kukan
+Date: early 2018
+"""
 
 import getopt
 import sys
@@ -21,8 +27,11 @@ def args_check(types):
         def wrapper(args):
             n = len(types)
             if len(args) != n:
+                for arg in args:
+                    print(arg.__repr__())
                 error("Unexpected arguments len. in " + f.__name__ + "() expected "
                       + str(n) + " got: " + str(len(args)), Err.lexOrSyn)
+
             for i, type in enumerate(types):
                 if type is None:
                     continue
@@ -210,6 +219,7 @@ def get_val(arg, expected_type):
         else:
             return arg.val
 
+
 def set_val(dst, src):
     dest_var = get_var(dst.frame, dst.name)
     if src.type == ArgType.var:
@@ -217,13 +227,8 @@ def set_val(dst, src):
         if src.type is None or src.val is None:
             error("Variable is not defined.", Err.in_varNotDefined)
 
-    if dest_var.type is None: # was not defined yet
-        dest_var.type = src.type
-        dest_var.val = src.val
-    elif dest_var.type != src.type:
-        error("Cannot move value of type " + src.type + " to type " + dest_var.type, Err.in_wrongOperand)
-    else:
-        dest_var.val = src.val
+    dest_var.type = src.type
+    dest_var.val = src.val
 
 
 def parse_val(val, type):
