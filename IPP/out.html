@@ -1,44 +1,427 @@
+
 <!DOCTYPE html>
             <html>
+            <head>
+<style>
+.FAIL {background-color: #ffafaf;}
+.OK   {background-color: #aaffaa;}
+table, th, td {border: 1px solid black;
+        margin-left: 20px;
+        padding-right: 10px;
+        padding-left: 10px;
+        font-size: 20px;
+        text-align:center; 
+    }
+th {
+    background-color: #25913d;
+    color: white;
+    font-weight: 600;
+    font-size: 23px;
+}
+table {
+    border-collapse: collapse;
+}
+</style>
+</head>
                 <body><h3>Parser Tests: </h3><table><tr>
             <th>Test source file</th>
             <th>Result</th> 
             <th>Error message</th>
-          </tr><tr>
-            <td>./ParserTests/test1.src</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/00.src</td>
             <td>OK</td> 
             <td></td>
-          </tr><tr>
-            <td>./ParserTests/test2.src</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/01.src</td>
             <td>OK</td> 
             <td></td>
-          </tr><tr>
-            <td>./ParserTests/test3.src</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/02.src</td>
             <td>OK</td> 
             <td></td>
-          </tr><tr>
-            <td>./ParserTests/test4.src</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/03.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/04.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/05.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/06.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/07.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/08.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/09.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/10.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/11.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/12.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/13.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/14.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/15.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/16.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/17.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/18.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/19.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/20.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/21.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/22.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/23.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/24.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/25.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/26.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/27.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/28.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/29.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/30.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/31.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/32.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/33.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/34.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/35.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/36.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/37.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/38.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/39.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/40.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/41.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/42.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/43.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/44.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/45.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/46.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/47.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/48.src</td>
             <td>OK</td> 
             <td></td>
           </tr></table><h3>Interpreter Tests: </h3><table><tr>
             <th>Test source file</th>
             <th>Result</th> 
             <th>Error message</th>
-          </tr><tr>
-            <td>./ParserTests/test1.src</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/00.src</td>
             <td>OK</td> 
             <td></td>
-          </tr><tr>
-            <td>./ParserTests/test2.src</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/01.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/02.src</td>
             <td>FAIL</td> 
             <td>Diff is not OK.</td>
-          </tr><tr>
-            <td>./ParserTests/test3.src</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/03.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/04.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/05.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/06.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/07.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/08.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/09.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/10.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/11.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/12.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/13.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/14.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/15.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/16.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/17.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/18.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/19.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/20.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/21.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/22.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/23.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/24.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/25.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/26.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/27.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/28.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 53</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/29.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/30.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 53</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/31.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/32.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/33.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/34.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/35.src</td>
             <td>FAIL</td> 
             <td>Diff is not OK.</td>
-          </tr><tr>
-            <td>./ParserTests/test4.src</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/36.src</td>
             <td>FAIL</td> 
-            <td>Diff is not OK.</td>
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/37.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/38.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/39.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/40.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="OK">
+            <td>./ifj_tests/41.src</td>
+            <td>OK</td> 
+            <td></td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/42.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/43.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/44.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/45.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/46.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/47.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
+          </tr><tr class="FAIL">
+            <td>./ifj_tests/48.src</td>
+            <td>FAIL</td> 
+            <td>Unexpected return code: 32</td>
           </tr></table>      </body>
             </html>

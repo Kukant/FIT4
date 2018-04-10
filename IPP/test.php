@@ -110,7 +110,7 @@ function testParser($srcFiles, $parser_path, $rcFiles) {
         $expectedRet = intval($expectedRet);
 
         $outputArr = array();
-        exec("php ".$parser_path." < ".$srcFiles[$i], $outputArr, $ret);
+        exec("php5.6 ".$parser_path." < ".$srcFiles[$i], $outputArr, $ret);
         if ($ret != 0){
             if ($ret != $expectedRet) {
                 // test failed
@@ -138,6 +138,7 @@ function testInterpreter($inFiles, $interpret_path, $outFiles) {
     for($i = 0; $i < count($inFiles); $i+=1 ){ 
         if (count($GLOBALS['interpretInputs'][$i]) != 2) {
             // parser did not end well
+            array_push($GLOBALS['interpretTestsOut'], "NOT TESTED");
             continue;
         }
         $input = $GLOBALS['interpretInputs'][$i]["input"];
@@ -162,6 +163,8 @@ function testInterpreter($inFiles, $interpret_path, $outFiles) {
 
         exec("diff xkukan00tempout ".$outFiles[$i], $out, $ret);
         if ($ret != 0) {
+            // TODO
+            exec("cp xkukan00tempout ".$outFiles[$i]."_realout");
             array_push($GLOBALS['interpretTestsOut'], "Diff is not OK.");
             continue; 
         }
@@ -176,6 +179,28 @@ function testInterpreter($inFiles, $interpret_path, $outFiles) {
 function generateHTML($srcFiles) {
     echo '<!DOCTYPE html>
             <html>
+            <head>
+<style>
+.FAIL {background-color: #ffafaf;}
+.OK   {background-color: #aaffaa;}
+table, th, td {border: 1px solid black;
+        margin-left: 20px;
+        padding-right: 10px;
+        padding-left: 10px;
+        font-size: 20px;
+        text-align:center; 
+    }
+th {
+    background-color: #25913d;
+    color: white;
+    font-weight: 600;
+    font-size: 23px;
+}
+table {
+    border-collapse: collapse;
+}
+</style>
+</head>
                 <body>';
     echo '<h3>Parser Tests: </h3>';
     parserTable($srcFiles);
@@ -202,7 +227,9 @@ function parserTable($srcFiles) {
             $errMessage = $GLOBALS['parserTestsOut'][$i];
         }
 
-        echo '<tr>
+        $class = $result;
+
+        echo '<tr class="'.$class.'">
             <td>'.$srcFiles[$i].'</td>
             <td>'.$result.'</td> 
             <td>'.$errMessage.'</td>
@@ -224,12 +251,15 @@ function interpretTable($srcFiles) {
         $errMessage="";
         if ($GLOBALS['interpretTestsOut'][$i] == "OK") {
             $result = "OK";
+        } else if ($GLOBALS['interpretTestsOut'][$i] == "NOT TESTED") {
+            continue;
         } else {
             $result = "FAIL";
             $errMessage = $GLOBALS['interpretTestsOut'][$i];
         }
+        $class=$result;
 
-        echo '<tr>
+        echo '<tr class="'.$class.'">
             <td>'.$srcFiles[$i].'</td>
             <td>'.$result.'</td> 
             <td>'.$errMessage.'</td>

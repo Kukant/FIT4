@@ -188,7 +188,13 @@ def POPFRAME(args):
 
 @args_check([ArgType.symb])
 def PUSHS(args):
-    g.data_stack.append(args[0])
+    if args[0].type == ArgType.var:
+        var = get_var(args[0].frame, args[0].name)
+        to_push = var
+    else:
+        to_push = args[0]
+
+    g.data_stack.append(Argument(_type=to_push.type, val=to_push.val))
 
 
 @args_check([ArgType.var])

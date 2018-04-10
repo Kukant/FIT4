@@ -1,4 +1,4 @@
-#!/usr/bin/php5.6
+
 <?php
 $errParam = 10;
 $errInFile = 11;
@@ -110,7 +110,7 @@ function testParser($srcFiles, $parser_path, $rcFiles) {
         $expectedRet = intval($expectedRet);
 
         $outputArr = array();
-        exec("php ".$parser_path." < ".$srcFiles[$i], $outputArr, $ret);
+        exec("php5.6 ".$parser_path." < ".$srcFiles[$i], $outputArr, $ret);
         if ($ret != 0){
             if ($ret != $expectedRet) {
                 // test failed
@@ -138,6 +138,7 @@ function testInterpreter($inFiles, $interpret_path, $outFiles) {
     for($i = 0; $i < count($inFiles); $i+=1 ){ 
         if (count($GLOBALS['interpretInputs'][$i]) != 2) {
             // parser did not end well
+            array_push($GLOBALS['interpretTestsOut'], "NOT TESTED");
             continue;
         }
         $input = $GLOBALS['interpretInputs'][$i]["input"];
@@ -224,6 +225,8 @@ function interpretTable($srcFiles) {
         $errMessage="";
         if ($GLOBALS['interpretTestsOut'][$i] == "OK") {
             $result = "OK";
+        } else if ($GLOBALS['interpretTestsOut'][$i] == "NOT TESTED") {
+            continue;
         } else {
             $result = "FAIL";
             $errMessage = $GLOBALS['interpretTestsOut'][$i];

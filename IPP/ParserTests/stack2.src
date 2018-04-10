@@ -1,0 +1,16 @@
+.IPPcode18
+
+pushs int@3
+pushs int@2
+pushs int@1
+
+defvar GF@a
+
+pops GF@a
+write GF@a
+
+pops GF@a
+write GF@a
+
+pops GF@a
+write GF@a
