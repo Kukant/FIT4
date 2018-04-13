@@ -1,5 +1,9 @@
-
 <?php
+/**
+ * Main an the only file of test.php
+ * created by Tomas Kukan
+ * early 2018
+ */
 $errParam = 10;
 $errInFile = 11;
 $errOutFile = 12;
@@ -72,8 +76,10 @@ function getFilePaths($opts) {
         $path = $opts["directory"];
 
     if (preg_match('/^.*\/$/', $path))
-        $path = substr($directory_path, 0, -1);
+        $path = substr($path, 0, -1);
 
+    //print_r("path:");
+    //print_r("bla: '".$path."'\n");
     $path = $path."/*.src";
 
     if (isset($opts["recursive"])) {
@@ -175,8 +181,8 @@ function testInterpreter($inFiles, $interpret_path, $outFiles) {
         array_push($GLOBALS['interpretTestsOut'], "OK"); 
 
     }
-
-    exec("rm xkukan00tempout xkukan00temp.xml");
+    if (count($inFiles) > 0)
+        exec("rm xkukan00tempout xkukan00temp.xml");
 }
 
 function generateHTML($srcFiles) {
