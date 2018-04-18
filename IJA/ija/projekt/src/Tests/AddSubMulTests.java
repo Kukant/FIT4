@@ -18,7 +18,6 @@ public class AddSubMulTests {
         add = new AddBlock();
         sub = new SubBlock();
         mul = new MulBlock();
-
     }
 
     /**

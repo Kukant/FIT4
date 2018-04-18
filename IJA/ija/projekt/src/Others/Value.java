@@ -1,6 +1,8 @@
 package Others;
 
-public class Value {
+import com.sun.javafx.geom.Vec2d;
+
+public class Value implements java.io.Serializable {
     public Value(double val, boolean defined) {
         this.val = val;
         this.defined = defined;

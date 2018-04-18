@@ -4,7 +4,9 @@ import Others.Value;
 
 public class AddBlock extends Block {
     public AddBlock() {
+        super();
         this.InputValues = new Value[2];
+        this.Inputs = new Block[2];
     }
 
     @Override

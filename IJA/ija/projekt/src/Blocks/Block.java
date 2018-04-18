@@ -3,12 +3,16 @@ package Blocks;
 import java.util.ArrayList;
 import Others.*;
 
-abstract public class Block {
+abstract public class Block implements java.io.Serializable{
 
     protected ArrayList<Output> Outputs;
     protected Block[] Inputs;
     public Value[] InputValues;
     public double MyVal;
+
+    public Block() {
+        this.Outputs = new ArrayList<>();
+    }
 
     /**
      * Manager will call this when new connection will be established.

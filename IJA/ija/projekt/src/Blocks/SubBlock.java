@@ -4,6 +4,7 @@ import Others.Value;
 
 public class SubBlock extends Block {
     public SubBlock() {
+        super();
         this.InputValues = new Value[2];
     }
 

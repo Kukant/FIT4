@@ -4,11 +4,13 @@ import Others.Value;
 
 public class RootBlock extends Block {
     public RootBlock() {
+        super();
+        this.Inputs = new Block[2];
         this.InputValues = new Value[2];
     }
 
     @Override
     public double Calculate() {
-        return Math.sqrt(this.InputValues[0].val);
+        return Math.pow(this.InputValues[0].val, 1/this.InputValues[1].val);
     }
 }
