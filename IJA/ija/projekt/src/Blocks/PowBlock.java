@@ -5,6 +5,8 @@ import java.lang.Math;
 
 public class PowBlock extends Block {
     public PowBlock() {
+        super();
+        this.Inputs = new Block[2];
         this.InputValues = new Value[2];
     }
 

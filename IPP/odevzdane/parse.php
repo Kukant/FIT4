@@ -1,9 +1,9 @@
-.IPPcode18
-
-DEFVAR GF@tmp
-MOVE GF@tmp string@ahoj\032svete
-WRITE GF@tmp
 <?php 
+/**
+ * Main an the only file of parse.php
+ * created by Tomas Kukan
+ * early 2018
+ */
 
 ## FUNCTIONS
 function printHelp() {
@@ -15,10 +15,8 @@ function printHelp() {
 function GetArguments($argv) {
     $shortopts  = "";
     $longopts = array("help");
-
     $options = getopt($shortopts, $longopts);
-
-    if (count($argv) > 1) {
+    if (count($argv) > 2) {
         exit(10);
     } elseif (isset($options["help"])) {
         printHelp();
@@ -47,10 +45,8 @@ function ProcessInput() {
         xmlwriter_start_attribute($xw, 'order');
             xmlwriter_text($xw, $i);
         xmlwriter_end_attribute($xw);
-
         xmlwriter_start_attribute($xw, 'opcode');
         $args = array_slice($parts, 1); # slice off the instruction
-
         # put there the opperation code now, if there is an error, there will be no output neverteless
         xmlwriter_text($xw, $parts[0]);
         xmlwriter_end_attribute($xw); # opcode
@@ -112,7 +108,6 @@ function ProcessInput() {
                 echo "ERROR: unknown operator '${parts[0]}'\n";
                 exit(21);
                 break;
-
         }
         xmlwriter_end_element($xw); #instruction
         $i+=1;
@@ -157,7 +152,6 @@ function Error($type, $arg = "") {
         case "arg":
             echo "ERROR: invalid argument: ${arg}";
             break;
-
         case "file":
             echo "ERROR: wrong file format";
         default:
@@ -186,14 +180,11 @@ function ProcessOneLine($line) {
     }
     if (count($nonEmpty) > 0)
         $nonEmpty[0] = strtoupper($nonEmpty[0]);
-
     return $nonEmpty;
 }
 
-
 /** returns an array of two items, [0] = ramec, typ [1] = nazev promenne, hodnota
  * expected types={var, symb, type, label} */
-
 # handles errors on its own
 function ProcessArguments($args, $expectedTypes) {
     if (count($args) != count($expectedTypes))
@@ -235,7 +226,6 @@ function ProcessArguments($args, $expectedTypes) {
                         Error("Unexpected arg type '${expectedType}' != symb");
                     $returnArr[$i] = array($split[0] => $split[1]);
                     break;
-
                 case "GF":
                 case "LF":
                 case "TF":
@@ -243,7 +233,6 @@ function ProcessArguments($args, $expectedTypes) {
                         Error("Unexpected arg type '${expectedType}' != var || symb");
                     $returnArr[$i] = array("var" => $arg);
                     break;
-
                 default:
                     Error("arg", $arg);
             }
@@ -251,7 +240,6 @@ function ProcessArguments($args, $expectedTypes) {
     }
     return $returnArr;
 }
-
 ## MAIN
 GetArguments($argv);
 ProcessInput();

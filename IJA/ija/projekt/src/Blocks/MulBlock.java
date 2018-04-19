@@ -4,6 +4,8 @@ import Others.Value;
 
 public class MulBlock extends Block {
     public MulBlock() {
+        super();
+        this.Inputs = new Block[2];
         this.InputValues = new Value[2];
     }
 

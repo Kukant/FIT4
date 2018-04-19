@@ -1,3 +1,11 @@
+"""
+Just some helpful classes, mainly to store data.
+
+Author: Tomas Kukan
+Date: early 2018
+"""
+
+
 from enum import Enum
 
 class ArgType:
@@ -66,3 +74,8 @@ class Variable:
     def __init__(self, _type=None, val=None):
         self.type = _type
         self.val = val
+
+    def __repr__(self):
+        string = "type: " + str(self.type) + ", "
+        string += "val: " + str(self.val) + "\n"
+        return string

@@ -1,0 +1,11 @@
+OK
+OK
+OK
+src:
+type: bool, val: False, frame: None, name: None
+
+dest_var:
+type: var, val: None, frame: TF, name: $T9
+type: int, val: -1
+
+Error:  Cannot move value of type bool to type int

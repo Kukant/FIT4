@@ -1,0 +1,12 @@
+.IPPcode18
+
+createframe
+defvar TF@a
+move TF@a int@2
+pushframe
+createframe
+defvar TF@a
+move TF@a int@1
+write TF@a
+popframe
+write TF@a
