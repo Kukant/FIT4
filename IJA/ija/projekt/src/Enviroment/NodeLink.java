@@ -1,8 +1,10 @@
 package Enviroment;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.UUID;
 
+import Others.Debugger;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
 import javafx.beans.property.DoubleProperty;
@@ -100,18 +102,29 @@ public class NodeLink extends AnchorPane {
         node_link.setEndY(endPoint.getY());
     }
 
-    public void bindEnds (DraggableNode source, DraggableNode target) {
+    public void bindEnds (DraggableNode source, DraggableNode target, double mousePosY) {
         node_link.startXProperty().bind(
-                Bindings.add(source.layoutXProperty(), (source.getWidth() / 2.0)));
+                Bindings.add(source.layoutXProperty(), source.getWidth()));
 
         node_link.startYProperty().bind(
-                Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)));
+                Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0) + 10));
 
-        node_link.endXProperty().bind(
-                Bindings.add(target.layoutXProperty(), (target.getWidth() / 2.0)));
+        if (target.inputsNumber == 1) {
+            node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), (target.getWidth() / 2.0)));
+            node_link.endYProperty().bind( Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
+            Debugger.log("one input");
+        } else { // two inputs
+            Debugger.log("two inputs");
+            Debugger.log("target Y: " + (target.getLayoutY() + 40 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ )  + " mouse Y: " + mousePosY);
+            if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mousePosY) {
+                node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(25), (target.getWidth() / 2.0) ));
+            } else {
+                node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(-5), (target.getWidth() / 2.0) ));
+            }
 
-        node_link.endYProperty().bind(
-                Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
+            node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), 0));
+        }
+
 
         source.registerLink (getId());
         target.registerLink (getId()); //TODO: BIND LINK

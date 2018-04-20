@@ -2,11 +2,12 @@ package Enviroment;
 
 
 public enum DragIconType {
-    red,
-    green,
-    blue,
-    black,
-    yellow,
-    purple,
-    grey
+    add,
+    sub,
+    mul,
+    root,
+    div,
+    result,
+    pow,
+    _const
 }

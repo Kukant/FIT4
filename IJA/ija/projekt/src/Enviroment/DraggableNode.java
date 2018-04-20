@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
+import Others.Debugger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -22,6 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 
 public class DraggableNode extends AnchorPane {
@@ -29,6 +31,8 @@ public class DraggableNode extends AnchorPane {
     @FXML AnchorPane root_pane;
 
     private final List  mLinkIds = new ArrayList  (); //TODO :pole inputs a outputs
+
+    public int inputsNumber = 2; // todo
 
     private EventHandler  mContextDragOver;
     private EventHandler  mContextDragDropped;
@@ -39,6 +43,8 @@ public class DraggableNode extends AnchorPane {
 
     @FXML private Label title_bar;
     @FXML private Label close_button;
+    @FXML Text operatorTextField;
+
 
     @FXML AnchorPane left_link_handle;
     @FXML AnchorPane right_link_handle;
@@ -56,7 +62,6 @@ public class DraggableNode extends AnchorPane {
     public DraggableNode() {
 
         self = this;
-
         setId(UUID.randomUUID().toString());
 
         FXMLLoader fxmlLoader = new FXMLLoader(
@@ -109,39 +114,34 @@ public class DraggableNode extends AnchorPane {
 
         getStyleClass().clear();
         getStyleClass().add("dragicon");
-        switch (mType) {
-
-            case blue:
-                getStyleClass().add("icon-blue");
+        /*switch (mType) {
+            case add:
+                operatorTextField.setText("+");
                 break;
-
-            case red:
-                getStyleClass().add("icon-red");
+            case sub:
+                operatorTextField.setText("-");
                 break;
-
-            case green:
-                getStyleClass().add("icon-green");
+            case mul:
+                operatorTextField.setText("\u00D7");
                 break;
-
-            case grey:
-                getStyleClass().add("icon-grey");
+            case div:
+                operatorTextField.setText("/");
                 break;
-
-            case purple:
-                getStyleClass().add("icon-purple");
+            case root:
+                operatorTextField.setText("\u221A");
                 break;
-
-            case yellow:
-                getStyleClass().add("icon-yellow");
+            case pow:
+                operatorTextField.setText("+");
                 break;
-
-            case black:
-                getStyleClass().add("icon-black");
+            case _const:
+                operatorTextField.setText("N");
                 break;
-
+            case result:
+                operatorTextField.setText("=");
+                break;
             default:
                 break;
-        }
+        }*/
     }
 
     public void relocateToPoint (Point2D p) {
@@ -322,7 +322,8 @@ public class DraggableNode extends AnchorPane {
 
                 //pass the UUID of the target node for later lookup
                 container.addData("target", getId());
-
+                Debugger.log("event.getScreenY() " + event.getScreenY() + "event.getSceneY()" + event.getSceneY() + "event.getY()" + event.getY());
+                container.addData("mouse_y", event.getSceneY());
                 content.put(DragContainer.AddLink, container);
 
                 event.getDragboard().setContent(content);
@@ -365,7 +366,6 @@ public class DraggableNode extends AnchorPane {
                 event.setDropCompleted(true);
                 event.consume();
             }
-
         };
 
     }

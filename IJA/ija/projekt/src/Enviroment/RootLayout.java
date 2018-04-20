@@ -1,7 +1,9 @@
 package Enviroment;
 
+import java.awt.*;
 import java.io.IOException;
 
+import Others.Debugger;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -61,7 +63,7 @@ public class RootLayout extends AnchorPane {
         getChildren().add(mDragOverIcon);
 
 
-        for (int i = 0; i < 7; i++) { // zobrazeni sedmi ikon z DragIcon.java
+        for (int i = 0; i < 8; i++) { // zobrazeni osmi ikon z DragIcon.java
 
             DragIcon icn = new DragIcon();// nova ikona
 
@@ -118,8 +120,8 @@ public class RootLayout extends AnchorPane {
                 DragContainer container =
                         (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 
-                container.addData("scene_coords",
-                        new Point2D(event.getSceneX(), event.getSceneY()));
+                container.addData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
+                container.addData("block_type", mDragOverIcon.operatorTextField.getText());
 
                 ClipboardContent content = new ClipboardContent();
                 content.put(DragContainer.AddNode, container);
@@ -146,6 +148,8 @@ public class RootLayout extends AnchorPane {
 
                 if (container != null) {
                     if (container.getValue("scene_coords") != null) {
+
+                        Debugger.log(container.getValue("block_type"));
 
                         DraggableNode node = new DraggableNode();
 
@@ -208,7 +212,7 @@ public class RootLayout extends AnchorPane {
                         }
 
                         if (source != null && target != null)
-                            link.bindEnds(source, target);
+                            link.bindEnds(source, target, container.getValue("mouse_y"));
                     }
 
                 }

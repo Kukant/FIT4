@@ -8,10 +8,13 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.text.Text;
+
 
 public class DragIcon extends AnchorPane {
 
     private DragIconType mType;
+    @FXML public Text operatorTextField;
 
     public DragIcon() {
 
@@ -43,34 +46,30 @@ public class DragIcon extends AnchorPane {
         getStyleClass().add("dragicon");
         switch (mType) {
 
-            case blue:
-                getStyleClass().add("icon-blue");
+            case add:
+                operatorTextField.setText("+");
                 break;
-
-            case red:
-                getStyleClass().add("icon-red");
+            case sub:
+                operatorTextField.setText("-");
                 break;
-
-            case green:
-                getStyleClass().add("icon-green");
+            case mul:
+                operatorTextField.setText("\u00D7");
                 break;
-
-            case grey:
-                getStyleClass().add("icon-grey");
+            case div:
+                operatorTextField.setText("/");
                 break;
-
-            case purple:
-                getStyleClass().add("icon-purple");
+            case root:
+                operatorTextField.setText("\u221A");
                 break;
-
-            case yellow:
-                getStyleClass().add("icon-yellow");
+            case pow:
+                operatorTextField.setText("+");
                 break;
-
-            case black:
-                getStyleClass().add("icon-black");
+            case _const:
+                operatorTextField.setText("N");
                 break;
-
+            case result:
+                operatorTextField.setText("=");
+                break;
             default:
                 break;
         }
