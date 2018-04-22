@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
+import Blocks.*;
 import Others.Debugger;
+import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -25,14 +27,19 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
+import static Enviroment.DraggableNodeType.Constant;
+import static Enviroment.DraggableNodeType.Result;
+import static Enviroment.DraggableNodeType.TwoInputs;
+
 
 public class DraggableNode extends AnchorPane {
 
     @FXML AnchorPane root_pane;
 
-    private final List  mLinkIds = new ArrayList  (); //TODO :pole inputs a outputs
+    private final List  mLinkIds = new ArrayList (); //TODO :pole inputs a outputs
 
-    public int inputsNumber = 2; // todo
+    public int inputsNumber;
+    Block block;
 
     private EventHandler  mContextDragOver;
     private EventHandler  mContextDragDropped;
@@ -59,13 +66,33 @@ public class DraggableNode extends AnchorPane {
 
     private final DraggableNode self;
 
-    public DraggableNode() {
+    public DraggableNode(DraggableNodeType draggableNodeType) {
 
         self = this;
+
         setId(UUID.randomUUID().toString());
+        String blockResourcePath;
+        switch (draggableNodeType) {
+            case TwoInputs:
+                blockResourcePath = "./../Resources/DraggableNode.fxml";
+                inputsNumber = 2;
+                break;
+            case Constant:
+                blockResourcePath = "./../Resources/DraggableNodeConstant.fxml";
+                inputsNumber = 0;
+                break;
+            case Result:
+                blockResourcePath = "./../Resources/DraggableNodeResult.fxml";
+                inputsNumber = 1;
+                break;
+
+                default:
+                    throw new Error();
+
+        }
 
         FXMLLoader fxmlLoader = new FXMLLoader(
-                getClass().getResource("./../Resources/DraggableNode.fxml")
+                getClass().getResource(blockResourcePath)
         );
 
         fxmlLoader.setRoot(this);
@@ -86,9 +113,11 @@ public class DraggableNode extends AnchorPane {
         buildLinkDragHandlers();
 
         //left_link_handle.setOnDragDetected(mLinkHandleDragDetected);
-        right_link_handle.setOnDragDetected(mLinkHandleDragDetected);
+        if (right_link_handle != null)
+            right_link_handle.setOnDragDetected(mLinkHandleDragDetected);
 
-        left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
+        if (left_link_handle != null)
+            left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
         //right_link_handle.setOnDragDropped(mLinkHandleDragDropped);
 
         mDragLink = new NodeLink();
@@ -112,36 +141,42 @@ public class DraggableNode extends AnchorPane {
 
         mType = type;
 
-        getStyleClass().clear();
-        getStyleClass().add("dragicon");
-        /*switch (mType) {
+        switch (mType) {
             case add:
                 operatorTextField.setText("+");
+                block = new AddBlock();
                 break;
             case sub:
                 operatorTextField.setText("-");
+                block = new SubBlock();
                 break;
             case mul:
                 operatorTextField.setText("\u00D7");
+                block = new MulBlock();
                 break;
             case div:
                 operatorTextField.setText("/");
+                block = new DivBlock();
                 break;
             case root:
                 operatorTextField.setText("\u221A");
+                block = new RootBlock();
                 break;
             case pow:
                 operatorTextField.setText("+");
+                block = new PowBlock();
                 break;
             case _const:
                 operatorTextField.setText("N");
+                block = new ConstBlock(0); // TODO
                 break;
             case result:
                 operatorTextField.setText("=");
+                block = new ResultBlock();
                 break;
             default:
                 break;
-        }*/
+        }
     }
 
     public void relocateToPoint (Point2D p) {

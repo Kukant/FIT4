@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
@@ -13,6 +14,12 @@
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="23.0" layoutX="65.0" layoutY="40.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="15.0" layoutX="-7.0" layoutY="29.0" stroke="BLACK" strokeType="INSIDE" width="32.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="15.0" layoutX="-8.0" layoutY="60.0" stroke="BLACK" strokeType="INSIDE" width="32.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="92.0" stroke="WHITE" strokeType="INSIDE" width="82.0" />
+      <Text fx:id="operatorTextField" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+" textAlignment="CENTER" wrappingWidth="82.0">
+         <font>
+            <Font name="FreeMono" size="62.0" />
+         </font>
+      </Text>
       <VBox prefHeight="92.0" prefWidth="92.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <GridPane prefHeight="15.0" prefWidth="41.0" styleClass="node-overlay">
@@ -34,9 +41,9 @@
             </GridPane>
             <HBox alignment="TOP_RIGHT" minHeight="0.0" minWidth="0.0" prefHeight="77.0" prefWidth="92.0" scaleShape="false" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="88.0" AnchorPane.topAnchor="14.0">
                <children>
-                  <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="77.0" prefWidth="25.0" style="-fx-background-color: #eeee;" styleClass="right-link-handle" />
+                  <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="77.0" prefWidth="25.0" styleClass="right-link-handle" />
                   <AnchorPane fx:id="node_body" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="77.0" prefWidth="17.0" />
-                  <AnchorPane fx:id="right_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="77.0" prefWidth="39.0" style="-fx-background-color: #eeeeee;" styleClass="right-link-handle" />
+                  <AnchorPane fx:id="right_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="77.0" prefWidth="39.0" styleClass="right-link-handle" />
                </children>
             </HBox>
          </children>

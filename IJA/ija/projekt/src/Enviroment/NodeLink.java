@@ -110,12 +110,12 @@ public class NodeLink extends AnchorPane {
                 Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0) + 10));
 
         if (target.inputsNumber == 1) {
-            node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), (target.getWidth() / 2.0)));
-            node_link.endYProperty().bind( Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
             Debugger.log("one input");
-        } else { // two inputs
+            node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), 0));
+            node_link.endYProperty().bind( Bindings.add(target.layoutYProperty(), 50));
+
+        } else if (target.inputsNumber == 2){ // two inputs
             Debugger.log("two inputs");
-            Debugger.log("target Y: " + (target.getLayoutY() + 40 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ )  + " mouse Y: " + mousePosY);
             if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mousePosY) {
                 node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(25), (target.getWidth() / 2.0) ));
             } else {
@@ -123,6 +123,8 @@ public class NodeLink extends AnchorPane {
             }
 
             node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), 0));
+        } else {
+            throw new Error("Unexpected inputs number: " + target.inputsNumber);
         }
 
 

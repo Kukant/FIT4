@@ -151,7 +151,28 @@ public class RootLayout extends AnchorPane {
 
                         Debugger.log(container.getValue("block_type"));
 
-                        DraggableNode node = new DraggableNode();
+                        DraggableNodeType draggableNodeType;
+                        String blockType = container.getValue("block_type");
+                        Debugger.log("block type: " + blockType);
+                        switch (blockType) {
+                            case "-":
+                            case "\u00D7":
+                            case "/":
+                            case "\u221A":
+                            case "+":
+                                draggableNodeType = DraggableNodeType.TwoInputs;
+                                break;
+                            case "N":
+                                draggableNodeType = DraggableNodeType.Constant;
+                                break;
+                            case "=":
+                                draggableNodeType = DraggableNodeType.Result;
+                                break;
+                            default:
+                                throw new Error("Unknown draggableNodeType string :" + blockType);
+                        }
+
+                        DraggableNode node = new DraggableNode(draggableNodeType);
 
                         node.setType(DragIconType.valueOf(container.getValue("type")));
                         right_pane.getChildren().add(node);
