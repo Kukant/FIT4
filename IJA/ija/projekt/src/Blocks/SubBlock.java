@@ -6,6 +6,7 @@ public class SubBlock extends Block {
     public SubBlock() {
         super();
         this.InputValues = new Value[2];
+        this.Inputs = new Block[2];
     }
 
     @Override

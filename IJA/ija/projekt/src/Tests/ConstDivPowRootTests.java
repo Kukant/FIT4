@@ -9,14 +9,15 @@ import org.junit.Assert;
 
 public class ConstDivPowRootTests {
 
-    private Block Const;
+    private ConstBlock Const;
     private Block Div;
     private Block Pow;
     private Block Root;
 
     @Before
     public void setUp() {
-        Const = new ConstBlock(9.9999);
+        Const = new ConstBlock();
+        Const.Calculate(9.9999);
         Div = new DivBlock();
         Pow = new PowBlock();
         Root = new RootBlock();

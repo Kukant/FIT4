@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import Others.Debugger;
+import Others.Output;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
 import javafx.beans.property.DoubleProperty;
@@ -103,6 +104,22 @@ public class NodeLink extends AnchorPane {
     }
 
     public void bindEnds (DraggableNode source, DraggableNode target, double mousePosY) {
+
+        int index = 0; // deaultni hodnota, pokud je jenom jeden vstup ma index 0
+
+        if (target.inputsNumber == 2){
+            if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mousePosY){ // jedna se o spodni (druhy vstup)
+               index = 1;
+            }
+
+        }
+
+        source.block.BindOutput(target.block,index);
+        target.block.BindInput(source.block,index);
+
+
+
+
         node_link.startXProperty().bind(
                 Bindings.add(source.layoutXProperty(), source.getWidth()));
 

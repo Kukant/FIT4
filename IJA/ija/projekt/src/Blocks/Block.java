@@ -5,8 +5,8 @@ import Others.*;
 
 abstract public class Block implements java.io.Serializable{
 
-    protected ArrayList<Output> Outputs;
-    protected Block[] Inputs;
+    public ArrayList<Output> Outputs;
+    public Block[] Inputs;
     public Value[] InputValues;
     public double MyVal;
 

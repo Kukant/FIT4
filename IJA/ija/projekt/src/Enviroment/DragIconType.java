@@ -2,12 +2,13 @@ package Enviroment;
 
 
 public enum DragIconType {
+    _const,
     add,
     sub,
     mul,
     root,
     div,
-    result,
     pow,
-    _const
+    result
+
 }

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.IOException;
 
 import Others.Debugger;
+import Schemes.Scheme;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -28,6 +29,7 @@ public class RootLayout extends AnchorPane {
     AnchorPane right_pane;
     @FXML
     VBox left_pane;
+    
 
     private EventHandler mIconDragOverRoot=null;
     private EventHandler mIconDragDropped=null;
@@ -182,6 +184,9 @@ public class RootLayout extends AnchorPane {
                         node.relocateToPoint(
                                 new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
                         );
+
+                        //TODO: pridat blok do schematu
+
                     }
                 }
 

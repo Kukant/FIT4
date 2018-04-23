@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import Blocks.*;
 import Others.Debugger;
+import Others.Output;
+import com.sun.org.apache.bcel.internal.classfile.ConstantValue;
 import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,6 +20,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -50,7 +53,11 @@ public class DraggableNode extends AnchorPane {
 
     @FXML private Label title_bar;
     @FXML private Label close_button;
-    @FXML Text operatorTextField;
+
+    @FXML TextField ConstValue; // textove pole v bloku CONST
+    @FXML Text operatorTextField; // znak (operator) v matematickych blocich
+    @FXML Text Result; // Vysledna hodnota bloku RESULT
+
 
 
     @FXML AnchorPane left_link_handle;
@@ -167,11 +174,9 @@ public class DraggableNode extends AnchorPane {
                 block = new PowBlock();
                 break;
             case _const:
-                operatorTextField.setText("N");
-                block = new ConstBlock(0); // TODO
+                block = new ConstBlock(); // TODO: inicializacni metoda
                 break;
             case result:
-                operatorTextField.setText("=");
                 block = new ResultBlock();
                 break;
             default:
@@ -227,6 +232,7 @@ public class DraggableNode extends AnchorPane {
             @Override
             public void handle(MouseEvent event) {
                 AnchorPane parent  = (AnchorPane) self.getParent();
+                //for (Output o: self.block.Out) // TODO: UNBIND INPUTS AND OUTPUTS
                 parent.getChildren().remove(self);
 
                 //iterate each link id connected to this node

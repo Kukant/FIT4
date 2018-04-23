@@ -23,8 +23,8 @@ public class SchemeTests {
     public void save() {
         Scheme newScheme = new Scheme();
         Block addBlock = new AddBlock();
-        Block constBlock1 = new ConstBlock(1);
-        Block constBlock2 = new ConstBlock(1);
+        Block constBlock1 = new ConstBlock();
+        Block constBlock2 = new ConstBlock();
         Block resultBlock = new ResultBlock();
 
         newScheme.Blocks.addAll(Arrays.asList(addBlock, constBlock1, constBlock2, resultBlock));
