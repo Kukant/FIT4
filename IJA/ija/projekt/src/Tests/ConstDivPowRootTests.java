@@ -17,7 +17,6 @@ public class ConstDivPowRootTests {
     @Before
     public void setUp() {
         Const = new ConstBlock();
-        Const.Calculate(9.9999);
         Div = new DivBlock();
         Pow = new PowBlock();
         Root = new RootBlock();
@@ -30,7 +29,7 @@ public class ConstDivPowRootTests {
      */
     @Test
     public void ConstTest() {
-        Assert.assertEquals(9.9999, Const.MyVal, 0);
+        Assert.assertEquals(9.9999, Const.MyVal.val, 0);
     }
 
     /**

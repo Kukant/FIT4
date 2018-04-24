@@ -10,5 +10,4 @@ public enum DragIconType {
     div,
     pow,
     result
-
 }

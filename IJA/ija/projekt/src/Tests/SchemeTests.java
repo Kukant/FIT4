@@ -66,7 +66,7 @@ public class SchemeTests {
         }
 
         Assert.assertNotNull(scheme);
-        Assert.assertEquals(1, scheme.Blocks.get(1).MyVal, 0.01);
+        Assert.assertEquals(1, scheme.Blocks.get(1).MyVal.val, 0.01);
     }
 
 }

@@ -8,10 +8,11 @@ abstract public class Block implements java.io.Serializable{
     public ArrayList<Output> Outputs;
     public Block[] Inputs;
     public Value[] InputValues;
-    public double MyVal;
+    public Value MyVal;
 
     public Block() {
         this.Outputs = new ArrayList<>();
+        MyVal = new Value(0);
     }
 
     /**
@@ -40,6 +41,7 @@ abstract public class Block implements java.io.Serializable{
     public int BindInput(Block b, int Index){
         if (this.Inputs[Index] != null) {
             Debugger.log("Trying to override already connected input.");
+            return 1;
         }
         this.Inputs[Index] = b;
         return 0;
@@ -84,20 +86,31 @@ abstract public class Block implements java.io.Serializable{
     /**
      * Manager will call this function on every Block until all blocks have a value.
      */
-    public void SendVal(){
+    public int SendVal(){
+        if (this.MyVal.defined) {
+            return 1;
+        }
+
         boolean AllDefined = true;
         for(Value v: this.InputValues) {
-            if (!v.defined) {
+            if (v == null || !v.defined) {
                 AllDefined = false;
                 break;
             }
         }
 
+
         if (AllDefined) {
-            this.MyVal = Calculate();
+            Debugger.log(this.getClass().getSimpleName() + ": My value is: " + Calculate() + " Outpus num: " + this.Outputs.size());
+            this.MyVal.val = Calculate();
+            this.MyVal.defined = true;
             for (Output output : this.Outputs ) {
-                output.block.InputValues[output.Index] = new Value(this.MyVal, true);
+                output.block.InputValues[output.Index] = new Value(this.MyVal.val, true);
             }
+            return 0;
+        } else {
+            return 1;
         }
+
     }
 }

@@ -111,13 +111,15 @@ public class NodeLink extends AnchorPane {
             if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mousePosY){ // jedna se o spodni (druhy vstup)
                index = 1;
             }
-
         }
 
-        source.block.BindOutput(target.block,index);
-        target.block.BindInput(source.block,index);
+        int ret1 = source.block.BindOutput(target.block,index);
+        int ret2 = target.block.BindInput(source.block,index);
 
-
+        if (ret1 != 0 || ret2 != 0) {
+            // probably trying to bind already binded output
+            return;
+        }
 
 
         node_link.startXProperty().bind(
@@ -127,12 +129,10 @@ public class NodeLink extends AnchorPane {
                 Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0) + 10));
 
         if (target.inputsNumber == 1) {
-            Debugger.log("one input");
             node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), 0));
             node_link.endYProperty().bind( Bindings.add(target.layoutYProperty(), 50));
 
         } else if (target.inputsNumber == 2){ // two inputs
-            Debugger.log("two inputs");
             if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mousePosY) {
                 node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(25), (target.getWidth() / 2.0) ));
             } else {

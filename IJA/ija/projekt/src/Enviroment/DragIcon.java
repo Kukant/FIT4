@@ -62,7 +62,7 @@ public class DragIcon extends AnchorPane {
                 operatorTextField.setText("\u221A");
                 break;
             case pow:
-                operatorTextField.setText("+");
+                operatorTextField.setText("^");
                 break;
             case _const:
                 operatorTextField.setText("N");

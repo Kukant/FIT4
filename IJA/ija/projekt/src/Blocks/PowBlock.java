@@ -7,7 +7,7 @@ public class PowBlock extends Block {
     public PowBlock() {
         super();
         this.Inputs = new Block[2];
-        this.InputValues = new Value[2];
+        this.InputValues = new Value[]{new Value(0), new Value(0)};
     }
 
     @Override

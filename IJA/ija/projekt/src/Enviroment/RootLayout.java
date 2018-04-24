@@ -3,14 +3,19 @@ package Enviroment;
 import java.awt.*;
 import java.io.IOException;
 
+import Blocks.ConstBlock;
+import Blocks.ResultBlock;
 import Others.Debugger;
 import Schemes.Scheme;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -20,21 +25,24 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
+import javax.xml.transform.Result;
+
 
 public class RootLayout extends AnchorPane {
 
-    @FXML
-    SplitPane base_pane;
-    @FXML
-    AnchorPane right_pane;
-    @FXML
-    VBox left_pane;
-    
+    @FXML SplitPane base_pane;
+    @FXML AnchorPane right_pane;
+    @FXML VBox left_pane;
+    @FXML javafx.scene.control.Button CalculateButton;
+    @FXML Button DebugButton;
 
     private EventHandler mIconDragOverRoot=null;
     private EventHandler mIconDragDropped=null;
     private EventHandler mIconDragOverRightPane=null;
     private DragIcon mDragOverIcon = null;
+
+    // main scheme used to store list of all blocks
+    public Scheme scheme = new Scheme();
 
     public RootLayout() {
 
@@ -46,8 +54,7 @@ public class RootLayout extends AnchorPane {
         fxmlLoader.setController(this);
 
         try {
-            fxmlLoader.load(); // vola .initialize
-
+            fxmlLoader.load();
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
@@ -76,6 +83,7 @@ public class RootLayout extends AnchorPane {
         }
 
         buildDragHandlers();
+        buildButtonHandlers();
     }
 
 
@@ -145,13 +153,10 @@ public class RootLayout extends AnchorPane {
 
                 mDragOverIcon.setVisible(false);
 
-                DragContainer container =
-                        (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
+                DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 
                 if (container != null) {
                     if (container.getValue("scene_coords") != null) {
-
-                        Debugger.log(container.getValue("block_type"));
 
                         DraggableNodeType draggableNodeType;
                         String blockType = container.getValue("block_type");
@@ -162,6 +167,7 @@ public class RootLayout extends AnchorPane {
                             case "/":
                             case "\u221A":
                             case "+":
+                            case "^":
                                 draggableNodeType = DraggableNodeType.TwoInputs;
                                 break;
                             case "N":
@@ -185,7 +191,7 @@ public class RootLayout extends AnchorPane {
                                 new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
                         );
 
-                        //TODO: pridat blok do schematu
+                        scheme.Blocks.add(node.block);
 
                     }
                 }
@@ -196,12 +202,6 @@ public class RootLayout extends AnchorPane {
                 if (container != null) {
                     if (container.getValue("type") != null)
                         System.out.println ("Moved node " + container.getValue("type"));
-                }
-
-                container = (DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
-
-                if (container != null) {
-                    System.out.println(container.getData());
                 }
 
                 //AddLink drag operation
@@ -281,5 +281,39 @@ public class RootLayout extends AnchorPane {
                 event.consume();
             }
         });
+    }
+
+    public void buildButtonHandlers() {
+        CalculateButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent event) {
+                Debugger.log("Calculate button clicked");
+            }
+        });
+
+        DebugButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent event) {
+                Debugger.log("Debug button clicked");
+                scheme.CalculateOnce();
+                UpdateBlockPrintedValues();
+            }
+        });
+    }
+
+    private void UpdateBlockPrintedValues() {
+
+        for(Node node: right_pane.getChildren()){
+            if (node instanceof DraggableNode) {
+                DraggableNode dn = (DraggableNode) node;
+                if (dn.block.MyVal.defined) {
+                    if (dn.block instanceof ResultBlock) {
+                        dn.Result.setText(String.valueOf(dn.block.MyVal.val));
+                    } else if ( dn.block instanceof ConstBlock) {
+
+                    } else {
+                        dn.valueDisplay.setText(String.valueOf(dn.block.MyVal.val));
+                    }
+                }
+            }
+        }
     }
 }

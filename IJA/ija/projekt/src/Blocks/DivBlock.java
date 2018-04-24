@@ -6,7 +6,7 @@ public class DivBlock extends Block {
     public DivBlock() {
         super();
         this.Inputs = new Block[2];
-        this.InputValues = new Value[2];
+        this.InputValues = new Value[]{new Value(0), new Value(0)};
     }
 
     @Override

@@ -5,7 +5,7 @@ import Others.Value;
 public class AddBlock extends Block {
     public AddBlock() {
         super();
-        this.InputValues = new Value[2];
+        this.InputValues = new Value[]{new Value(0), new Value(0)};
         this.Inputs = new Block[2];
     }
 

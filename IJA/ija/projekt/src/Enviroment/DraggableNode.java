@@ -14,11 +14,13 @@ import com.sun.org.apache.bcel.internal.classfile.ConstantValue;
 import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
@@ -57,8 +59,7 @@ public class DraggableNode extends AnchorPane {
     @FXML TextField ConstValue; // textove pole v bloku CONST
     @FXML Text operatorTextField; // znak (operator) v matematickych blocich
     @FXML Text Result; // Vysledna hodnota bloku RESULT
-
-
+    @FXML Text valueDisplay; // Aktualni hodnota bloku
 
     @FXML AnchorPane left_link_handle;
     @FXML AnchorPane right_link_handle;
@@ -118,6 +119,7 @@ public class DraggableNode extends AnchorPane {
 
         buildNodeDragHandlers();
         buildLinkDragHandlers();
+        RegisterOtherHandlers();
 
         //left_link_handle.setOnDragDetected(mLinkHandleDragDetected);
         if (right_link_handle != null)
@@ -170,11 +172,11 @@ public class DraggableNode extends AnchorPane {
                 block = new RootBlock();
                 break;
             case pow:
-                operatorTextField.setText("+");
+                operatorTextField.setText("^");
                 block = new PowBlock();
                 break;
             case _const:
-                block = new ConstBlock(); // TODO: inicializacni metoda
+                block = new ConstBlock();
                 break;
             case result:
                 block = new ResultBlock();
@@ -231,9 +233,26 @@ public class DraggableNode extends AnchorPane {
 
             @Override
             public void handle(MouseEvent event) {
+
+                // TODO some exceptions are happening here
+                if (! (self.block instanceof ResultBlock))
+                    for (Output o: self.block.Outputs) {
+                        if (o != null)
+                            self.block.UnbindOutput(o.block, o.Index);
+                    }
+                if (! (self.block instanceof ConstBlock))
+                    for (int i = 0; i < self.block.Inputs.length ; i++) {
+                        if (self.block.Inputs[i] != null)
+                            self.block.UnbindInput(self.block.Inputs[i], i);
+                    }
+
+
+
                 AnchorPane parent  = (AnchorPane) self.getParent();
-                //for (Output o: self.block.Out) // TODO: UNBIND INPUTS AND OUTPUTS
                 parent.getChildren().remove(self);
+                RootLayout rootLayout = (RootLayout) parent.getParent().getParent().getParent();
+                rootLayout.scheme.Blocks.remove(self.block);
+
 
                 //iterate each link id connected to this node
                 //find it's corresponding component in the right-hand
@@ -316,7 +335,7 @@ public class DraggableNode extends AnchorPane {
                 mDragLink.setVisible(false);
 
                 Point2D p = new Point2D(
-                        getLayoutX() + (getWidth() / 2.0),
+                        getLayoutX() + getWidth(),
                         getLayoutY() + (getHeight() / 2.0)
                 );
 
@@ -363,7 +382,6 @@ public class DraggableNode extends AnchorPane {
 
                 //pass the UUID of the target node for later lookup
                 container.addData("target", getId());
-                Debugger.log("event.getScreenY() " + event.getScreenY() + "event.getSceneY()" + event.getSceneY() + "event.getY()" + event.getY());
                 container.addData("mouse_y", event.getSceneY());
                 content.put(DragContainer.AddLink, container);
 
@@ -410,6 +428,26 @@ public class DraggableNode extends AnchorPane {
         };
 
     }
+
+    public void RegisterOtherHandlers() {
+        if (ConstValue != null)
+        ConstValue.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    ConstValue.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+
+                ConstBlock thisBlock = (ConstBlock) block;
+                String textVal = ConstValue.getText();
+                if (!textVal.isEmpty()) {
+                    thisBlock.setConstVal(Double.parseDouble(textVal));
+                }
+            }
+        });
+    }
+
 
     public void registerLink(String linkId) {
         mLinkIds.add(linkId);
