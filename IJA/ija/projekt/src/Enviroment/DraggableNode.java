@@ -2,10 +2,7 @@ package Enviroment;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.UUID;
+import java.util.*;
 
 import Blocks.*;
 import Others.Debugger;
@@ -234,19 +231,43 @@ public class DraggableNode extends AnchorPane {
             @Override
             public void handle(MouseEvent event) {
 
-                // TODO some exceptions are happening here
+//                Debugger.log("Outputs before delete: " + self.block.Outputs);
+//                Debugger.log("Inputs before delete:");
+//                for (Block i : self.block.Inputs) {
+//                    if (i != null)
+//                        Debugger.log(" " +i);
+//                }
+                List<Output> toRemove = new ArrayList<>(); // pole outputs ktere budeme mazat
+
                 if (! (self.block instanceof ResultBlock))
-                    for (Output o: self.block.Outputs) {
-                        if (o != null)
-                            self.block.UnbindOutput(o.block, o.Index);
+
+                    for (Output o : self.block.Outputs) {
+                        if (o != null){
+                            toRemove.add(o); //pridame do pole mazanych
+                        }
                     }
+
+                    for(Output o: toRemove){ // mazeme vystupy
+                        o.block.UnbindInput(o.Index);
+                        self.block.UnbindOutput(o.block, o.Index);
+                    }
+
+
+
                 if (! (self.block instanceof ConstBlock))
                     for (int i = 0; i < self.block.Inputs.length ; i++) {
                         if (self.block.Inputs[i] != null)
-                            self.block.UnbindInput(self.block.Inputs[i], i);
+                            self.block.Inputs[i].UnbindInput(i);
+                            self.block.UnbindOutput(self.block,i);
                     }
 
 
+//                Debugger.log("Outputs after delete: " + self.block.Outputs);
+//                Debugger.log("Inputs before delete:");
+//                for (Block i : self.block.Inputs) {
+//                    if (i != null)
+//                        Debugger.log(" " +i);
+//                }
 
                 AnchorPane parent  = (AnchorPane) self.getParent();
                 parent.getChildren().remove(self);

@@ -59,20 +59,19 @@ abstract public class Block implements java.io.Serializable{
                 return;
             }
         }
-        Debugger.log("Block was not unbinded, as it is not in the Outputs list");
+        //Debugger.log("Block was not unbinded, as it is not in the Outputs list");
     }
 
     /**
      * Manager will call this when Block will be destroyed.
-     * @param b
      * @param Index
-     * @return
      */
-    public int UnbindInput(Block b, int Index){
-        this.Inputs[Index].UnbindOutput(b, Index);
+    public void UnbindInput(int Index){
+
         this.Inputs[Index] = null;
 
-        return 0;
+
+        return;
     }
 
     /**
