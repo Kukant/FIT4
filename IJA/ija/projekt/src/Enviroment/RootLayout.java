@@ -1,11 +1,10 @@
 package Enviroment;
 
-import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 
-import Blocks.ConstBlock;
-import Blocks.ResultBlock;
+import Blocks.*;
 import Others.Debugger;
+import Others.Output;
 import Schemes.Scheme;
 import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import javafx.event.ActionEvent;
@@ -16,6 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -35,6 +35,8 @@ public class RootLayout extends AnchorPane {
     @FXML VBox left_pane;
     @FXML javafx.scene.control.Button CalculateButton;
     @FXML Button DebugButton;
+    @FXML MenuItem SaveBtn;
+    @FXML MenuItem LoadBtn;
 
     private EventHandler mIconDragOverRoot=null;
     private EventHandler mIconDragDropped=null;
@@ -131,7 +133,6 @@ public class RootLayout extends AnchorPane {
                         (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 
                 container.addData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
-                container.addData("block_type", mDragOverIcon.operatorTextField.getText());
 
                 ClipboardContent content = new ClipboardContent();
                 content.put(DragContainer.AddNode, container);
@@ -158,31 +159,7 @@ public class RootLayout extends AnchorPane {
                 if (container != null) {
                     if (container.getValue("scene_coords") != null) {
 
-                        DraggableNodeType draggableNodeType;
-                        String blockType = container.getValue("block_type");
-                        Debugger.log("block type: " + blockType);
-                        switch (blockType) {
-                            case "-":
-                            case "\u00D7":
-                            case "/":
-                            case "\u221A":
-                            case "+":
-                            case "^":
-                                draggableNodeType = DraggableNodeType.TwoInputs;
-                                break;
-                            case "N":
-                                draggableNodeType = DraggableNodeType.Constant;
-                                break;
-                            case "=":
-                                draggableNodeType = DraggableNodeType.Result;
-                                break;
-                            default:
-                                throw new Error("Unknown draggableNodeType string :" + blockType);
-                        }
-
-                        DraggableNode node = new DraggableNode(draggableNodeType);
-
-                        node.setType(DragIconType.valueOf(container.getValue("type")));
+                        DraggableNode node = new DraggableNode(DragIconType.valueOf(container.getValue("type")));
                         right_pane.getChildren().add(node);
 
                         Point2D cursorPoint = container.getValue("scene_coords");
@@ -297,6 +274,101 @@ public class RootLayout extends AnchorPane {
                 UpdateBlockPrintedValues();
             }
         });
+
+        SaveBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Debugger.log("Save button clicked");
+                SaveScheme();
+            }
+        });
+
+        LoadBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Debugger.log("Load button clicked");
+                LoadScheme();
+            }
+        });
+
+
+
+    }
+
+    private void SaveScheme() {
+        for (Node node: right_pane.getChildren()) {
+            if (node.getClass() != DraggableNode.class)
+                continue;
+            DraggableNode dnode = (DraggableNode) node;
+            dnode.block.parentPosX = dnode.localToScene(node.getBoundsInLocal()).getMinX();
+            dnode.block.parentPosY = dnode.localToScene(node.getBoundsInLocal()).getMinY();
+        }
+        // TODO get filename
+        String filename = "schemeSaveTest";
+        try {
+            FileOutputStream fileOut = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.scheme);
+            out.close();
+            fileOut.close();
+            Debugger.log("Serialized data is saved in " + filename + ", pwd: " + System.getProperty("user.dir"));
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    private void LoadScheme() {
+        // TODO get filename
+        String filename = "schemeSaveTest";
+        Scheme scheme = null;
+        try {
+            FileInputStream fileIn = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            scheme = (Scheme) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Scheme class not found");
+            c.printStackTrace();
+        }
+
+        if (scheme == null)
+            throw new Error("Scheme was not loaded correctly");
+
+        this.scheme = scheme;
+
+        // clear the right pane
+        right_pane.getChildren().clear();
+
+        // generate new nodes
+        for (Block block : scheme.Blocks) {
+            DraggableNode node = new DraggableNode(BlockToDragIconType(block.getClass()));
+            block.parent = node;
+            right_pane.getChildren().add(node);
+            node.relocateToPoint( new Point2D(block.parentPosX, block.parentPosY));
+        }
+
+        for (Block block : scheme.Blocks) {
+            // generate new connections
+            for (Output out : block.Outputs) {
+                NodeLink link = new NodeLink();
+                right_pane.getChildren().add(0,link);
+                if (out.Index == 0) {
+                    link.bindEnds(block.parent, out.block.parent, -50000);
+                } else if (out.Index == 1){
+                    link.bindEnds(block.parent, out.block.parent, 50000);
+                } else {
+                    throw new Error("Unexpected Index");
+                }
+            }
+
+        }
+
+
+
+
     }
 
     private void UpdateBlockPrintedValues() {
@@ -315,5 +387,26 @@ public class RootLayout extends AnchorPane {
                 }
             }
         }
+    }
+
+    private DragIconType BlockToDragIconType(Class klasa) {
+        if (klasa == SubBlock.class )
+            return DragIconType.sub;
+        else if ( klasa == AddBlock.class)
+            return DragIconType.add;
+        else if ( klasa == DivBlock.class)
+            return DragIconType.div;
+        else if ( klasa == PowBlock.class)
+            return DragIconType.pow;
+        else if ( klasa == MulBlock.class)
+            return DragIconType.mul;
+        else if ( klasa == RootBlock.class)
+            return DragIconType.root;
+        else if (klasa == ConstBlock.class)
+            return DragIconType._const;
+        else if (klasa == ResultBlock.class)
+            return DragIconType.result;
+        else
+            throw new Error("Unknown draggableNodeType");
     }
 }

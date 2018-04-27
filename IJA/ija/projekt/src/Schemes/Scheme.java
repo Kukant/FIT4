@@ -19,12 +19,4 @@ public class Scheme implements java.io.Serializable{
             }
         }
     }
-
-    public void Serialize(){
-
-    }
-
-    public void Load(String filename){
-
-    }
 }

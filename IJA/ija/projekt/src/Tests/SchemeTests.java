@@ -28,6 +28,8 @@ public class SchemeTests {
         Block resultBlock = new ResultBlock();
 
         newScheme.Blocks.addAll(Arrays.asList(addBlock, constBlock1, constBlock2, resultBlock));
+        constBlock1.MyVal.val = 1;
+        constBlock2.MyVal.val = 1;
 
 
         constBlock1.BindOutput(addBlock, 0);
