@@ -257,8 +257,8 @@ public class DraggableNode extends AnchorPane {
                 if (! (self.block instanceof ConstBlock))
                     for (int i = 0; i < self.block.Inputs.length ; i++) {
                         if (self.block.Inputs[i] != null)
-                            self.block.Inputs[i].UnbindInput(i);
-                            self.block.UnbindOutput(self.block,i);
+                            self.block.Inputs[i].UnbindOutput(self.block, i);
+                            self.block.UnbindInput(i);
                     }
 
 
