@@ -287,14 +287,19 @@ public class RootLayout extends AnchorPane {
         CalculateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
                 Debugger.log("Calculate button clicked");
+                if(scheme.ValidateScheme()) {
+                    //TODO: scheme.Calculate();
+                }
             }
         });
 
         DebugButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
                 Debugger.log("Debug button clicked");
-                scheme.CalculateOnce();
-                UpdateBlockPrintedValues();
+                if(scheme.ValidateScheme()) {
+                    scheme.CalculateOnce();
+                    UpdateBlockPrintedValues();
+                }
             }
         });
     }
