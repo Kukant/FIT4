@@ -1,16 +1,13 @@
 package Enviroment;
 
-import java.awt.*;
 import java.io.IOException;
 
 import Blocks.ConstBlock;
 import Blocks.ResultBlock;
 import Others.Debugger;
 import Schemes.Scheme;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -18,15 +15,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
-import javax.xml.transform.Result;
 
 
 public class RootLayout extends AnchorPane {
@@ -291,7 +285,13 @@ public class RootLayout extends AnchorPane {
                 Debugger.log("Calculate button clicked");
                 WarningLine.setText(""); // smazani varovne zpravy
                 int validationResult =  scheme.ValidateScheme();
-                ValidationDisplay(validationResult);
+                if (validationResult == 0){
+                   scheme.Calculate();
+                   UpdateBlockPrintedValues();
+                }
+                else {
+                    ValidationMessage(validationResult);
+                }
             }
         });
 
@@ -300,18 +300,20 @@ public class RootLayout extends AnchorPane {
                 WarningLine.setText(""); // smazani varovne zpravy
                 Debugger.log("Debug button clicked");
                 int validationResult =  scheme.ValidateScheme();
-                ValidationDisplay(validationResult);
+                if (validationResult == 0){
+                    scheme.CalculateOnce();
+                    UpdateBlockPrintedValues();
+                }
+                else {
+                    ValidationMessage(validationResult);
+                }
             }
         });
     }
 
-    private void ValidationDisplay(int validationResult) {
-        if(validationResult == 0) { // validace uspesna
-            scheme.CalculateOnce();
-            UpdateBlockPrintedValues();
-        }
-        else{
-            switch (validationResult){
+    private void ValidationMessage(int validationResult) {
+
+        switch (validationResult){
                 case 1: //input error
                     WarningLine.setText("WARNING: UNATTACHED INPUTS FOUND!!!");
                     break;
@@ -323,10 +325,10 @@ public class RootLayout extends AnchorPane {
                 case 3: // cycle error
                     WarningLine.setText("WARNING: CYCLE DETECTED!!!");
                     break;
+
                 default:
                     break;
             }
-        }
     }
 
     private void UpdateBlockPrintedValues() {

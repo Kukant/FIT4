@@ -73,6 +73,15 @@ public class Scheme implements java.io.Serializable{
 
     }
 
+    public void Calculate() {
+        for (Block res : Blocks){ // pro kazdy blok
+            if (res instanceof ResultBlock){ // ktery je vysledkovym blokem
+
+                while (!res.MyVal.defined) CalculateOnce();  // pocitame dokud neni definovan pocitame
+            }
+        }
+    }
+
     public void CalculateOnce() {
         for (Block b: Blocks) {
             if  (b != null) {
