@@ -24,6 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 import javax.xml.transform.Result;
 
@@ -35,6 +36,7 @@ public class RootLayout extends AnchorPane {
     @FXML VBox left_pane;
     @FXML javafx.scene.control.Button CalculateButton;
     @FXML Button DebugButton;
+    @FXML Text WarningLine;
 
     private EventHandler mIconDragOverRoot=null;
     private EventHandler mIconDragDropped=null;
@@ -287,18 +289,37 @@ public class RootLayout extends AnchorPane {
         CalculateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
                 Debugger.log("Calculate button clicked");
-                if(scheme.ValidateScheme()) {
-                    //TODO: scheme.Calculate();
-                }
+//                if(scheme.ValidateScheme()) {
+//                    //TODO: scheme.Calculate();
+//                }
             }
         });
 
         DebugButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
+                WarningLine.setText(""); // smazani varovne zpravy
                 Debugger.log("Debug button clicked");
-                if(scheme.ValidateScheme()) {
+                int validationResult =  scheme.ValidateScheme();
+                if(validationResult == 0) {
                     scheme.CalculateOnce();
                     UpdateBlockPrintedValues();
+                }
+                else{
+                    switch (validationResult){
+                        case 1:
+                            WarningLine.setText("WARNING: UNATTACHED INPUTS FOUND!!!");
+                            break;
+
+                        case 2:
+                            WarningLine.setText("WARNING: UNATTACHED OUTPUTS FOUND!!!");
+                            break;
+
+                        case 3:
+                            WarningLine.setText("WARNING: CYCLE DETECTED!!!");
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         });
