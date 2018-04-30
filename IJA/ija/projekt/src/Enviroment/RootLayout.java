@@ -1,7 +1,9 @@
 package Enviroment;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
+import Blocks.Block;
 import Blocks.ConstBlock;
 import Blocks.ResultBlock;
 import Others.Debugger;
@@ -286,8 +288,15 @@ public class RootLayout extends AnchorPane {
                 WarningLine.setText(""); // smazani varovne zpravy
                 int validationResult =  scheme.ValidateScheme();
                 if (validationResult == 0){
-                   scheme.Calculate();
-                   UpdateBlockPrintedValues();
+                    for (Block res : scheme.Blocks){ // pro kazdy blok
+                        if (res instanceof ResultBlock){ // ktery je vysledkovym blokem
+
+                            while (!res.MyVal.defined) {
+                                scheme.CalculateOnce();  // pocitame dokud neni definovan pocitame
+                                UpdateBlockPrintedValues();
+                            }
+                        }
+                    }
                 }
                 else {
                     ValidationMessage(validationResult);
