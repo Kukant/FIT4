@@ -24,6 +24,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import javax.xml.transform.Result;
 
@@ -43,6 +45,8 @@ public class RootLayout extends AnchorPane {
     private EventHandler mIconDragOverRightPane=null;
     private DragIcon mDragOverIcon = null;
 
+    Stage stage;
+
     // main scheme used to store list of all blocks
     public Scheme scheme = new Scheme();
 
@@ -55,11 +59,15 @@ public class RootLayout extends AnchorPane {
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 
+
         try {
             fxmlLoader.load();
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
+
+
     }
 
 
@@ -215,7 +223,7 @@ public class RootLayout extends AnchorPane {
                         }
 
                         if (source != null && target != null)
-                            link.bindEnds(source, target, container.getValue("mouse_y"));
+                            link.bindEnds(source, target, container.getValue("mouse_y"), true);
                     }
 
                 }
@@ -271,6 +279,7 @@ public class RootLayout extends AnchorPane {
             @Override public void handle(ActionEvent event) {
                 Debugger.log("Debug button clicked");
                 Debugger.log(scheme.Blocks.size());
+                Debugger.log(scheme.Blocks.get(0).MyVal.defined + " " + scheme.Blocks.get(0).MyVal.val);
                 scheme.CalculateOnce();
                 UpdateBlockPrintedValues();
             }
@@ -304,23 +313,37 @@ public class RootLayout extends AnchorPane {
             dnode.block.parentPosX = dnode.localToScene(node.getBoundsInLocal()).getMinX();
             dnode.block.parentPosY = dnode.localToScene(node.getBoundsInLocal()).getMinY();
         }
-        // TODO get filename
-        String filename = "schemeSaveTest";
+
+        stage = (Stage) base_pane.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Set your scheme name");
+        File selectedFile = fileChooser.showSaveDialog(stage);
+        if (selectedFile == null)
+            return;
+
+        String filename = selectedFile.getAbsolutePath();
+
         try {
             FileOutputStream fileOut = new FileOutputStream(filename);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.scheme);
             out.close();
             fileOut.close();
-            Debugger.log("Serialized data is saved in " + filename + ", pwd: " + System.getProperty("user.dir"));
+            Debugger.log("Serialized data is saved in " + filename);
         } catch (IOException i) {
             i.printStackTrace();
         }
     }
 
     private void LoadScheme() {
-        // TODO get filename
-        String filename = "schemeSaveTest";
+        stage = (Stage) base_pane.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open scheme file");
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile == null)
+            return;
+        String filename = selectedFile.getAbsolutePath();
+
         Scheme scheme = null;
         try {
             FileInputStream fileIn = new FileInputStream(filename);
@@ -346,6 +369,12 @@ public class RootLayout extends AnchorPane {
         // generate new nodes
         for (Block block : scheme.Blocks) {
             DraggableNode node = new DraggableNode(BlockToDragIconType(block.getClass()));
+            if (block.getClass() == ConstBlock.class) {
+                int n = (int) block.InputValues[0].val;
+                node.ConstValue.setText(String.valueOf(n));
+            }
+
+            node.block = block;
             block.parent = node;
             right_pane.getChildren().add(node);
             node.relocateToPoint( new Point2D(block.parentPosX, block.parentPosY));
@@ -358,15 +387,17 @@ public class RootLayout extends AnchorPane {
                 NodeLink link = new NodeLink();
                 right_pane.getChildren().add(0,link);
                 if (out.Index == 0) {
-                    link.bindEnds(block.parent, out.block.parent, -50000);
+                    link.bindEnds(block.parent, out.block.parent, -50000, false);
                 } else if (out.Index == 1){
-                    link.bindEnds(block.parent, out.block.parent, 50000);
+                    link.bindEnds(block.parent, out.block.parent, 50000, false);
                 } else {
                     throw new Error("Unexpected Index");
                 }
             }
 
         }
+
+        UpdateBlockPrintedValues();
 
 
 
@@ -376,6 +407,7 @@ public class RootLayout extends AnchorPane {
     private void UpdateBlockPrintedValues() {
 
         for(Node node: right_pane.getChildren()){
+
             if (node instanceof DraggableNode) {
                 DraggableNode dn = (DraggableNode) node;
                 if (dn.block.MyVal.defined) {

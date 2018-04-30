@@ -103,7 +103,7 @@ public class NodeLink extends AnchorPane {
         node_link.setEndY(endPoint.getY());
     }
 
-    public void bindEnds (DraggableNode source, DraggableNode target, double mousePosY) {
+    public void bindEnds (DraggableNode source, DraggableNode target, double mousePosY, boolean bind) {
 
         int index = 0; // deaultni hodnota, pokud je jenom jeden vstup ma index 0
 
@@ -112,13 +112,14 @@ public class NodeLink extends AnchorPane {
                index = 1;
             }
         }
+        if (bind){
+            int ret1 = source.block.BindOutput(target.block,index);
+            int ret2 = target.block.BindInput(source.block,index);
 
-        int ret1 = source.block.BindOutput(target.block,index);
-        int ret2 = target.block.BindInput(source.block,index);
-
-        if (ret1 != 0 || ret2 != 0) {
-            // probably trying to bind already binded output
-            return;
+            if (ret1 != 0 || ret2 != 0) {
+                // probably trying to bind already binded output
+                return;
+            }
         }
 
         double targetWidth = target.localToScene(target.getBoundsInLocal()).getWidth();
