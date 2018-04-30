@@ -289,9 +289,9 @@ public class RootLayout extends AnchorPane {
         CalculateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
                 Debugger.log("Calculate button clicked");
-//                if(scheme.ValidateScheme()) {
-//                    //TODO: scheme.Calculate();
-//                }
+                WarningLine.setText(""); // smazani varovne zpravy
+                int validationResult =  scheme.ValidateScheme();
+                ValidationDisplay(validationResult);
             }
         });
 
@@ -300,29 +300,33 @@ public class RootLayout extends AnchorPane {
                 WarningLine.setText(""); // smazani varovne zpravy
                 Debugger.log("Debug button clicked");
                 int validationResult =  scheme.ValidateScheme();
-                if(validationResult == 0) {
-                    scheme.CalculateOnce();
-                    UpdateBlockPrintedValues();
-                }
-                else{
-                    switch (validationResult){
-                        case 1:
-                            WarningLine.setText("WARNING: UNATTACHED INPUTS FOUND!!!");
-                            break;
-
-                        case 2:
-                            WarningLine.setText("WARNING: UNATTACHED OUTPUTS FOUND!!!");
-                            break;
-
-                        case 3:
-                            WarningLine.setText("WARNING: CYCLE DETECTED!!!");
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                ValidationDisplay(validationResult);
             }
         });
+    }
+
+    private void ValidationDisplay(int validationResult) {
+        if(validationResult == 0) { // validace uspesna
+            scheme.CalculateOnce();
+            UpdateBlockPrintedValues();
+        }
+        else{
+            switch (validationResult){
+                case 1: //input error
+                    WarningLine.setText("WARNING: UNATTACHED INPUTS FOUND!!!");
+                    break;
+
+                case 2: //output error
+                    WarningLine.setText("WARNING: UNATTACHED OUTPUTS FOUND!!!");
+                    break;
+
+                case 3: // cycle error
+                    WarningLine.setText("WARNING: CYCLE DETECTED!!!");
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void UpdateBlockPrintedValues() {
