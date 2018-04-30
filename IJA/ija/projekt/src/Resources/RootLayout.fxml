@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
@@ -53,5 +54,10 @@
             <AnchorPane fx:id="right_pane" />
          </items>
       </SplitPane>
+      <Text fx:id="WarningLine" fill="RED" layoutX="425.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="17.0" />
+         </font>
+      </Text>
    </children>
 </fx:root>
