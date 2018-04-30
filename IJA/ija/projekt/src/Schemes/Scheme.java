@@ -1,6 +1,8 @@
 package Schemes;
 
 import Blocks.Block;
+import Others.Debugger;
+
 import java.util.ArrayList;
 
 public class Scheme implements java.io.Serializable{
@@ -11,6 +13,7 @@ public class Scheme implements java.io.Serializable{
     }
     
     public void CalculateOnce() {
+
         for (Block b: Blocks) {
             if  (b != null) {
                 int ret = b.SendVal();

@@ -270,6 +270,7 @@ public class RootLayout extends AnchorPane {
         DebugButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
                 Debugger.log("Debug button clicked");
+                Debugger.log(scheme.Blocks.size());
                 scheme.CalculateOnce();
                 UpdateBlockPrintedValues();
             }
@@ -348,6 +349,7 @@ public class RootLayout extends AnchorPane {
             block.parent = node;
             right_pane.getChildren().add(node);
             node.relocateToPoint( new Point2D(block.parentPosX, block.parentPosY));
+
         }
 
         for (Block block : scheme.Blocks) {
