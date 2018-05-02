@@ -36,7 +36,7 @@ public class Scheme implements java.io.Serializable{
 
 
 
-            //kontrola pripojeni vsech outputs
+            //kontrola pripojeni vsech inputs
             if(!(b instanceof ConstBlock)) {
                 for (Block in : b.Inputs) {
                     if (in == null) {
