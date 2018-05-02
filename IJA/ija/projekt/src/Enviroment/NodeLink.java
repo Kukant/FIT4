@@ -103,7 +103,7 @@ public class NodeLink extends AnchorPane {
         node_link.setEndY(endPoint.getY());
     }
 
-    public void bindEnds (DraggableNode source, DraggableNode target, double mousePosY) {
+    public void bindEnds (DraggableNode source, DraggableNode target, double mousePosY, boolean bind) {
 
         int index = 0; // deaultni hodnota, pokud je jenom jeden vstup ma index 0
 
@@ -112,31 +112,35 @@ public class NodeLink extends AnchorPane {
                index = 1;
             }
         }
+        if (bind){
+            int ret1 = source.block.BindOutput(target.block,index);
+            int ret2 = target.block.BindInput(source.block,index);
 
-        int ret1 = source.block.BindOutput(target.block,index);
-        int ret2 = target.block.BindInput(source.block,index);
-
-        if (ret1 != 0 || ret2 != 0) {
-            // probably trying to bind already binded output
-            return;
+            if (ret1 != 0 || ret2 != 0) {
+                // probably trying to bind already binded output
+                return;
+            }
         }
 
+        double targetWidth = target.localToScene(target.getBoundsInLocal()).getWidth();
+        double targetHeight = target.localToScene(target.getBoundsInLocal()).getHeight();
 
-        node_link.startXProperty().bind(
-                Bindings.add(source.layoutXProperty(), source.getWidth()));
+        double sourceWidth = source.localToScene(source.getBoundsInLocal()).getWidth() - 9;
+        double sourceHeight = source.localToScene(source.getBoundsInLocal()).getHeight();
+        
+        node_link.startXProperty().bind( Bindings.add(source.layoutXProperty(), sourceWidth));
 
-        node_link.startYProperty().bind(
-                Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0) + 10));
+        node_link.startYProperty().bind( Bindings.add(source.layoutYProperty(), (sourceHeight/ 2.0) + 5));
 
         if (target.inputsNumber == 1) {
             node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), 0));
-            node_link.endYProperty().bind( Bindings.add(target.layoutYProperty(), 50));
+            node_link.endYProperty().bind( Bindings.add(target.layoutYProperty(), targetHeight / 2.0));
 
         } else if (target.inputsNumber == 2){ // two inputs
             if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mousePosY) {
-                node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(25), (target.getWidth() / 2.0) ));
+                node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(15), (targetHeight / 2.0) ));
             } else {
-                node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(-5), (target.getWidth() / 2.0) ));
+                node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(-15), (targetHeight / 2.0) ));
             }
 
             node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), 0));
@@ -146,7 +150,7 @@ public class NodeLink extends AnchorPane {
 
 
         source.registerLink (getId());
-        target.registerLink (getId()); //TODO: BIND LINK
+        target.registerLink (getId());
 
     }
 }

@@ -1,12 +1,10 @@
 package Enviroment;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.io.*;
 
-import Blocks.Block;
-import Blocks.ConstBlock;
-import Blocks.ResultBlock;
+import Blocks.*;
 import Others.Debugger;
+import Others.Output;
 import Schemes.Scheme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -22,6 +21,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
 
@@ -33,11 +34,15 @@ public class RootLayout extends AnchorPane {
     @FXML javafx.scene.control.Button CalculateButton;
     @FXML Button DebugButton;
     @FXML Text WarningLine;
+    @FXML MenuItem SaveBtn;
+    @FXML MenuItem LoadBtn;
 
     private EventHandler mIconDragOverRoot=null;
     private EventHandler mIconDragDropped=null;
     private EventHandler mIconDragOverRightPane=null;
     private DragIcon mDragOverIcon = null;
+
+    Stage stage;
 
     // main scheme used to store list of all blocks
     public Scheme scheme = new Scheme();
@@ -51,11 +56,15 @@ public class RootLayout extends AnchorPane {
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 
+
         try {
             fxmlLoader.load();
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
+
+
     }
 
 
@@ -129,7 +138,6 @@ public class RootLayout extends AnchorPane {
                         (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 
                 container.addData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
-                container.addData("block_type", mDragOverIcon.operatorTextField.getText());
 
                 ClipboardContent content = new ClipboardContent();
                 content.put(DragContainer.AddNode, container);
@@ -156,31 +164,7 @@ public class RootLayout extends AnchorPane {
                 if (container != null) {
                     if (container.getValue("scene_coords") != null) {
 
-                        DraggableNodeType draggableNodeType;
-                        String blockType = container.getValue("block_type");
-                        Debugger.log("block type: " + blockType);
-                        switch (blockType) {
-                            case "-":
-                            case "\u00D7":
-                            case "/":
-                            case "\u221A":
-                            case "+":
-                            case "^":
-                                draggableNodeType = DraggableNodeType.TwoInputs;
-                                break;
-                            case "N":
-                                draggableNodeType = DraggableNodeType.Constant;
-                                break;
-                            case "=":
-                                draggableNodeType = DraggableNodeType.Result;
-                                break;
-                            default:
-                                throw new Error("Unknown draggableNodeType string :" + blockType);
-                        }
-
-                        DraggableNode node = new DraggableNode(draggableNodeType);
-
-                        node.setType(DragIconType.valueOf(container.getValue("type")));
+                        DraggableNode node = new DraggableNode(DragIconType.valueOf(container.getValue("type")));
                         right_pane.getChildren().add(node);
 
                         Point2D cursorPoint = container.getValue("scene_coords");
@@ -236,7 +220,7 @@ public class RootLayout extends AnchorPane {
                         }
 
                         if (source != null && target != null)
-                            link.bindEnds(source, target, container.getValue("mouse_y"));
+                            link.bindEnds(source, target, container.getValue("mouse_y"), true);
                     }
 
                 }
@@ -316,8 +300,29 @@ public class RootLayout extends AnchorPane {
                 else {
                     ValidationMessage(validationResult);
                 }
+                Debugger.log(scheme.Blocks.size());
+                Debugger.log(scheme.Blocks.get(0).MyVal.defined + " " + scheme.Blocks.get(0).MyVal.val);
             }
         });
+
+        SaveBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Debugger.log("Save button clicked");
+                SaveScheme();
+            }
+        });
+
+        LoadBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Debugger.log("Load button clicked");
+                LoadScheme();
+            }
+        });
+
+
+
     }
 
     private void ValidationMessage(int validationResult) {
@@ -340,9 +345,109 @@ public class RootLayout extends AnchorPane {
             }
     }
 
+    private void SaveScheme() {
+        for (Node node: right_pane.getChildren()) {
+            if (node.getClass() != DraggableNode.class)
+                continue;
+            DraggableNode dnode = (DraggableNode) node;
+            dnode.block.parentPosX = dnode.localToScene(node.getBoundsInLocal()).getMinX();
+            dnode.block.parentPosY = dnode.localToScene(node.getBoundsInLocal()).getMinY();
+        }
+
+        stage = (Stage) base_pane.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Set your scheme name");
+        File selectedFile = fileChooser.showSaveDialog(stage);
+        if (selectedFile == null)
+            return;
+
+        String filename = selectedFile.getAbsolutePath();
+
+        try {
+            FileOutputStream fileOut = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this.scheme);
+            out.close();
+            fileOut.close();
+            Debugger.log("Serialized data is saved in " + filename);
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    private void LoadScheme() {
+        stage = (Stage) base_pane.getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open scheme file");
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile == null)
+            return;
+        String filename = selectedFile.getAbsolutePath();
+
+        Scheme scheme = null;
+        try {
+            FileInputStream fileIn = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            scheme = (Scheme) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            System.out.println("Scheme class not found");
+            c.printStackTrace();
+        }
+
+        if (scheme == null)
+            throw new Error("Scheme was not loaded correctly");
+
+        this.scheme = scheme;
+
+        // clear the right pane
+        right_pane.getChildren().clear();
+
+        // generate new nodes
+        for (Block block : scheme.Blocks) {
+            DraggableNode node = new DraggableNode(BlockToDragIconType(block.getClass()));
+            if (block.getClass() == ConstBlock.class) {
+                int n = (int) block.InputValues[0].val;
+                node.ConstValue.setText(String.valueOf(n));
+            }
+
+            node.block = block;
+            block.parent = node;
+            right_pane.getChildren().add(node);
+            node.relocateToPoint( new Point2D(block.parentPosX, block.parentPosY));
+
+        }
+
+        for (Block block : scheme.Blocks) {
+            // generate new connections
+            for (Output out : block.Outputs) {
+                NodeLink link = new NodeLink();
+                right_pane.getChildren().add(0,link);
+                if (out.Index == 0) {
+                    link.bindEnds(block.parent, out.block.parent, -50000, false);
+                } else if (out.Index == 1){
+                    link.bindEnds(block.parent, out.block.parent, 50000, false);
+                } else {
+                    throw new Error("Unexpected Index");
+                }
+            }
+
+        }
+
+        UpdateBlockPrintedValues();
+
+
+
+
+    }
+
     private void UpdateBlockPrintedValues() {
 
         for(Node node: right_pane.getChildren()){
+
             if (node instanceof DraggableNode) {
                 DraggableNode dn = (DraggableNode) node;
                 if (dn.block.MyVal.defined) {
@@ -356,5 +461,26 @@ public class RootLayout extends AnchorPane {
                 }
             }
         }
+    }
+
+    private DragIconType BlockToDragIconType(Class klasa) {
+        if (klasa == SubBlock.class )
+            return DragIconType.sub;
+        else if ( klasa == AddBlock.class)
+            return DragIconType.add;
+        else if ( klasa == DivBlock.class)
+            return DragIconType.div;
+        else if ( klasa == PowBlock.class)
+            return DragIconType.pow;
+        else if ( klasa == MulBlock.class)
+            return DragIconType.mul;
+        else if ( klasa == RootBlock.class)
+            return DragIconType.root;
+        else if (klasa == ConstBlock.class)
+            return DragIconType._const;
+        else if (klasa == ResultBlock.class)
+            return DragIconType.result;
+        else
+            throw new Error("Unknown draggableNodeType");
     }
 }

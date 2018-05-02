@@ -1,14 +1,19 @@
 package Blocks;
 
 import java.util.ArrayList;
+
+import Enviroment.DraggableNode;
 import Others.*;
 
-abstract public class Block implements java.io.Serializable{
+public class Block implements java.io.Serializable{
 
     public ArrayList<Output> Outputs;
     public Block[] Inputs;
     public Value[] InputValues;
     public Value MyVal;
+    public double parentPosX;
+    public double parentPosY;
+    public DraggableNode parent;
 
     public Block() {
         this.Outputs = new ArrayList<>();

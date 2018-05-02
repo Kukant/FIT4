@@ -71,22 +71,27 @@ public class DraggableNode extends AnchorPane {
 
     private final DraggableNode self;
 
-    public DraggableNode(DraggableNodeType draggableNodeType) {
+    public DraggableNode(DragIconType type) {
 
         self = this;
-
+        mType = type;
         setId(UUID.randomUUID().toString());
         String blockResourcePath;
-        switch (draggableNodeType) {
-            case TwoInputs:
+        switch (type) {
+            case add:
+            case mul:
+            case div:
+            case root:
+            case pow:
+            case sub:
                 blockResourcePath = "./../Resources/DraggableNode.fxml";
                 inputsNumber = 2;
                 break;
-            case Constant:
+            case _const:
                 blockResourcePath = "./../Resources/DraggableNodeConstant.fxml";
                 inputsNumber = 0;
                 break;
-            case Result:
+            case result:
                 blockResourcePath = "./../Resources/DraggableNodeResult.fxml";
                 inputsNumber = 1;
                 break;
@@ -114,6 +119,7 @@ public class DraggableNode extends AnchorPane {
     @FXML
     private void initialize() {
 
+        setType();
         buildNodeDragHandlers();
         buildLinkDragHandlers();
         RegisterOtherHandlers();
@@ -143,9 +149,7 @@ public class DraggableNode extends AnchorPane {
 
     public DragIconType getType() { return mType;}
 
-    public void setType(DragIconType type) {
-
-        mType = type;
+    public void setType() {
 
         switch (mType) {
             case add:

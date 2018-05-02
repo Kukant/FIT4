@@ -74,6 +74,7 @@ public class Scheme implements java.io.Serializable{
     }
 
     public void CalculateOnce() {
+
         for (Block b: Blocks) {
             if  (b != null) {
                 int ret = b.SendVal();
@@ -81,13 +82,5 @@ public class Scheme implements java.io.Serializable{
                     return;
             }
         }
-    }
-
-    public void Serialize(){
-
-    }
-
-    public void Load(String filename){
-
     }
 }
