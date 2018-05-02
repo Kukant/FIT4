@@ -6,8 +6,14 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+/**
+ * Main class of application.
+ */
 public class Main extends Application {
-
+    /**
+     * Main method of application. It's called when is application executed.
+     * This function call other initialization functions, and creates necessary resources.
+     */
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();

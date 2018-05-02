@@ -15,6 +15,9 @@ public class Block implements java.io.Serializable{
     public double parentPosY;
     public DraggableNode parent;
 
+    /**
+     * Initialize new empty block
+     */
     public Block() {
         this.Outputs = new ArrayList<>();
         MyVal = new Value(0);

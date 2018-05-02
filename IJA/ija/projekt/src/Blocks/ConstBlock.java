@@ -5,6 +5,9 @@ import Others.Value;
 import com.sun.org.apache.xml.internal.security.Init;
 
 public class ConstBlock extends Block {
+    /**
+     * Initialize new block input
+     */
     public ConstBlock() {
         super();
         this.InputValues = new Value[]{new Value(0)};
@@ -12,10 +15,18 @@ public class ConstBlock extends Block {
         this.InputValues[0].defined = true;
     }
 
+    /**
+     *
+     * @return value of this block
+     */
     public double Calculate(){
         return InputValues[0].val;
     }
 
+    /**
+     * Sets value of this constant block
+     * @param val value which will be set
+     */
     public void setConstVal(double val) {
         this.InputValues[0].val = val;
     }

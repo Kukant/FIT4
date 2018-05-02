@@ -10,12 +10,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Scheme implements java.io.Serializable{
+    /**
+     * array of block of scheme
+     */
     public ArrayList<Block> Blocks;
 
+    /**
+     * creates new array of blocks
+     */
     public Scheme(){
         Blocks = new ArrayList<>();
     }
 
+    /**
+     * Controls if scheme is ready for computation.
+     *
+     *
+     * @return 0 scheme is valid
+     * @return 1 unattached input
+     * @return 2 unattached output
+     * @return 3 scheme contain cycles
+     */
     public int ValidateScheme(){
         for (Block b: this.Blocks){
 
@@ -56,6 +71,14 @@ public class Scheme implements java.io.Serializable{
         return 0;
     }
 
+    /**
+     * Recursive function which go trough scheme and controls if there are any blocks connected in cycle
+     *
+     * @param b  first controlled block
+     * @param ControlledBlocks all blocks which were all ready controlled
+     * @return true, cycle wasn't found
+     * @return false, cycle was found
+     */
     private boolean CycleDetection(Block b , ArrayList<Block> ControlledBlocks){
 
         for (Output o : b.Outputs){
@@ -73,6 +96,9 @@ public class Scheme implements java.io.Serializable{
 
     }
 
+    /**
+     * Finds first not calculated block in scheme and calculates it
+     */
     public void CalculateOnce() {
 
         for (Block b: Blocks) {
