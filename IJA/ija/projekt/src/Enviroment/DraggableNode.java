@@ -296,7 +296,7 @@ public class DraggableNode extends AnchorPane {
                 DataHolder container = new DataHolder();
 
                 container.importData("type", mType.toString());
-                content.put(DataHolder.AddNode, container);
+                content.put(DataHolder.BlockAdded, container);
 
                 startDragAndDrop (TransferMode.ANY).setContent(content);
 
@@ -338,7 +338,7 @@ public class DraggableNode extends AnchorPane {
                 //pass the UUID of the source node for later lookup
                 container.importData("source", getId());
 
-                content.put(DataHolder.AddLink, container);
+                content.put(DataHolder.ConnectionAdded, container);
 
                 startDragAndDrop (TransferMode.ANY).setContent(content);
 
@@ -357,7 +357,7 @@ public class DraggableNode extends AnchorPane {
                 //get the drag data.  If it's null, abort.
                 //This isn't the drag event we're looking for.
                 DataHolder container =
-                        (DataHolder) event.getDragboard().getContent(DataHolder.AddLink);
+                        (DataHolder) event.getDragboard().getContent(DataHolder.ConnectionAdded);
 
                 if (container == null)
                     return;
@@ -373,7 +373,7 @@ public class DraggableNode extends AnchorPane {
                 //pass the UUID of the target node for later lookup
                 container.importData("target", getId());
                 container.importData("mouse_y", event.getSceneY());
-                content.put(DataHolder.AddLink, container);
+                content.put(DataHolder.ConnectionAdded, container);
 
                 event.getDragboard().setContent(content);
                 event.setDropCompleted(true);

@@ -135,12 +135,12 @@ public class RootLayout extends AnchorPane {
             public void handle(DragEvent event) {
 
                 DataHolder container =
-                        (DataHolder) event.getDragboard().getContent(DataHolder.AddNode);
+                        (DataHolder) event.getDragboard().getContent(DataHolder.BlockAdded);
 
                 container.importData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
 
                 ClipboardContent content = new ClipboardContent();
-                content.put(DataHolder.AddNode, container);
+                content.put(DataHolder.BlockAdded, container);
 
                 event.getDragboard().setContent(content);
                 event.setDropCompleted(true);
@@ -159,7 +159,7 @@ public class RootLayout extends AnchorPane {
 
                 mDragOverIcon.setVisible(false);
 
-                DataHolder container = (DataHolder) event.getDragboard().getContent(DataHolder.AddNode);
+                DataHolder container = (DataHolder) event.getDragboard().getContent(DataHolder.BlockAdded);
 
                 if (container != null) {
                     if (container.fetchData("scene_coords") != null) {
@@ -179,15 +179,15 @@ public class RootLayout extends AnchorPane {
                 }
 
                 container =
-                        (DataHolder) event.getDragboard().getContent(DataHolder.DragNode);
+                        (DataHolder) event.getDragboard().getContent(DataHolder.BlockDragged);
 
                 if (container != null) {
                     if (container.fetchData("type") != null)
                         System.out.println ("Moved node " + container.fetchData("type"));
                 }
 
-                //AddLink drag operation
-                container = (DataHolder) event.getDragboard().getContent(DataHolder.AddLink);
+                //ConnectionAdded drag operation
+                container = (DataHolder) event.getDragboard().getContent(DataHolder.ConnectionAdded);
 
                 if (container != null) {
 
@@ -255,7 +255,7 @@ public class RootLayout extends AnchorPane {
                 DataHolder container = new DataHolder();
 
                 container.importData("type", mDragOverIcon.getType().toString());
-                content.put(DataHolder.AddNode, container);
+                content.put(DataHolder.BlockAdded, container);
 
                 mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
                 mDragOverIcon.setVisible(true);
