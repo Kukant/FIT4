@@ -12,16 +12,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Node.java" pinned="false" current-in-tab="false">
-        <entry file="jar:///opt/java/jdk1.8.0_161/javafx-src.zip!/javafx/scene/Node.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2149">
-              <caret line="383" column="22" lean-forward="false" selection-start-line="383" selection-start-column="22" selection-end-line="383" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Debugger.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Others/Debugger.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -85,11 +75,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainScene.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MainScene.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Enviroment/MainScene.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="489" column="36" lean-forward="false" selection-start-line="489" selection-start-column="36" selection-end-line="489" selection-end-column="36" />
+            <state relative-caret-position="8136">
+              <caret line="493" column="12" lean-forward="true" selection-start-line="493" selection-start-column="12" selection-end-line="493" selection-end-column="12" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="readme.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/readme.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -155,6 +155,7 @@
       <find>scene_coords</find>
       <find>link</find>
       <find>System.out</find>
+      <find>System.out.println</find>
     </findStrings>
     <replaceStrings>
       <replace>:</replace>
@@ -207,6 +208,7 @@
         <option value="$PROJECT_DIR$/src/Enviroment/Connection.java" />
         <option value="$PROJECT_DIR$/src/Enviroment/RootLayout.java" />
         <option value="$PROJECT_DIR$/src/Enviroment/MainScene.java" />
+        <option value="$PROJECT_DIR$/readme.md" />
       </list>
     </option>
   </component>
@@ -615,7 +617,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92776000" />
+    <option name="totallyTimeSpent" value="94092000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1600" y="-2" width="1680" height="1052" extended-state="6" />
@@ -716,7 +718,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar:///usr/lib/jvm/java-8-oracle/javafx-src.zip!/com/sun/javafx/tk/quantum/QuantumToolkit.java" />
     <entry file="jar:///usr/lib/jvm/java-8-oracle/javafx-src.zip!/com/sun/javafx/tk/quantum/GlassViewEventHandler.java" />
     <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/security/AccessController.java" />
     <entry file="jar:///usr/lib/jvm/java-8-oracle/javafx-src.zip!/com/sun/javafx/tk/quantum/GlassSceneDnDEventHandler.java" />
@@ -998,8 +999,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Enviroment/MainScene.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="489" column="36" lean-forward="false" selection-start-line="489" selection-start-column="36" selection-end-line="489" selection-end-column="36" />
+        <state relative-caret-position="8136">
+          <caret line="493" column="12" lean-forward="true" selection-start-line="493" selection-start-column="12" selection-end-line="493" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/readme.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
           <folding />
         </state>
       </provider>
@@ -1068,6 +1077,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
+          <last-edited>hamcrest-core-1.3</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
