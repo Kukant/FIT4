@@ -35,7 +35,7 @@ public class MovableBlock extends AnchorPane {
 
     private EventHandler DragOver, DragDropped;
 
-    private DragIconType TypeOfBlock;
+    private BlockIconType TypeOfBlock;
 
     private Point2D RelocatedPosition = new Point2D(0.0, 0.0);
 
@@ -63,7 +63,7 @@ public class MovableBlock extends AnchorPane {
      *
      * @param type  one predefined block types
      */
-    public MovableBlock(DragIconType type) {
+    public MovableBlock(BlockIconType type) {
 
         self = this;
         TypeOfBlock = type;
@@ -140,7 +140,7 @@ public class MovableBlock extends AnchorPane {
      * Returns type of block.
      * @return type of block
      */
-    public DragIconType getType() { return TypeOfBlock;}
+    public BlockIconType getType() { return TypeOfBlock;}
 
     public void setType() {
 

@@ -85,7 +85,7 @@ public class RootLayout extends AnchorPane {
 
             addDragDetection(icn); //je dragovatelna
 
-            icn.setType(DragIconType.values()[i]); //nastaven typ (barva)
+            icn.setType(BlockIconType.values()[i]); //nastaven typ (barva)
             left_pane.getChildren().add(icn);// pridani ikony na levou stanu okna (do Vboxu)
         }
 
@@ -164,7 +164,7 @@ public class RootLayout extends AnchorPane {
                 if (container != null) {
                     if (container.fetchData("scene_coords") != null) {
 
-                        MovableBlock node = new MovableBlock(DragIconType.valueOf(container.fetchData("type")));
+                        MovableBlock node = new MovableBlock(BlockIconType.valueOf(container.fetchData("type")));
                         right_pane.getChildren().add(node);
 
                         Point2D cursorPoint = container.fetchData("scene_coords");
@@ -463,23 +463,23 @@ public class RootLayout extends AnchorPane {
         }
     }
 
-    private DragIconType BlockToDragIconType(Class klasa) {
+    private BlockIconType BlockToDragIconType(Class klasa) {
         if (klasa == SubBlock.class )
-            return DragIconType.sub;
+            return BlockIconType.sub;
         else if ( klasa == AddBlock.class)
-            return DragIconType.add;
+            return BlockIconType.add;
         else if ( klasa == DivBlock.class)
-            return DragIconType.div;
+            return BlockIconType.div;
         else if ( klasa == PowBlock.class)
-            return DragIconType.pow;
+            return BlockIconType.pow;
         else if ( klasa == MulBlock.class)
-            return DragIconType.mul;
+            return BlockIconType.mul;
         else if ( klasa == RootBlock.class)
-            return DragIconType.root;
+            return BlockIconType.root;
         else if (klasa == ConstBlock.class)
-            return DragIconType._const;
+            return BlockIconType._const;
         else if (klasa == ResultBlock.class)
-            return DragIconType.result;
+            return BlockIconType.result;
         else
             throw new Error("Unknown draggableNodeType");
     }

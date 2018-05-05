@@ -1,7 +1,9 @@
 package Enviroment;
 
-
-public enum DragIconType {
+/**
+ * Enumeration of Graphical Icon types.
+ */
+public enum BlockIconType {
     _const,
     add,
     sub,

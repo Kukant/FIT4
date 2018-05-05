@@ -6,14 +6,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.CubicCurve;
 import javafx.scene.text.Text;
 
 
 public class DragIcon extends AnchorPane {
 
-    private DragIconType mType;
+    private BlockIconType mType;
     @FXML public Text operatorTextField;
 
     public DragIcon() {
@@ -36,9 +34,9 @@ public class DragIcon extends AnchorPane {
     @FXML
     private void initialize() {}
 
-    public DragIconType getType() { return mType;}
+    public BlockIconType getType() { return mType;}
 
-    public void setType(DragIconType type) {
+    public void setType(BlockIconType type) {
 
         mType = type;
 
