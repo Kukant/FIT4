@@ -254,8 +254,8 @@ public class MovableBlock extends AnchorPane {
 
                 AnchorPane parent  = (AnchorPane) self.getParent();
                 parent.getChildren().remove(self);
-                RootLayout rootLayout = (RootLayout) parent.getParent().getParent().getParent();
-                rootLayout.scheme.Blocks.remove(self.block);
+                MainScene mainScene = (MainScene) parent.getParent().getParent().getParent();
+                mainScene.scheme.Blocks.remove(self.block);
 
 
                 for (ListIterator <String> iterId = AttachedConnections.listIterator();

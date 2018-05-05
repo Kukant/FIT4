@@ -25,33 +25,34 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
+/**
+ * Representation of Whole graphical scene of application. This class is parent to other graphical object of app.
+ */
+public class MainScene extends AnchorPane {
 
-public class RootLayout extends AnchorPane {
+    @FXML private SplitPane base_pane;
+    @FXML private AnchorPane right_pane;
+    @FXML private VBox left_pane;
+    @FXML private javafx.scene.control.Button CalculateButton;
+    @FXML private Button DebugButton;
+    @FXML private Text WarningLine;
+    @FXML private MenuItem SaveBtn;
+    @FXML private MenuItem LoadBtn;
 
-    @FXML SplitPane base_pane;
-    @FXML AnchorPane right_pane;
-    @FXML VBox left_pane;
-    @FXML javafx.scene.control.Button CalculateButton;
-    @FXML Button DebugButton;
-    @FXML Text WarningLine;
-    @FXML MenuItem SaveBtn;
-    @FXML MenuItem LoadBtn;
-
-    private EventHandler mIconDragOverRoot=null;
-    private EventHandler mIconDragDropped=null;
-    private EventHandler mIconDragOverRightPane=null;
+    private EventHandler DragOver = null, DragDropped = null, DragOverSchemeScene =null;
     private BlockIcon mDragOverIcon = null;
 
-    Stage stage;
+    private Stage stage;
 
     // main scheme used to store list of all blocks
     public Scheme scheme = new Scheme();
 
-    public RootLayout() {
+    /**
+     * Initialize new scene from FXML file.
+     */
+    public MainScene() {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(
-                getClass().getResource("./../Resources/RootLayout.fxml")
-        );
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../Resources/MainScene.fxml"));
 
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -68,9 +69,10 @@ public class RootLayout extends AnchorPane {
     }
 
 
-
-    @FXML
-    private void initialize() {
+    /**
+     * Initialize graphical icons and creates event handlers which react to incoming events.
+     */
+    @FXML private void initialize() {
 
         mDragOverIcon = new BlockIcon(); //specialni neviditelna ikona, je zobrazena jen kdyz "Drag and Dropujeme"
 
@@ -81,23 +83,24 @@ public class RootLayout extends AnchorPane {
 
         for (int i = 0; i < 8; i++) { // zobrazeni osmi ikon z BlockIcon.java
 
-            BlockIcon icn = new BlockIcon();// nova ikona
+            BlockIcon icon = new BlockIcon();// nova ikona
 
-            addDragDetection(icn); //je dragovatelna
+            MakeIconDraggable(icon); //je dragovatelna
 
-            icn.setType(BlockIconType.values()[i]); //nastaven typ (barva)
-            left_pane.getChildren().add(icn);// pridani ikony na levou stanu okna (do Vboxu)
+            icon.setType(BlockIconType.values()[i]); //nastaven typ (barva)
+            left_pane.getChildren().add(icon);// pridani ikony na levou stanu okna (do Vboxu)
         }
 
-        buildDragHandlers();
-        buildButtonHandlers();
+        DragHandlers();
+        ButtonHandlers();
     }
 
-
-    private void buildDragHandlers() {
-
-        //drag over transition to move widget form left pane to right pane
-        mIconDragOverRoot = new EventHandler <DragEvent>() {
+    /**
+     * Handlers handling drag events such a move of block etc.
+     */
+    private void DragHandlers() {
+        
+        DragOver = new EventHandler <DragEvent>() {
 
             @Override
             public void handle(DragEvent event) {
@@ -113,36 +116,30 @@ public class RootLayout extends AnchorPane {
             }
         };
 
-        mIconDragOverRightPane = new EventHandler <DragEvent> () {
+        DragOverSchemeScene = new EventHandler <DragEvent> () {
 
             @Override
             public void handle(DragEvent event) {
 
                 event.acceptTransferModes(TransferMode.ANY);
-
-                mDragOverIcon.ChangePosition(
-                        new Point2D(event.getSceneX(), event.getSceneY())
-                );
-
-
+                mDragOverIcon.ChangePosition(new Point2D(event.getSceneX(), event.getSceneY()));
                 event.consume();
             }
         };
 
-        mIconDragDropped = new EventHandler <DragEvent> () {
+        DragDropped = new EventHandler <DragEvent> () {
 
             @Override
             public void handle(DragEvent event) {
 
-                DataHolder container =
-                        (DataHolder) event.getDragboard().getContent(DataHolder.BlockAdded);
+                DataHolder dataContainer = (DataHolder) event.getDragboard().getContent(DataHolder.BlockAdded);
 
-                container.importData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
+                dataContainer.importData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
 
-                ClipboardContent content = new ClipboardContent();
-                content.put(DataHolder.BlockAdded, container);
+                ClipboardContent data = new ClipboardContent();
+                data.put(DataHolder.BlockAdded, dataContainer);
 
-                event.getDragboard().setContent(content);
+                event.getDragboard().setContent(data);
                 event.setDropCompleted(true);
             }
         };
@@ -153,86 +150,79 @@ public class RootLayout extends AnchorPane {
             @Override
             public void handle (DragEvent event) {
 
-                right_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
-                right_pane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
-                base_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRoot);
+                right_pane.removeEventHandler(DragEvent.DRAG_OVER, DragOverSchemeScene);
+                right_pane.removeEventHandler(DragEvent.DRAG_DROPPED, DragDropped);
+                base_pane.removeEventHandler(DragEvent.DRAG_OVER, DragOver);
 
                 mDragOverIcon.setVisible(false);
 
-                DataHolder container = (DataHolder) event.getDragboard().getContent(DataHolder.BlockAdded);
+                DataHolder dataContainer = (DataHolder) event.getDragboard().getContent(DataHolder.BlockAdded);
 
-                if (container != null) {
-                    if (container.fetchData("scene_coords") != null) {
+                if (dataContainer != null) {
+                    if (dataContainer.fetchData("scene_coords") != null) {
 
-                        MovableBlock node = new MovableBlock(BlockIconType.valueOf(container.fetchData("type")));
-                        right_pane.getChildren().add(node);
+                        MovableBlock foundBlock = new MovableBlock(BlockIconType.valueOf(dataContainer.fetchData("type")));
+                        right_pane.getChildren().add(foundBlock);
 
-                        Point2D cursorPoint = container.fetchData("scene_coords");
+                        Point2D cursorPoint = dataContainer.fetchData("scene_coords");
 
-                        node.ChangePosition(
-                                new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
-                        );
+                        foundBlock.ChangePosition(new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32));
 
-                        scheme.Blocks.add(node.block);
+                        scheme.Blocks.add(foundBlock.block);
 
                     }
                 }
 
-                container =
-                        (DataHolder) event.getDragboard().getContent(DataHolder.BlockDragged);
+                dataContainer = (DataHolder) event.getDragboard().getContent(DataHolder.BlockDragged);
 
-                if (container != null) {
-                    if (container.fetchData("type") != null)
-                        System.out.println ("Moved node " + container.fetchData("type"));
+                if (dataContainer != null) {
+                    if (dataContainer.fetchData("type") != null)
+                        Debugger.log ("Moved node " + dataContainer.fetchData("type"));
                 }
 
-                //ConnectionAdded drag operation
-                container = (DataHolder) event.getDragboard().getContent(DataHolder.ConnectionAdded);
+                dataContainer = (DataHolder) event.getDragboard().getContent(DataHolder.ConnectionAdded);
 
-                if (container != null) {
+                if (dataContainer != null) {
 
-                    //bind the ends of our link to the nodes whose id's are stored in the drag container
-                    String sourceId = container.fetchData("source");
-                    String targetId = container.fetchData("target");
+                    String src = dataContainer.fetchData("source");
+                    String tar = dataContainer.fetchData("target");
 
-                    if (sourceId != null && targetId != null) {
+                    if (src != null && tar != null) {
 
-                        //System.out.println(container.getData());
-                        Connection link = new Connection();
+                        Connection conn = new Connection();
 
-                        //add our link at the top of the rendering order so it's rendered first
-                        right_pane.getChildren().add(0,link);
+                        right_pane.getChildren().add(0,conn);
 
                         MovableBlock source = null;
                         MovableBlock target = null;
 
                         for (Node n: right_pane.getChildren()) {
 
-                            if (n.getId() == null)
-                                continue;
+                            if (n.getId() == null) continue;
 
-                            if (n.getId().equals(sourceId))
-                                source = (MovableBlock) n;
+                            if (n.getId().equals(src)) source = (MovableBlock) n;
 
-                            if (n.getId().equals(targetId))
-                                target = (MovableBlock) n;
+                            if (n.getId().equals(tar)) target = (MovableBlock) n;
 
                         }
 
                         if (source != null && target != null)
-                            link.ConnectBlocks(source, target, container.fetchData("mouse_y"), true);
+                            conn.ConnectBlocks(source, target, dataContainer.fetchData("mouse_y"), true);
                     }
 
                 }
 
                 event.consume();
 
-                //TODO : create block
             }
         });
     }
 
-    private void addDragDetection(BlockIcon blockIcon) {
+    /**
+     * Allow draggable events to icon.
+     * @param blockIcon specific icon
+     */
+    private void MakeIconDraggable(BlockIcon blockIcon) {
 
         blockIcon.setOnDragDetected (new EventHandler <MouseEvent> () {
 
@@ -240,24 +230,24 @@ public class RootLayout extends AnchorPane {
             public void handle(MouseEvent event) {
 
                 // set the other drag event handles on their respective objects
-                base_pane.setOnDragOver(mIconDragOverRoot);
-                right_pane.setOnDragOver(mIconDragOverRightPane);
-                right_pane.setOnDragDropped(mIconDragDropped);
+                base_pane.setOnDragOver(DragOver);
+                right_pane.setOnDragOver(DragOverSchemeScene);
+                right_pane.setOnDragDropped(DragDropped);
 
                 // get a reference to the clicked BlockIcon object
-                BlockIcon icn = (BlockIcon) event.getSource();
+                BlockIcon icon = (BlockIcon) event.getSource();
 
                 //begin drag ops
-                mDragOverIcon.setType(icn.getType());
+                mDragOverIcon.setType(icon.getType());
                 mDragOverIcon.ChangePosition(new Point2D(event.getSceneX(), event.getSceneY()));
 
-                ClipboardContent content = new ClipboardContent();
-                DataHolder container = new DataHolder();
+                ClipboardContent data = new ClipboardContent();
+                DataHolder dataContainer = new DataHolder();
 
-                container.importData("type", mDragOverIcon.getType().toString());
-                content.put(DataHolder.BlockAdded, container);
+                dataContainer.importData("type", mDragOverIcon.getType().toString());
+                data.put(DataHolder.BlockAdded, dataContainer);
 
-                mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
+                mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(data);
                 mDragOverIcon.setVisible(true);
                 mDragOverIcon.setMouseTransparent(true);
                 event.consume();
@@ -265,7 +255,10 @@ public class RootLayout extends AnchorPane {
         });
     }
 
-    public void buildButtonHandlers() {
+    /**
+     * Handlers handling events raised by buttons.
+     */
+    public void ButtonHandlers() {
         CalculateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
                 Debugger.log("Calculate button clicked");
@@ -325,6 +318,10 @@ public class RootLayout extends AnchorPane {
 
     }
 
+    /**
+     * Displays warning message to user.
+     * @param validationResult
+     */
     private void ValidationMessage(int validationResult) {
 
         switch (validationResult){
@@ -345,6 +342,9 @@ public class RootLayout extends AnchorPane {
             }
     }
 
+    /**
+     * Save whole scheme into datastream. Datastream is saved into.
+     */
     private void SaveScheme() {
         for (Node node: right_pane.getChildren()) {
             if (node.getClass() != MovableBlock.class)
@@ -375,6 +375,9 @@ public class RootLayout extends AnchorPane {
         }
     }
 
+    /**
+     * Load whole scheme from datastream. Datastream is loaded from file.
+     */
     private void LoadScheme() {
         stage = (Stage) base_pane.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
@@ -394,7 +397,7 @@ public class RootLayout extends AnchorPane {
         } catch (IOException i) {
             i.printStackTrace();
         } catch (ClassNotFoundException c) {
-            System.out.println("Scheme class not found");
+            Debugger.log("Scheme class not found");
             c.printStackTrace();
         }
 
@@ -444,6 +447,9 @@ public class RootLayout extends AnchorPane {
 
     }
 
+    /**
+     * Refresh displayed values of graphical blocks.
+     */
     private void UpdateBlockPrintedValues() {
 
         for(Node node: right_pane.getChildren()){
@@ -463,6 +469,11 @@ public class RootLayout extends AnchorPane {
         }
     }
 
+    /**
+     * Find Type of icon refering to type of block.
+     * @param klasa class of block
+     * @return type of icon
+     */
     private BlockIconType BlockToDragIconType(Class klasa) {
         if (klasa == SubBlock.class )
             return BlockIconType.sub;

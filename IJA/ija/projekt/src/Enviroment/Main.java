@@ -29,7 +29,7 @@ public class Main extends Application {
             e.printStackTrace();
         }
 
-        root.setCenter(new RootLayout());
+        root.setCenter(new MainScene());
     }
 
     public static void main(String[] args) {
