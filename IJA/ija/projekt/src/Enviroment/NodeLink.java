@@ -1,11 +1,8 @@
 package Enviroment;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.UUID;
 
-import Others.Debugger;
-import Others.Output;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
 import javafx.beans.property.DoubleProperty;
@@ -103,11 +100,11 @@ public class NodeLink extends AnchorPane {
         node_link.setEndY(endPoint.getY());
     }
 
-    public void bindEnds (DraggableNode source, DraggableNode target, double mousePosY, boolean bind) {
+    public void bindEnds (MovableBlock source, MovableBlock target, double mousePosY, boolean bind) {
 
         int index = 0; // deaultni hodnota, pokud je jenom jeden vstup ma index 0
 
-        if (target.inputsNumber == 2){
+        if (target.NumberOfInputPorts == 2){
             if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mousePosY){ // jedna se o spodni (druhy vstup)
                index = 1;
             }
@@ -132,11 +129,11 @@ public class NodeLink extends AnchorPane {
 
         node_link.startYProperty().bind( Bindings.add(source.layoutYProperty(), (sourceHeight/ 2.0) + 5));
 
-        if (target.inputsNumber == 1) {
+        if (target.NumberOfInputPorts == 1) {
             node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), 0));
             node_link.endYProperty().bind( Bindings.add(target.layoutYProperty(), targetHeight / 2.0));
 
-        } else if (target.inputsNumber == 2){ // two inputs
+        } else if (target.NumberOfInputPorts == 2){ // two inputs
             if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mousePosY) {
                 node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(15), (targetHeight / 2.0) ));
             } else {
@@ -145,7 +142,7 @@ public class NodeLink extends AnchorPane {
 
             node_link.endXProperty().bind( Bindings.add(target.layoutXProperty(), 0));
         } else {
-            throw new Error("Unexpected inputs number: " + target.inputsNumber);
+            throw new Error("Unexpected inputs number: " + target.NumberOfInputPorts);
         }
 
 

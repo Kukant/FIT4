@@ -164,12 +164,12 @@ public class RootLayout extends AnchorPane {
                 if (container != null) {
                     if (container.fetchData("scene_coords") != null) {
 
-                        DraggableNode node = new DraggableNode(DragIconType.valueOf(container.fetchData("type")));
+                        MovableBlock node = new MovableBlock(DragIconType.valueOf(container.fetchData("type")));
                         right_pane.getChildren().add(node);
 
                         Point2D cursorPoint = container.fetchData("scene_coords");
 
-                        node.relocateToPoint(
+                        node.ChangePosition(
                                 new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
                         );
 
@@ -203,8 +203,8 @@ public class RootLayout extends AnchorPane {
                         //add our link at the top of the rendering order so it's rendered first
                         right_pane.getChildren().add(0,link);
 
-                        DraggableNode source = null;
-                        DraggableNode target = null;
+                        MovableBlock source = null;
+                        MovableBlock target = null;
 
                         for (Node n: right_pane.getChildren()) {
 
@@ -212,10 +212,10 @@ public class RootLayout extends AnchorPane {
                                 continue;
 
                             if (n.getId().equals(sourceId))
-                                source = (DraggableNode) n;
+                                source = (MovableBlock) n;
 
                             if (n.getId().equals(targetId))
-                                target = (DraggableNode) n;
+                                target = (MovableBlock) n;
 
                         }
 
@@ -347,9 +347,9 @@ public class RootLayout extends AnchorPane {
 
     private void SaveScheme() {
         for (Node node: right_pane.getChildren()) {
-            if (node.getClass() != DraggableNode.class)
+            if (node.getClass() != MovableBlock.class)
                 continue;
-            DraggableNode dnode = (DraggableNode) node;
+            MovableBlock dnode = (MovableBlock) node;
             dnode.block.parentPosX = dnode.localToScene(node.getBoundsInLocal()).getMinX();
             dnode.block.parentPosY = dnode.localToScene(node.getBoundsInLocal()).getMinY();
         }
@@ -408,7 +408,7 @@ public class RootLayout extends AnchorPane {
 
         // generate new nodes
         for (Block block : scheme.Blocks) {
-            DraggableNode node = new DraggableNode(BlockToDragIconType(block.getClass()));
+            MovableBlock node = new MovableBlock(BlockToDragIconType(block.getClass()));
             if (block.getClass() == ConstBlock.class) {
                 int n = (int) block.InputValues[0].val;
                 node.ConstValue.setText(String.valueOf(n));
@@ -417,7 +417,7 @@ public class RootLayout extends AnchorPane {
             node.block = block;
             block.parent = node;
             right_pane.getChildren().add(node);
-            node.relocateToPoint( new Point2D(block.parentPosX, block.parentPosY));
+            node.ChangePosition( new Point2D(block.parentPosX, block.parentPosY));
 
         }
 
@@ -448,8 +448,8 @@ public class RootLayout extends AnchorPane {
 
         for(Node node: right_pane.getChildren()){
 
-            if (node instanceof DraggableNode) {
-                DraggableNode dn = (DraggableNode) node;
+            if (node instanceof MovableBlock) {
+                MovableBlock dn = (MovableBlock) node;
                 if (dn.block.MyVal.defined) {
                     if (dn.block instanceof ResultBlock) {
                         dn.Result.setText(String.valueOf(dn.block.MyVal.val));

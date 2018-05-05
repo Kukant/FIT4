@@ -11,7 +11,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root fx:id="root_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="92.0" prefWidth="82.0" style="-fx-background-color: #ffffff;" styleClass="dragicon" stylesheets="@application.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="root_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="92.0" prefWidth="82.0" style="-fx-background-color: #ffffff;" styleClass="dragicon" stylesheets="@stylesheet.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="23.0" layoutX="65.0" layoutY="44.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="15.0" layoutX="-7.0" layoutY="29.0" stroke="BLACK" strokeType="INSIDE" width="32.0" />

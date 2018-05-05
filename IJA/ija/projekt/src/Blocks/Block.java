@@ -2,7 +2,7 @@ package Blocks;
 
 import java.util.ArrayList;
 
-import Enviroment.DraggableNode;
+import Enviroment.MovableBlock;
 import Others.*;
 
 public class Block implements java.io.Serializable{
@@ -13,7 +13,7 @@ public class Block implements java.io.Serializable{
     public Value MyVal;
     public double parentPosX;
     public double parentPosY;
-    public DraggableNode parent;
+    public MovableBlock parent;
 
     /**
      * Initialize new empty block

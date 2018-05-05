@@ -21,22 +21,23 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-
-public class DraggableNode extends AnchorPane {
+/**
+ * Representation of graphical block.
+ */
+public class MovableBlock extends AnchorPane {
 
     @FXML AnchorPane root_pane;
 
-    private final List  mLinkIds = new ArrayList (); //TODO :pole inputs a outputs
+    private final List AttachedConnections = new ArrayList (); //TODO :pole inputs a outputs
 
-    public int inputsNumber;
+    public int NumberOfInputPorts;
     Block block;
 
-    private EventHandler  mContextDragOver;
-    private EventHandler  mContextDragDropped;
+    private EventHandler DragOver, DragDropped;
 
-    private DragIconType mType = null;
+    private DragIconType TypeOfBlock;
 
-    private Point2D mDragOffset = new Point2D(0.0, 0.0);
+    private Point2D RelocatedPosition = new Point2D(0.0, 0.0);
 
     @FXML private Label title_bar;
     @FXML private Label close_button;
@@ -52,17 +53,20 @@ public class DraggableNode extends AnchorPane {
     private NodeLink mDragLink = null;
     private AnchorPane right_pane = null;
 
-    private EventHandler <MouseEvent> mLinkHandleDragDetected;
-    private EventHandler <DragEvent> mLinkHandleDragDropped;
-    private EventHandler <DragEvent> mContextLinkDragOver;
-    private EventHandler <DragEvent>  mContextLinkDragDropped;
+    private EventHandler <MouseEvent> DragDetected;
+    private EventHandler <DragEvent> BlockDragDropped, LinkDragOver, LinkDragDropped;
 
-    private final DraggableNode self;
+    private final MovableBlock self;
 
-    public DraggableNode(DragIconType type) {
+    /**
+     * Creates new block.
+     *
+     * @param type  one predefined block types
+     */
+    public MovableBlock(DragIconType type) {
 
         self = this;
-        mType = type;
+        TypeOfBlock = type;
         setId(UUID.randomUUID().toString());
         String blockResourcePath;
         switch (type) {
@@ -72,16 +76,16 @@ public class DraggableNode extends AnchorPane {
             case root:
             case pow:
             case sub:
-                blockResourcePath = "./../Resources/DraggableNode.fxml";
-                inputsNumber = 2;
+                blockResourcePath = "./../Resources/MovableBlock.fxml";
+                NumberOfInputPorts = 2;
                 break;
             case _const:
-                blockResourcePath = "./../Resources/DraggableNodeConstant.fxml";
-                inputsNumber = 0;
+                blockResourcePath = "./../Resources/MovableBlockConst.fxml";
+                NumberOfInputPorts = 0;
                 break;
             case result:
-                blockResourcePath = "./../Resources/DraggableNodeResult.fxml";
-                inputsNumber = 1;
+                blockResourcePath = "./../Resources/MovableBlockResult.fxml";
+                NumberOfInputPorts = 1;
                 break;
 
                 default:
@@ -89,9 +93,7 @@ public class DraggableNode extends AnchorPane {
 
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(
-                getClass().getResource(blockResourcePath)
-        );
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(blockResourcePath));
 
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -99,25 +101,25 @@ public class DraggableNode extends AnchorPane {
         try {
             fxmlLoader.load();
 
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
+        } catch (IOException exception) { throw new RuntimeException(exception); }
     }
 
-    @FXML
-    private void initialize() {
+    /**
+     * Initialize empty unattached block.
+     */
+    @FXML private void initialize() {
 
         setType();
-        buildNodeDragHandlers();
-        buildLinkDragHandlers();
+        BlockDragHandlers();
+        ConnectionDragHandlers();
         RegisterOtherHandlers();
 
-        //left_link_handle.setOnDragDetected(mLinkHandleDragDetected);
+        //left_link_handle.setOnDragDetected(DragDetected);
         if (right_link_handle != null)
-            right_link_handle.setOnDragDetected(mLinkHandleDragDetected);
+            right_link_handle.setOnDragDetected(DragDetected);
 
         if (left_link_handle != null)
-            left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
+            left_link_handle.setOnDragDropped(BlockDragDropped);
 
         mDragLink = new NodeLink();
         mDragLink.setVisible(false);
@@ -134,11 +136,15 @@ public class DraggableNode extends AnchorPane {
 
     }
 
-    public DragIconType getType() { return mType;}
+    /**
+     * Returns type of block.
+     * @return type of block
+     */
+    public DragIconType getType() { return TypeOfBlock;}
 
     public void setType() {
 
-        switch (mType) {
+        switch (TypeOfBlock) {
             case add:
                 operatorTextField.setText("+");
                 block = new AddBlock();
@@ -174,39 +180,41 @@ public class DraggableNode extends AnchorPane {
         }
     }
 
-    public void relocateToPoint (Point2D p) {
+    /**
+     * Changes position of block in scene.
+     * @param NewPosition new position
+     */
+    public void ChangePosition(Point2D NewPosition) {
 
-        //relocates the object to a point that has been converted to
-        //scene coordinates
-        Point2D localCoords = getParent().sceneToLocal(p);
+        Point2D OriginalPosition = getParent().sceneToLocal(NewPosition);
 
-        relocate (
-                (int) (localCoords.getX() - mDragOffset.getX()),
-                (int) (localCoords.getY() - mDragOffset.getY())
-        );
+        relocate ((int) (OriginalPosition.getX() - RelocatedPosition.getX()), (int) (OriginalPosition.getY() - RelocatedPosition.getY()));
     }
 
-    public void buildNodeDragHandlers() {
+    /**
+     * Handles Drag events of Blocks. If specific event is caught, his predefined action occurs.
+     */
+    public void BlockDragHandlers() {
 
-        mContextDragOver = new EventHandler <DragEvent>() {
+        //move block
+        DragOver = new EventHandler <DragEvent>() {
 
             @Override
             public void handle(DragEvent event) {
 
                 event.acceptTransferModes(TransferMode.ANY);
-                relocateToPoint(new Point2D( event.getSceneX(), event.getSceneY()));
+                ChangePosition(new Point2D( event.getSceneX(), event.getSceneY()));
 
                 event.consume();
             }
         };
 
-        mContextDragDropped = new EventHandler <DragEvent> () {
+        DragDropped = new EventHandler <DragEvent> () {
 
             @Override
             public void handle(DragEvent event) {
-
-                getParent().setOnDragOver(null);
                 getParent().setOnDragDropped(null);
+                getParent().setOnDragOver(null);
 
                 event.setDropCompleted(true);
 
@@ -214,7 +222,7 @@ public class DraggableNode extends AnchorPane {
             }
         };
 
-        //close button click
+        //block destroyed
         close_button.setOnMouseClicked( new EventHandler <MouseEvent> () {
 
             @Override
@@ -250,21 +258,21 @@ public class DraggableNode extends AnchorPane {
                 rootLayout.scheme.Blocks.remove(self.block);
 
 
-                for (ListIterator <String> iterId = mLinkIds.listIterator();
+                for (ListIterator <String> iterId = AttachedConnections.listIterator();
                      iterId.hasNext();) {
 
-                    String id = iterId.next();
+                    String nextBlock = iterId.next();
 
-                    for (ListIterator <Node> iterNode = parent.getChildren().listIterator();
-                         iterNode.hasNext();) {
+                    for (ListIterator <Node> iterBlock = parent.getChildren().listIterator();
+                         iterBlock.hasNext();) {
 
-                        Node node = iterNode.next();
+                        Node node = iterBlock.next();
 
                         if (node.getId() == null)
                             continue;
 
-                        if (node.getId().equals(id))
-                            iterNode.remove();
+                        if (node.getId().equals(nextBlock))
+                            iterBlock.remove();
                     }
 
                     iterId.remove();
@@ -282,23 +290,21 @@ public class DraggableNode extends AnchorPane {
                 getParent().setOnDragOver(null);
                 getParent().setOnDragDropped(null);
 
-                getParent().setOnDragOver (mContextDragOver);
-                getParent().setOnDragDropped (mContextDragDropped);
+                getParent().setOnDragOver (DragOver);
+                getParent().setOnDragDropped (DragDropped);
 
                 //begin drag ops
-                mDragOffset = new Point2D(event.getX(), event.getY());
+                RelocatedPosition = new Point2D(event.getX(), event.getY());
 
-                relocateToPoint(
-                        new Point2D(event.getSceneX(), event.getSceneY())
-                );
+                ChangePosition(new Point2D(event.getSceneX(), event.getSceneY()));
 
-                ClipboardContent content = new ClipboardContent();
-                DataHolder container = new DataHolder();
+                ClipboardContent data = new ClipboardContent();
+                DataHolder dataContainer = new DataHolder();
 
-                container.importData("type", mType.toString());
-                content.put(DataHolder.BlockAdded, container);
+                dataContainer.importData("type", TypeOfBlock.toString());
+                data.put(DataHolder.BlockAdded, dataContainer);
 
-                startDragAndDrop (TransferMode.ANY).setContent(content);
+                startDragAndDrop (TransferMode.ANY).setContent(data);
 
                 event.consume();
             }
@@ -306,47 +312,48 @@ public class DraggableNode extends AnchorPane {
         });
     }
 
-    private void buildLinkDragHandlers() {
+    /**
+     * Handles Drag events of Connections. If specific event is caught, his predefined action occurs.
+     */
+    private void ConnectionDragHandlers() {
 
-        mLinkHandleDragDetected = new EventHandler <MouseEvent> () {
+        DragDetected = new EventHandler <MouseEvent> () {
 
             @Override
             public void handle(MouseEvent event) {
-
-                getParent().setOnDragOver(null);
+                
                 getParent().setOnDragDropped(null);
+                getParent().setOnDragOver(null);
+                
 
-                getParent().setOnDragOver(mContextLinkDragOver);
-                getParent().setOnDragDropped(mContextLinkDragDropped);
+                getParent().setOnDragOver(LinkDragOver);
+                getParent().setOnDragDropped(LinkDragDropped);
 
                 //Set up user-draggable link
                 right_pane.getChildren().add(0,mDragLink);
 
                 mDragLink.setVisible(false);
 
-                Point2D p = new Point2D(
-                        getLayoutX() + getWidth(),
-                        getLayoutY() + (getHeight() / 2.0)
-                );
+                Point2D StartPosition = new Point2D(getLayoutX() + getWidth(), getLayoutY() + (getHeight() / 2.0));
 
-                mDragLink.setStart(p);
+                mDragLink.setStart(StartPosition);
 
-                //Drag content code
-                ClipboardContent content = new ClipboardContent();
-                DataHolder container = new DataHolder();
+                //Drag data code
+                ClipboardContent data = new ClipboardContent();
+                DataHolder dataContainer = new DataHolder();
 
                 //pass the UUID of the source node for later lookup
-                container.importData("source", getId());
+                dataContainer.importData("source", getId());
 
-                content.put(DataHolder.ConnectionAdded, container);
+                data.put(DataHolder.ConnectionAdded, dataContainer);
 
-                startDragAndDrop (TransferMode.ANY).setContent(content);
+                startDragAndDrop (TransferMode.ANY).setContent(data);
 
                 event.consume();
             }
         };
 
-        mLinkHandleDragDropped = new EventHandler <DragEvent> () {
+        BlockDragDropped = new EventHandler <DragEvent> () {
 
             @Override
             public void handle(DragEvent event) {
@@ -356,59 +363,58 @@ public class DraggableNode extends AnchorPane {
 
                 //get the drag data.  If it's null, abort.
                 //This isn't the drag event we're looking for.
-                DataHolder container =
-                        (DataHolder) event.getDragboard().getContent(DataHolder.ConnectionAdded);
+                DataHolder dataContainer = (DataHolder) event.getDragboard().getContent(DataHolder.ConnectionAdded);
 
-                if (container == null)
+                if (dataContainer == null)
                     return;
 
-                //hide the draggable NodeLink and remove it from the right-hand AnchorPane's children
                 mDragLink.setVisible(false);
                 right_pane.getChildren().remove(0);
 
                 AnchorPane link_handle = (AnchorPane) event.getSource();
 
-                ClipboardContent content = new ClipboardContent();
+                ClipboardContent data = new ClipboardContent();
 
                 //pass the UUID of the target node for later lookup
-                container.importData("target", getId());
-                container.importData("mouse_y", event.getSceneY());
-                content.put(DataHolder.ConnectionAdded, container);
+                dataContainer.importData("target", getId());
+                dataContainer.importData("mouse_y", event.getSceneY());
+                data.put(DataHolder.ConnectionAdded, dataContainer);
 
-                event.getDragboard().setContent(content);
+                event.getDragboard().setContent(data);
                 event.setDropCompleted(true);
                 event.consume();
             }
         };
 
-        mContextLinkDragOver = new EventHandler <DragEvent> () {
+        LinkDragOver = new EventHandler <DragEvent> () {
 
             @Override
             public void handle(DragEvent event) {
                 event.acceptTransferModes(TransferMode.ANY);
 
-                //Relocate end of user-draggable link
                 if (!mDragLink.isVisible())
                     mDragLink.setVisible(true);
 
-                mDragLink.setEnd(new Point2D(event.getX(), event.getY()));
+                Point2D EndPosition = new Point2D(event.getX(), event.getY());
+
+                mDragLink.setEnd(EndPosition);
 
                 event.consume();
 
             }
         };
 
-        //drop event for link creation
-        mContextLinkDragDropped = new EventHandler <DragEvent> () {
+        //drop event for connection creation
+        LinkDragDropped = new EventHandler <DragEvent> () {
 
             @Override
             public void handle(DragEvent event) {
-                System.out.println("context link drag dropped");
+                System.out.println("context connection drag dropped");
 
-                getParent().setOnDragOver(null);
                 getParent().setOnDragDropped(null);
+                getParent().setOnDragOver(null);
 
-                //hide the draggable NodeLink and remove it from the right-hand AnchorPane's children
+
                 mDragLink.setVisible(false);
                 right_pane.getChildren().remove(0);
 
@@ -419,6 +425,9 @@ public class DraggableNode extends AnchorPane {
 
     }
 
+    /**
+     * Handles different events. If specific event is caught, his predefined action occurs.
+     */
     public void RegisterOtherHandlers() {
         if (ConstValue != null)
         ConstValue.textProperty().addListener(new ChangeListener<String>() {
@@ -438,9 +447,12 @@ public class DraggableNode extends AnchorPane {
         });
     }
 
-
+    /**
+     * Attach connection to block.
+     * @param linkId attached connection
+     */
     public void registerLink(String linkId) {
-        mLinkIds.add(linkId);
+        AttachedConnections.add(linkId);
     }
 }
 

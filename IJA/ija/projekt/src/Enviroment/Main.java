@@ -21,7 +21,7 @@ public class Main extends Application {
         try {
             primaryStage.getIcons().add(new Image("https://image.flaticon.com/icons/svg/201/201551.svg"));
             Scene scene = new Scene(root,1230,615);
-            scene.getStylesheets().add(getClass().getResource("./../Resources/application.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("./../Resources/stylesheet.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
 
