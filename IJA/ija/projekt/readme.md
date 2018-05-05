@@ -3,7 +3,7 @@
 School project to IJA class (The Java Programming Language). Application is mathematical scheme editor.
 Every scheme is set  of graphical blocks connected by links.There is specified few block types,
 every type hold different mathematical operation (+, - * etc.).Block contains input and output ports.
-Block holds numeral value and distributes it through output block to other block.
+Block holds numeral value and distributes it through output port to other block.
 That is basic idea how this application works.
 
 ## Authors
