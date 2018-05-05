@@ -134,13 +134,13 @@ public class RootLayout extends AnchorPane {
             @Override
             public void handle(DragEvent event) {
 
-                DragContainer container =
-                        (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
+                DataHolder container =
+                        (DataHolder) event.getDragboard().getContent(DataHolder.AddNode);
 
-                container.addData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
+                container.importData("scene_coords", new Point2D(event.getSceneX(), event.getSceneY()));
 
                 ClipboardContent content = new ClipboardContent();
-                content.put(DragContainer.AddNode, container);
+                content.put(DataHolder.AddNode, container);
 
                 event.getDragboard().setContent(content);
                 event.setDropCompleted(true);
@@ -159,15 +159,15 @@ public class RootLayout extends AnchorPane {
 
                 mDragOverIcon.setVisible(false);
 
-                DragContainer container = (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
+                DataHolder container = (DataHolder) event.getDragboard().getContent(DataHolder.AddNode);
 
                 if (container != null) {
-                    if (container.getValue("scene_coords") != null) {
+                    if (container.fetchData("scene_coords") != null) {
 
-                        DraggableNode node = new DraggableNode(DragIconType.valueOf(container.getValue("type")));
+                        DraggableNode node = new DraggableNode(DragIconType.valueOf(container.fetchData("type")));
                         right_pane.getChildren().add(node);
 
-                        Point2D cursorPoint = container.getValue("scene_coords");
+                        Point2D cursorPoint = container.fetchData("scene_coords");
 
                         node.relocateToPoint(
                                 new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
@@ -179,21 +179,21 @@ public class RootLayout extends AnchorPane {
                 }
 
                 container =
-                        (DragContainer) event.getDragboard().getContent(DragContainer.DragNode);
+                        (DataHolder) event.getDragboard().getContent(DataHolder.DragNode);
 
                 if (container != null) {
-                    if (container.getValue("type") != null)
-                        System.out.println ("Moved node " + container.getValue("type"));
+                    if (container.fetchData("type") != null)
+                        System.out.println ("Moved node " + container.fetchData("type"));
                 }
 
                 //AddLink drag operation
-                container = (DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
+                container = (DataHolder) event.getDragboard().getContent(DataHolder.AddLink);
 
                 if (container != null) {
 
                     //bind the ends of our link to the nodes whose id's are stored in the drag container
-                    String sourceId = container.getValue("source");
-                    String targetId = container.getValue("target");
+                    String sourceId = container.fetchData("source");
+                    String targetId = container.fetchData("target");
 
                     if (sourceId != null && targetId != null) {
 
@@ -220,7 +220,7 @@ public class RootLayout extends AnchorPane {
                         }
 
                         if (source != null && target != null)
-                            link.bindEnds(source, target, container.getValue("mouse_y"), true);
+                            link.bindEnds(source, target, container.fetchData("mouse_y"), true);
                     }
 
                 }
@@ -252,10 +252,10 @@ public class RootLayout extends AnchorPane {
                 mDragOverIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
 
                 ClipboardContent content = new ClipboardContent();
-                DragContainer container = new DragContainer();
+                DataHolder container = new DataHolder();
 
-                container.addData ("type", mDragOverIcon.getType().toString());
-                content.put(DragContainer.AddNode, container);
+                container.importData("type", mDragOverIcon.getType().toString());
+                content.put(DataHolder.AddNode, container);
 
                 mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
                 mDragOverIcon.setVisible(true);

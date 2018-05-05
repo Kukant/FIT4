@@ -1,37 +1,25 @@
 package Enviroment;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.*;
 
 import Blocks.*;
-import Others.Debugger;
 import Others.Output;
-import com.sun.org.apache.bcel.internal.classfile.ConstantValue;
-import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-
-import static Enviroment.DraggableNodeType.Constant;
-import static Enviroment.DraggableNodeType.Result;
-import static Enviroment.DraggableNodeType.TwoInputs;
 
 
 public class DraggableNode extends AnchorPane {
@@ -130,7 +118,6 @@ public class DraggableNode extends AnchorPane {
 
         if (left_link_handle != null)
             left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
-        //right_link_handle.setOnDragDropped(mLinkHandleDragDropped);
 
         mDragLink = new NodeLink();
         mDragLink.setVisible(false);
@@ -203,7 +190,6 @@ public class DraggableNode extends AnchorPane {
 
         mContextDragOver = new EventHandler <DragEvent>() {
 
-            //dragover to handle node dragging in the right pane view
             @Override
             public void handle(DragEvent event) {
 
@@ -214,7 +200,6 @@ public class DraggableNode extends AnchorPane {
             }
         };
 
-        //dragdrop for node dragging
         mContextDragDropped = new EventHandler <DragEvent> () {
 
             @Override
@@ -234,13 +219,6 @@ public class DraggableNode extends AnchorPane {
 
             @Override
             public void handle(MouseEvent event) {
-
-//                Debugger.log("Outputs before delete: " + self.block.Outputs);
-//                Debugger.log("Inputs before delete:");
-//                for (Block i : self.block.Inputs) {
-//                    if (i != null)
-//                        Debugger.log(" " +i);
-//                }
                 List<Output> toRemove = new ArrayList<>(); // pole outputs ktere budeme mazat
 
                 if (! (self.block instanceof ResultBlock))
@@ -266,25 +244,12 @@ public class DraggableNode extends AnchorPane {
                     }
 
 
-//                Debugger.log("Outputs after delete: " + self.block.Outputs);
-//                Debugger.log("Inputs before delete:");
-//                for (Block i : self.block.Inputs) {
-//                    if (i != null)
-//                        Debugger.log(" " +i);
-//                }
-
                 AnchorPane parent  = (AnchorPane) self.getParent();
                 parent.getChildren().remove(self);
                 RootLayout rootLayout = (RootLayout) parent.getParent().getParent().getParent();
                 rootLayout.scheme.Blocks.remove(self.block);
 
 
-                //iterate each link id connected to this node
-                //find it's corresponding component in the right-hand
-                //AnchorPane and delete it.
-
-                //Note:  other nodes connected to these links are not being
-                //notified that the link has been removed.
                 for (ListIterator <String> iterId = mLinkIds.listIterator();
                      iterId.hasNext();) {
 
@@ -328,10 +293,10 @@ public class DraggableNode extends AnchorPane {
                 );
 
                 ClipboardContent content = new ClipboardContent();
-                DragContainer container = new DragContainer();
+                DataHolder container = new DataHolder();
 
-                container.addData ("type", mType.toString());
-                content.put(DragContainer.AddNode, container);
+                container.importData("type", mType.toString());
+                content.put(DataHolder.AddNode, container);
 
                 startDragAndDrop (TransferMode.ANY).setContent(content);
 
@@ -368,12 +333,12 @@ public class DraggableNode extends AnchorPane {
 
                 //Drag content code
                 ClipboardContent content = new ClipboardContent();
-                DragContainer container = new DragContainer ();
+                DataHolder container = new DataHolder();
 
                 //pass the UUID of the source node for later lookup
-                container.addData("source", getId());
+                container.importData("source", getId());
 
-                content.put(DragContainer.AddLink, container);
+                content.put(DataHolder.AddLink, container);
 
                 startDragAndDrop (TransferMode.ANY).setContent(content);
 
@@ -391,8 +356,8 @@ public class DraggableNode extends AnchorPane {
 
                 //get the drag data.  If it's null, abort.
                 //This isn't the drag event we're looking for.
-                DragContainer container =
-                        (DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
+                DataHolder container =
+                        (DataHolder) event.getDragboard().getContent(DataHolder.AddLink);
 
                 if (container == null)
                     return;
@@ -406,9 +371,9 @@ public class DraggableNode extends AnchorPane {
                 ClipboardContent content = new ClipboardContent();
 
                 //pass the UUID of the target node for later lookup
-                container.addData("target", getId());
-                container.addData("mouse_y", event.getSceneY());
-                content.put(DragContainer.AddLink, container);
+                container.importData("target", getId());
+                container.importData("mouse_y", event.getSceneY());
+                content.put(DataHolder.AddLink, container);
 
                 event.getDragboard().setContent(content);
                 event.setDropCompleted(true);
