@@ -48,11 +48,11 @@
       <file leaf-file-name="MovableBlock.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Enviroment/MovableBlock.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1126">
+            <state relative-caret-position="1936">
               <caret line="444" column="17" lean-forward="false" selection-start-line="444" selection-start-column="17" selection-end-line="444" selection-end-column="17" />
               <folding>
-                <element signature="e#14004#14005#0" expanded="true" />
-                <element signature="e#14051#14052#0" expanded="true" />
+                <element signature="e#14030#14031#0" expanded="true" />
+                <element signature="e#14077#14078#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -75,6 +75,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="Connection.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/Enviroment/Connection.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1224">
+              <caret line="142" column="33" lean-forward="false" selection-start-line="142" selection-start-column="33" selection-end-line="142" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="BlockIconType.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Enviroment/BlockIconType.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -85,11 +95,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DragIcon.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/Enviroment/DragIcon.java">
+      <file leaf-file-name="BlockIcon.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Enviroment/BlockIcon.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1104">
-              <caret line="84" column="28" lean-forward="false" selection-start-line="84" selection-start-column="28" selection-end-line="84" selection-end-column="28" />
+            <state relative-caret-position="-198">
+              <caret line="13" column="22" lean-forward="false" selection-start-line="13" selection-start-column="22" selection-end-line="13" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -167,7 +177,6 @@
         <option value="$PROJECT_DIR$/src/Tests/ConstDivPowRootTests.java" />
         <option value="$PROJECT_DIR$/src/Tests/SchemeTests.java" />
         <option value="$PROJECT_DIR$/projekt.iml" />
-        <option value="$PROJECT_DIR$/src/Enviroment/NodeLink.java" />
         <option value="$PROJECT_DIR$/src/Enviroment/RootLayout.java" />
         <option value="$PROJECT_DIR$/src/Blocks/AddBlock.java" />
         <option value="$PROJECT_DIR$/src/Blocks/ConstBlock.java" />
@@ -191,7 +200,10 @@
         <option value="$PROJECT_DIR$/src/Enviroment/MovableBlockType.java" />
         <option value="$PROJECT_DIR$/src/Enviroment/DragIconType.java" />
         <option value="$PROJECT_DIR$/src/Enviroment/BlockIconType.java" />
+        <option value="$PROJECT_DIR$/src/Enviroment/NodeLink.java" />
         <option value="$PROJECT_DIR$/src/Enviroment/DragIcon.java" />
+        <option value="$PROJECT_DIR$/src/Enviroment/BlockIcon.java" />
+        <option value="$PROJECT_DIR$/src/Enviroment/Connection.java" />
       </list>
     </option>
   </component>
@@ -600,7 +612,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="90134000" />
+    <option name="totallyTimeSpent" value="91453000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1600" y="-2" width="1680" height="1052" extended-state="6" />
@@ -754,7 +766,7 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Resources/DragIcon.fxml">
+    <entry file="file://$PROJECT_DIR$/src/Resources/BlockIcon.fxml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
           <caret line="16" column="14" lean-forward="false" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="14" />
@@ -801,14 +813,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
           <caret line="28" column="9" lean-forward="false" selection-start-line="28" selection-start-column="9" selection-end-line="28" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Enviroment/NodeLink.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="105" column="100" lean-forward="false" selection-start-line="105" selection-start-column="100" selection-end-line="105" selection-end-column="100" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -941,6 +945,11 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Resources/icon.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Enviroment/DataHolder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="594">
@@ -952,18 +961,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Resources/icon.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Enviroment/MovableBlock.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1126">
+        <state relative-caret-position="1936">
           <caret line="444" column="17" lean-forward="false" selection-start-line="444" selection-start-column="17" selection-end-line="444" selection-end-column="17" />
           <folding>
-            <element signature="e#14004#14005#0" expanded="true" />
-            <element signature="e#14051#14052#0" expanded="true" />
+            <element signature="e#14030#14031#0" expanded="true" />
+            <element signature="e#14077#14078#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -984,10 +988,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Enviroment/DragIcon.java">
+    <entry file="file://$PROJECT_DIR$/src/Enviroment/BlockIcon.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1104">
-          <caret line="84" column="28" lean-forward="false" selection-start-line="84" selection-start-column="28" selection-end-line="84" selection-end-column="28" />
+        <state relative-caret-position="-198">
+          <caret line="13" column="22" lean-forward="false" selection-start-line="13" selection-start-column="22" selection-end-line="13" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Enviroment/Connection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1224">
+          <caret line="142" column="33" lean-forward="false" selection-start-line="142" selection-start-column="33" selection-end-line="142" selection-end-column="33" />
           <folding />
         </state>
       </provider>

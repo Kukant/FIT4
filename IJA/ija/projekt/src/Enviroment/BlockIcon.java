@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 /**
  * Representation of Graphical icon in side panel of application.
  */
-public class DragIcon extends AnchorPane {
+public class BlockIcon extends AnchorPane {
 
     private BlockIconType TypeOfIcon;
     @FXML public Text operatorTextField;
@@ -19,9 +19,9 @@ public class DragIcon extends AnchorPane {
     /**
      * Initialize new Icon from FXML file.
      */
-    public DragIcon() {
+    public BlockIcon() {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("./../Resources/DragIcon.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../Resources/BlockIcon.fxml"));
 
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);

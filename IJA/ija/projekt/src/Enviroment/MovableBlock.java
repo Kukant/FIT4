@@ -50,7 +50,7 @@ public class MovableBlock extends AnchorPane {
     @FXML AnchorPane left_link_handle;
     @FXML AnchorPane right_link_handle;
 
-    private NodeLink mDragLink = null;
+    private Connection mDragLink = null;
     private AnchorPane right_pane = null;
 
     private EventHandler <MouseEvent> DragDetected;
@@ -121,7 +121,7 @@ public class MovableBlock extends AnchorPane {
         if (left_link_handle != null)
             left_link_handle.setOnDragDropped(BlockDragDropped);
 
-        mDragLink = new NodeLink();
+        mDragLink = new Connection();
         mDragLink.setVisible(false);
 
         parentProperty().addListener(new ChangeListener() {
@@ -336,7 +336,7 @@ public class MovableBlock extends AnchorPane {
 
                 Point2D StartPosition = new Point2D(getLayoutX() + getWidth(), getLayoutY() + (getHeight() / 2.0));
 
-                mDragLink.setStart(StartPosition);
+                mDragLink.SetStartPosition(StartPosition);
 
                 //Drag data code
                 ClipboardContent data = new ClipboardContent();
@@ -397,7 +397,7 @@ public class MovableBlock extends AnchorPane {
 
                 Point2D EndPosition = new Point2D(event.getX(), event.getY());
 
-                mDragLink.setEnd(EndPosition);
+                mDragLink.SetEndPosition(EndPosition);
 
                 event.consume();
 
@@ -451,7 +451,7 @@ public class MovableBlock extends AnchorPane {
      * Attach connection to block.
      * @param linkId attached connection
      */
-    public void registerLink(String linkId) {
+    public void registerConnection(String linkId) {
         AttachedConnections.add(linkId);
     }
 }

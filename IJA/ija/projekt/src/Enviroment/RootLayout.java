@@ -40,7 +40,7 @@ public class RootLayout extends AnchorPane {
     private EventHandler mIconDragOverRoot=null;
     private EventHandler mIconDragDropped=null;
     private EventHandler mIconDragOverRightPane=null;
-    private DragIcon mDragOverIcon = null;
+    private BlockIcon mDragOverIcon = null;
 
     Stage stage;
 
@@ -72,16 +72,16 @@ public class RootLayout extends AnchorPane {
     @FXML
     private void initialize() {
 
-        mDragOverIcon = new DragIcon(); //specialni neviditelna ikona, je zobrazena jen kdyz "Drag and Dropujeme"
+        mDragOverIcon = new BlockIcon(); //specialni neviditelna ikona, je zobrazena jen kdyz "Drag and Dropujeme"
 
         mDragOverIcon.setVisible(false);//uprava jejich atributu
         mDragOverIcon.setOpacity(0.65);
         getChildren().add(mDragOverIcon);
 
 
-        for (int i = 0; i < 8; i++) { // zobrazeni osmi ikon z DragIcon.java
+        for (int i = 0; i < 8; i++) { // zobrazeni osmi ikon z BlockIcon.java
 
-            DragIcon icn = new DragIcon();// nova ikona
+            BlockIcon icn = new BlockIcon();// nova ikona
 
             addDragDetection(icn); //je dragovatelna
 
@@ -198,7 +198,7 @@ public class RootLayout extends AnchorPane {
                     if (sourceId != null && targetId != null) {
 
                         //System.out.println(container.getData());
-                        NodeLink link = new NodeLink();
+                        Connection link = new Connection();
 
                         //add our link at the top of the rendering order so it's rendered first
                         right_pane.getChildren().add(0,link);
@@ -220,7 +220,7 @@ public class RootLayout extends AnchorPane {
                         }
 
                         if (source != null && target != null)
-                            link.bindEnds(source, target, container.fetchData("mouse_y"), true);
+                            link.ConnectBlocks(source, target, container.fetchData("mouse_y"), true);
                     }
 
                 }
@@ -232,9 +232,9 @@ public class RootLayout extends AnchorPane {
         });
     }
 
-    private void addDragDetection(DragIcon dragIcon) {
+    private void addDragDetection(BlockIcon blockIcon) {
 
-        dragIcon.setOnDragDetected (new EventHandler <MouseEvent> () {
+        blockIcon.setOnDragDetected (new EventHandler <MouseEvent> () {
 
             @Override
             public void handle(MouseEvent event) {
@@ -244,8 +244,8 @@ public class RootLayout extends AnchorPane {
                 right_pane.setOnDragOver(mIconDragOverRightPane);
                 right_pane.setOnDragDropped(mIconDragDropped);
 
-                // get a reference to the clicked DragIcon object
-                DragIcon icn = (DragIcon) event.getSource();
+                // get a reference to the clicked BlockIcon object
+                BlockIcon icn = (BlockIcon) event.getSource();
 
                 //begin drag ops
                 mDragOverIcon.setType(icn.getType());
@@ -424,12 +424,12 @@ public class RootLayout extends AnchorPane {
         for (Block block : scheme.Blocks) {
             // generate new connections
             for (Output out : block.Outputs) {
-                NodeLink link = new NodeLink();
+                Connection link = new Connection();
                 right_pane.getChildren().add(0,link);
                 if (out.Index == 0) {
-                    link.bindEnds(block.parent, out.block.parent, -50000, false);
+                    link.ConnectBlocks(block.parent, out.block.parent, -50000, false);
                 } else if (out.Index == 1){
-                    link.bindEnds(block.parent, out.block.parent, 50000, false);
+                    link.ConnectBlocks(block.parent, out.block.parent, 50000, false);
                 } else {
                     throw new Error("Unexpected Index");
                 }
