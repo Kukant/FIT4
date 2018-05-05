@@ -105,7 +105,7 @@ public class RootLayout extends AnchorPane {
                 javafx.geometry.Point2D p = right_pane.sceneToLocal(event.getSceneX(), event.getSceneY());
 
                 if (!right_pane.boundsInLocalProperty().get().contains(p)) {
-                    mDragOverIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+                    mDragOverIcon.ChangePosition(new Point2D(event.getSceneX(), event.getSceneY()));
                     return;
                 }
 
@@ -120,7 +120,7 @@ public class RootLayout extends AnchorPane {
 
                 event.acceptTransferModes(TransferMode.ANY);
 
-                mDragOverIcon.relocateToPoint(
+                mDragOverIcon.ChangePosition(
                         new Point2D(event.getSceneX(), event.getSceneY())
                 );
 
@@ -249,7 +249,7 @@ public class RootLayout extends AnchorPane {
 
                 //begin drag ops
                 mDragOverIcon.setType(icn.getType());
-                mDragOverIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+                mDragOverIcon.ChangePosition(new Point2D(event.getSceneX(), event.getSceneY()));
 
                 ClipboardContent content = new ClipboardContent();
                 DataHolder container = new DataHolder();

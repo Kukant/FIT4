@@ -49,7 +49,7 @@
         <entry file="file://$PROJECT_DIR$/src/Enviroment/MovableBlock.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1126">
-              <caret line="444" column="17" lean-forward="true" selection-start-line="444" selection-start-column="17" selection-end-line="444" selection-end-column="17" />
+              <caret line="444" column="17" lean-forward="false" selection-start-line="444" selection-start-column="17" selection-end-line="444" selection-end-column="17" />
               <folding>
                 <element signature="e#14004#14005#0" expanded="true" />
                 <element signature="e#14051#14052#0" expanded="true" />
@@ -75,21 +75,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BlockIconType.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="BlockIconType.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Enviroment/BlockIconType.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="252">
-              <caret line="14" column="1" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
+              <caret line="14" column="1" lean-forward="false" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DragIcon.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DragIcon.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Enviroment/DragIcon.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1278">
-              <caret line="77" column="26" lean-forward="false" selection-start-line="77" selection-start-column="26" selection-end-line="77" selection-end-column="26" />
+            <state relative-caret-position="1104">
+              <caret line="84" column="28" lean-forward="false" selection-start-line="84" selection-start-column="28" selection-end-line="84" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -165,7 +165,6 @@
         <option value="$PROJECT_DIR$/src/Resources/DragIcon.fxml" />
         <option value="$PROJECT_DIR$/src/Enviroment/DraggableNodeType.java" />
         <option value="$PROJECT_DIR$/src/Tests/ConstDivPowRootTests.java" />
-        <option value="$PROJECT_DIR$/src/Enviroment/DragIcon.java" />
         <option value="$PROJECT_DIR$/src/Tests/SchemeTests.java" />
         <option value="$PROJECT_DIR$/projekt.iml" />
         <option value="$PROJECT_DIR$/src/Enviroment/NodeLink.java" />
@@ -192,6 +191,7 @@
         <option value="$PROJECT_DIR$/src/Enviroment/MovableBlockType.java" />
         <option value="$PROJECT_DIR$/src/Enviroment/DragIconType.java" />
         <option value="$PROJECT_DIR$/src/Enviroment/BlockIconType.java" />
+        <option value="$PROJECT_DIR$/src/Enviroment/DragIcon.java" />
       </list>
     </option>
   </component>
@@ -600,7 +600,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="89768000" />
+    <option name="totallyTimeSpent" value="90134000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1600" y="-2" width="1680" height="1052" extended-state="6" />
@@ -766,14 +766,6 @@
     </entry>
     <entry file="jar:///usr/lib/jvm/java-8-oracle/javafx-src.zip!/javafx/scene/layout/Pane.java" />
     <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/lang/Double.java" />
-    <entry file="file://$PROJECT_DIR$/src/Enviroment/DragIcon.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1278">
-          <caret line="77" column="26" lean-forward="false" selection-start-line="77" selection-start-column="26" selection-end-line="77" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Tests/AddSubMulTests.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
@@ -968,7 +960,7 @@
     <entry file="file://$PROJECT_DIR$/src/Enviroment/MovableBlock.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1126">
-          <caret line="444" column="17" lean-forward="true" selection-start-line="444" selection-start-column="17" selection-end-line="444" selection-end-column="17" />
+          <caret line="444" column="17" lean-forward="false" selection-start-line="444" selection-start-column="17" selection-end-line="444" selection-end-column="17" />
           <folding>
             <element signature="e#14004#14005#0" expanded="true" />
             <element signature="e#14051#14052#0" expanded="true" />
@@ -987,7 +979,15 @@
     <entry file="file://$PROJECT_DIR$/src/Enviroment/BlockIconType.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
-          <caret line="14" column="1" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
+          <caret line="14" column="1" lean-forward="false" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Enviroment/DragIcon.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1104">
+          <caret line="84" column="28" lean-forward="false" selection-start-line="84" selection-start-column="28" selection-end-line="84" selection-end-column="28" />
           <folding />
         </state>
       </provider>

@@ -8,17 +8,20 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
-
+/**
+ * Representation of Graphical icon in side panel of application.
+ */
 public class DragIcon extends AnchorPane {
 
-    private BlockIconType mType;
+    private BlockIconType TypeOfIcon;
     @FXML public Text operatorTextField;
 
+    /**
+     * Initialize new Icon from FXML file.
+     */
     public DragIcon() {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(
-                getClass().getResource("./../Resources/DragIcon.fxml")
-        );
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("./../Resources/DragIcon.fxml"));
 
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -26,23 +29,27 @@ public class DragIcon extends AnchorPane {
         try {
             fxmlLoader.load();
 
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
+        } catch (IOException exception) { throw new RuntimeException(exception);}
     }
 
-    @FXML
-    private void initialize() {}
+    @FXML private void initialize() {}
 
-    public BlockIconType getType() { return mType;}
+    /**
+     * @return type of icon
+     */
+    public BlockIconType getType() { return TypeOfIcon;}
 
+    /**
+     * Set type of Icon.
+     * @param type one of predefined types
+     */
     public void setType(BlockIconType type) {
 
-        mType = type;
+        TypeOfIcon = type;
 
         getStyleClass().clear();
         getStyleClass().add("dragicon");
-        switch (mType) {
+        switch (TypeOfIcon) {
 
             case add:
                 operatorTextField.setText("+");
@@ -73,14 +80,18 @@ public class DragIcon extends AnchorPane {
         }
     }
 
-    public void relocateToPoint (Point2D p) {
+    /**
+     * Relocate Position of Icon.
+     * @param p new position
+     */
+    public void ChangePosition(Point2D p) {
 
-        Point2D localCoords = getParent().sceneToLocal(p);
+        Point2D FetchedCoords = getParent().sceneToLocal(p);
 
         relocate (
-                (int) (localCoords.getX() -
+                (int) (FetchedCoords.getX() -
                         (getBoundsInLocal().getWidth() / 2)),
-                (int) (localCoords.getY() -
+                (int) (FetchedCoords.getY() -
                         (getBoundsInLocal().getHeight() / 2))
         );
     }
