@@ -17,7 +17,10 @@ public class DivBlock extends Block {
      */
     @Override
     public double Calculate() {
-        return this.InputValues[0].val / this.InputValues[1].val;
+        if (this.InputValues[1].val != 0)
+            return this.InputValues[0].val / this.InputValues[1].val;
+        else
+            return 0;
     }
 }
 

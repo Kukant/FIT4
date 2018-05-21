@@ -1,0 +1,13 @@
+
+
+
+.node-overlay {
+    -fx-background-color: rgba(0, 220, 0,1);
+
+}
+
+.right-link-handle:hover {
+    -fx-background-radius: 0 0 10 0;
+    -fx-background-color:
+            rgba(255, 255, 255, 0.35);
+}

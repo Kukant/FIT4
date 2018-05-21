@@ -21,7 +21,7 @@ public class BlockIcon extends AnchorPane {
      */
     public BlockIcon() {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../Resources/BlockIcon.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("Resources/BlockIcon.fxml"));
 
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);

@@ -52,7 +52,7 @@ public class MainScene extends AnchorPane {
      */
     public MainScene() {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../Resources/MainScene.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("Resources/MainScene.fxml"));
 
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -338,6 +338,7 @@ public class MainScene extends AnchorPane {
                     break;
 
                 default:
+                    WarningLine.setText("");
                     break;
             }
     }

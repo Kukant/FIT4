@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root fx:id="root_pane" minHeight="200.0" minWidth="200.0" prefHeight="561.0" prefWidth="805.0" stylesheets="@stylesheet.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <GridPane>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <MenuBar prefHeight="29.0" prefWidth="168.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem fx:id="LoadBtn" mnemonicParsing="false" text="Load" />
+                        <MenuItem fx:id="SaveBtn" mnemonicParsing="false" text="Save" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <Button fx:id="DebugButton" mnemonicParsing="false" text="Debug" GridPane.columnIndex="2" />
+            <Button fx:id="CalculateButton" mnemonicParsing="false" text="Calculate" GridPane.columnIndex="1" />
+         </children>
+      </GridPane>
+      <SplitPane fx:id="base_pane" dividerPositions="0.5" layoutX="-93.0" layoutY="-156.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="29.0">
+         <items>
+            <ScrollPane hbarPolicy="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="530.0" prefWidth="85.0" vbarPolicy="ALWAYS">
+               <content>
+                  <VBox fx:id="left_pane" spacing="10.0" />
+               </content>
+            </ScrollPane>
+            <AnchorPane fx:id="right_pane" />
+         </items>
+      </SplitPane>
+      <Text fx:id="WarningLine" fill="RED" layoutX="425.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="17.0" />
+         </font>
+      </Text>
+   </children>
+</fx:root>

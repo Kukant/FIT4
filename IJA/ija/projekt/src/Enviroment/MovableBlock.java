@@ -76,15 +76,15 @@ public class MovableBlock extends AnchorPane {
             case root:
             case pow:
             case sub:
-                blockResourcePath = "./../Resources/MovableBlock.fxml";
+                blockResourcePath = "Resources/MovableBlock.fxml";
                 NumberOfInputPorts = 2;
                 break;
             case _const:
-                blockResourcePath = "./../Resources/MovableBlockConst.fxml";
+                blockResourcePath = "Resources/MovableBlockConst.fxml";
                 NumberOfInputPorts = 0;
                 break;
             case result:
-                blockResourcePath = "./../Resources/MovableBlockResult.fxml";
+                blockResourcePath = "Resources/MovableBlockResult.fxml";
                 NumberOfInputPorts = 1;
                 break;
 
@@ -93,7 +93,7 @@ public class MovableBlock extends AnchorPane {
 
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(blockResourcePath));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource(blockResourcePath));
 
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -434,17 +434,28 @@ public class MovableBlock extends AnchorPane {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue,
                                 String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    ConstValue.setText(newValue.replaceAll("[^\\d]", ""));
+                if (!newValue.matches("[0-9\\.\\-]*")) {
+                    if (newValue.length() != 0)
+                        newValue = newValue.substring(0, newValue.length() - 1);
+                    ConstValue.setText(newValue);
                 }
 
                 ConstBlock thisBlock = (ConstBlock) block;
                 String textVal = ConstValue.getText();
-                if (!textVal.isEmpty()) {
+                if (!textVal.isEmpty() && tryParseDouble(textVal)) {
                     thisBlock.setConstVal(Double.parseDouble(textVal));
                 }
             }
         });
+    }
+
+    private boolean tryParseDouble(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**

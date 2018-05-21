@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root fx:id="root_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="92.0" prefWidth="82.0" style="-fx-background-color: #ffffff;" styleClass="dragicon" stylesheets="@stylesheet.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="23.0" layoutX="65.0" layoutY="44.0" stroke="BLACK" strokeType="INSIDE" width="25.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="15.0" layoutX="-7.0" layoutY="29.0" stroke="BLACK" strokeType="INSIDE" width="32.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="15.0" layoutX="-8.0" layoutY="60.0" stroke="BLACK" strokeType="INSIDE" width="32.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#d6d0f4" height="92.0" stroke="#757272" strokeLineCap="BUTT" strokeWidth="2.0" width="82.0" />
+      <Text fx:id="valueDisplay" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="82.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="15.0" />
+      <Text fx:id="operatorTextField" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/" textAlignment="CENTER" wrappingWidth="82.0" AnchorPane.topAnchor="24.400001525878906">
+         <font>
+            <Font name="FreeMono" size="62.0" />
+         </font>
+      </Text>
+      <VBox prefHeight="92.0" prefWidth="92.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <GridPane prefHeight="15.0" prefWidth="41.0" styleClass="node-overlay">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label fx:id="close_button" text="X" GridPane.columnIndex="1">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="title_bar" prefHeight="15.0" prefWidth="71.0" />
+               </children>
+            </GridPane>
+            <HBox alignment="TOP_RIGHT" minHeight="0.0" minWidth="0.0" prefHeight="77.0" prefWidth="92.0" scaleShape="false" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="88.0" AnchorPane.topAnchor="14.0">
+               <children>
+                  <AnchorPane fx:id="left_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="77.0" prefWidth="44.0" />
+                  <AnchorPane fx:id="right_link_handle" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="77.0" prefWidth="39.0" styleClass="right-link-handle" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</fx:root>

@@ -34,7 +34,7 @@ public class Connection extends AnchorPane {
 
         setId(UUID.randomUUID().toString());
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../Resources/Connection.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("Resources/Connection.fxml"));
 
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -129,7 +129,7 @@ public class Connection extends AnchorPane {
 
         } else if (target.NumberOfInputPorts == 2){ // two inputs
             if ((target.getLayoutY() + 100 / 2 /*heigh of draggable block*/ + 39 /*height of menu*/ ) < mouseY) {
-                node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(15), (targetHeight / 2.0) ));
+                node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(19), (targetHeight / 2.0) ));
             } else {
                 node_link.endYProperty().bind( Bindings.add(target.layoutYProperty().add(-15), (targetHeight / 2.0) ));
             }
